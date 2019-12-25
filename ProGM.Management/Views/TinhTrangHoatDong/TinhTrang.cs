@@ -23,7 +23,7 @@ namespace ProGM.Management.Views.TinhTrangHoatDong
     public partial class TinhTrang : DevExpress.XtraEditors.XtraUserControl
     {
         App app_controller;
-        List<gridViewDataItem> datasource = new List<gridViewDataItem>();
+        public List<gridViewDataItem> datasource = new List<gridViewDataItem>();
         public TinhTrang(MenuObject obj, App app)
         {
             this.app_controller = app;
@@ -154,7 +154,7 @@ namespace ProGM.Management.Views.TinhTrangHoatDong
             if (client != null)
             {
                 SocketReceivedData ms = new SocketReceivedData();
-                ms.type = "OPEN";
+                ms.type = SocketCommandType.OPENCLIENT;
                 this.app_controller.asyncSocketListener.Send(client.id, JsonConvert.SerializeObject(ms), false);
                 this.UpdateStatusPC(mac, 2, DateTime.Now.ToString("HH:mm:ss"));
             }
@@ -170,7 +170,7 @@ namespace ProGM.Management.Views.TinhTrangHoatDong
                 SocketReceivedData ms = new SocketReceivedData();
                 ms.type = SocketCommandType.CLOSECLIENT;
                 this.app_controller.asyncSocketListener.Send(client.id, JsonConvert.SerializeObject(ms), false);
-                this.UpdateStatusPC(mac, 0, "00:00:00");
+                this.UpdateStatusPC(mac, 1, "00:00:00");
             }
         }
 

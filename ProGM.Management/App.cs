@@ -31,6 +31,7 @@ using System.Collections;
 using ProGM.Management.Controller;
 using ProGM.Management.Views.Chat;
 using ProGM.Business.ApiBusiness;
+using Timer = System.Timers.Timer;
 
 namespace ProGM.Management
 {
@@ -42,7 +43,6 @@ namespace ProGM.Management
 
         public IAsyncSocketListener asyncSocketListener;
         public List<SocketClients> clients = new List<SocketClients>();
-
         Thread threadListen;
         public bool isVerifyAccount = false;
         public string CompanyId = "";
@@ -122,14 +122,28 @@ namespace ProGM.Management
                            
                             if (loginResponse.result[0].status == "SUCCESS")
                             {
+                                #region đăng nhập thánh  công
                                 var _clientsk = clients.Where(c => c.macaddress == obj.macAddressFrom).SingleOrDefault();
                                 if (_clientsk != null)
                                 {
                                     _clientsk.timerStart = DateTime.Now;
+                                    _clientsk.accountBlance = loginResponse.result[0].dBalance;
+                                    _clientsk.macaddress = obj.macAddressFrom;
+                                    _clientsk.Price = decimal.Parse(this.userTinhTrang.datasource.Where(n => n.MacID == obj.macAddressFrom).SingleOrDefault().Price);
+   
                                 }
+                                Timer timerpay = new Timer();
+                                timerpay.Elapsed += (sender, eventArgs) => Timerpay_Tick(sender, eventArgs, id);
+                                timerpay.Interval = 10000;
+                                timerpay.Enabled = true;
+
                                 ms.type = SocketCommandType.LOGIN_SUCCESS;
 
                                 this.userTinhTrang.UpdateStatusPC(obj.macAddressFrom, 2, string.Format("{0:HH:mm:ss}", _clientsk.timerStart));
+
+
+                                #endregion
+
                             }
                             else if (loginResponse.result[0].status == "FALSED")
                             {
@@ -155,6 +169,31 @@ namespace ProGM.Management
             {
 
 
+            }
+        }
+
+        private void Timerpay_Tick(object sender, EventArgs e, int id)
+        {
+            Timer tt = sender as Timer;
+            var _clientItem = clients.Where(n => n.id == id).SingleOrDefault();
+            if (_clientItem!=null)
+            {
+                _clientItem.accountBlance = _clientItem.accountBlance - (_clientItem.Price / 60 * 2);
+                var thoigianconlai = _clientItem.accountBlance / _clientItem.Price * 60;
+                if (thoigianconlai<=0)
+                {
+                    SocketReceivedData ms = new SocketReceivedData();
+                    ms.type = SocketCommandType.CLOSECLIENT;
+                    this.asyncSocketListener.Send(id, JsonConvert.SerializeObject(ms), false);
+                    _clientItem.timerStart = DateTime.MinValue;
+                    _clientItem.userLogin = "";
+                    _clientItem.accountBlance = 0;
+                    _clientItem.frmChat  = null;
+                    tt.Enabled = false;
+                    tt.Dispose();
+
+                    this.userTinhTrang.UpdateStatusPC(_clientItem.macaddress, 1, "00:00:00");
+                }
             }
         }
         #endregion
@@ -212,7 +251,8 @@ namespace ProGM.Management
         public string macaddress { set; get; }
         public frmChat frmChat { set; get; }
         public DateTime timerStart { set; get; }
-        public int userLogin { set; get; }
+        public string userLogin { set; get; }
         public decimal accountBlance { set; get; }
+        public decimal Price { set; get; }
     }
 }
