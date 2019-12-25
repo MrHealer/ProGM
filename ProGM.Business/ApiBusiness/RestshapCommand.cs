@@ -40,7 +40,7 @@ namespace ProGM.Business.ApiBusiness
 
         public static responseListPC GetAllComputerByCompany(string id)
         {
-             //var client = new RestClient("http://40.74.77.139/api/?key=computerList&companyId=cf09c7b5-254e-11ea-b536-005056b97a5d&groupId=ALL");
+            //var client = new RestClient("http://40.74.77.139/api/?key=groupComputerList&companyId="+id);
             var client = new RestClient(url + "/?key=computerList&companyId=" + id + "&groupId=ALL");
             var request = new RestRequest(Method.GET);
             request.AddHeader("cache-control", "no-cache");
@@ -72,7 +72,7 @@ namespace ProGM.Business.ApiBusiness
         {
             try
             {
-                var client = new RestClient(url + "?key=computer-detail&_strMacAddress=" + mac);
+                var client = new RestClient(url + "?key=computeDetail&pcMacAddress=" + mac);
                 client.Timeout = -1;
                 var request = new RestRequest(Method.GET);
                 request.AddHeader("Content-Type", "application/json");

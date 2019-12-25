@@ -34,8 +34,8 @@ namespace ProGM.Management.Views.TinhTrangHoatDong
         }
         public void InitData()
         {
-            responseListPC responseData = RestshapCommand.GetAllComputerByCompany("cf09c7b5-254e-11ea-b536-005056b97a5d");
-            if (responseData != null)
+            responseListPC responseData = RestshapCommand.GetAllComputerByCompany(this.app_controller.CompanyId);
+            if (responseData != null && responseData.computerList!=null)
             {
                 int countOffline = 0;
                 int countOnline = 0;

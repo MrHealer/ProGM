@@ -44,7 +44,6 @@ namespace ProGM.Management.Views.DangNhap
             {
                 string messeage = "";
                 LoginResponse loginResponse = RestshapCommand.Login(userName, passWord, ref messeage);
-                SocketReceivedData ms = new SocketReceivedData();
                 if (loginResponse != null)
                 {
 
@@ -53,6 +52,7 @@ namespace ProGM.Management.Views.DangNhap
                         if (loginResponse.result[0].strRoleName == "MANAGER")
                         {
                             this.Hide();
+                            this.app_controller.CompanyId = loginResponse.result[0].companyId;
                             this.app_controller.UpdateGui();
                             this.app_controller.Show();
                         }

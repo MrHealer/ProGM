@@ -15,7 +15,10 @@ namespace ProGM.Business.Model
     {
         public string status { get; set; }
         public string strId { get; set; }
-        public string strCompanyId { get; set; }
+        public string companyId { get; set; }
+        public string companyName { get; set; }
+        public string strManagerPcIP { get; set; }
+        public string strManagerPcMac { get; set; }
         public string strName { get; set; }
         public string strPhoneNumber { get; set; }
         public string strEmail { get; set; }
@@ -31,7 +34,7 @@ namespace ProGM.Business.Model
         public string strRoleId { get; set; }
         public string strRoleName { get; set; }
         public string strRoleDesc { get; set; }
-        public string dBalance { get; set; }
+        public decimal dBalance { get; set; }
     }
 
 }

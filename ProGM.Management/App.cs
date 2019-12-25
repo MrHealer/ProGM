@@ -45,6 +45,7 @@ namespace ProGM.Management
 
         Thread threadListen;
         public bool isVerifyAccount = false;
+        public string CompanyId = "";
         public App()
         {
             InitializeComponent();
@@ -194,6 +195,14 @@ namespace ProGM.Management
         {
             this.asyncSocketListener.Dispose();
             this.threadListen.Abort();
+        }
+
+        private void tileNavPaneMenu_ElementClick(object sender, NavElementEventArgs e)
+        {
+            if (e.Element.Name=="mTinhtrang")
+            {
+
+            }
         }
     }
 

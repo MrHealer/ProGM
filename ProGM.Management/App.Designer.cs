@@ -117,6 +117,7 @@
             this.tileNavPaneMenu.Size = new System.Drawing.Size(1317, 40);
             this.tileNavPaneMenu.TabIndex = 2;
             this.tileNavPaneMenu.Text = "tileMenu";
+            this.tileNavPaneMenu.ElementClick += new DevExpress.XtraBars.Navigation.NavElementClickEventHandler(this.tileNavPaneMenu_ElementClick);
             // 
             // navButton2
             // 

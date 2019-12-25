@@ -33,7 +33,7 @@ namespace ProGM.Client
         {
             string mac = PCExtention.GetMacId();
             var detail = RestshapCommand.ComputerDetail(mac);
-            if (detail != null && detail.computeDetail.Count() > 0)
+            if (detail != null && detail != null && detail.computeDetail.Count() > 0)
             {
                 this.ComputerDetail = JsonConvert.SerializeObject(detail);
                 this.IpManager = detail.computeDetail[0].strManagerPcIP;
