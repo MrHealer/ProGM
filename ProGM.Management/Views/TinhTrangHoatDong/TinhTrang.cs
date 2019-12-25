@@ -11,12 +11,12 @@ using DevExpress.XtraEditors;
 using ProGM.Management.Model;
 using ProGM.Management.Controller;
 using ProGM.Management.Views.TaiKhoan;
-using RestSharp;
 using Newtonsoft.Json;
 using DevExpress.XtraGrid.Views.Tile;
 using DevExpress.XtraGrid.Views.Tile.ViewInfo;
 using DevExpress.XtraGrid.Views.Grid;
 using ProGM.Business.Model;
+using ProGM.Business.ApiBusiness;
 
 namespace ProGM.Management.Views.TinhTrangHoatDong
 {
@@ -34,20 +34,9 @@ namespace ProGM.Management.Views.TinhTrangHoatDong
         }
         public void InitData()
         {
-            var client = new RestClient("http://40.74.77.139/api/?key=computerList&companyId=cf09c7b5-254e-11ea-b536-005056b97a5d&groupId=ALL");
-            var request = new RestRequest(Method.GET);
-            request.AddHeader("cache-control", "no-cache");
-            request.AddHeader("Connection", "keep-alive");
-            request.AddHeader("accept-encoding", "gzip, deflate");
-            request.AddHeader("Host", "40.74.77.139");
-            request.AddHeader("Cache-Control", "no-cache");
-            request.AddHeader("Accept", "*/*");
-            request.AddHeader("Authorization", "Basic d2ViOjEyMw==");
-            IRestResponse response = client.Execute(request);
-            if (!string.IsNullOrEmpty(response.Content))
+            responseListPC responseData = RestshapCommand.GetAllComputerByCompany("cf09c7b5-254e-11ea-b536-005056b97a5d");
+            if (responseData != null)
             {
-                responseListPC responseData = JsonConvert.DeserializeObject<responseListPC>(response.Content);
-
                 int countOffline = 0;
                 int countOnline = 0;
                 int countReady = 0;
@@ -167,7 +156,7 @@ namespace ProGM.Management.Views.TinhTrangHoatDong
                 SocketReceivedData ms = new SocketReceivedData();
                 ms.type = "OPEN";
                 this.app_controller.asyncSocketListener.Send(client.id, JsonConvert.SerializeObject(ms), false);
-                this.UpdateStatusPC(mac, 2,DateTime.Now.ToString("HH:mm:ss"));
+                this.UpdateStatusPC(mac, 2, DateTime.Now.ToString("HH:mm:ss"));
             }
 
         }
@@ -179,7 +168,7 @@ namespace ProGM.Management.Views.TinhTrangHoatDong
             if (client != null)
             {
                 SocketReceivedData ms = new SocketReceivedData();
-                ms.type = "CLOSE";
+                ms.type = SocketCommandType.CLOSECLIENT;
                 this.app_controller.asyncSocketListener.Send(client.id, JsonConvert.SerializeObject(ms), false);
                 this.UpdateStatusPC(mac, 0, "00:00:00");
             }

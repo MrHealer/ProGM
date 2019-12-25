@@ -123,10 +123,15 @@ namespace ProGM.Business.SocketBusiness
 
                 }
             }
-            catch (Exception)
+            catch (NullReferenceException e)
+            {
+                // Do something with e, please.
+            }
+            catch (Exception ex)
             {
 
             }
+            
 
 
         }
@@ -194,9 +199,11 @@ namespace ProGM.Business.SocketBusiness
 
         public void Dispose()
         {
-            this.connected.Dispose();
             this.sent.Dispose();
             this.received.Dispose();
+            this.connected.Dispose();
+           
+            
             this.Close();
         }
     }

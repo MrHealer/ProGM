@@ -53,7 +53,7 @@ namespace ProGM.Client.View.Chat
                 ms.msgFrom = "Linh";
                 ms.macAddressFrom = PCExtention.GetMacId();
                 ms.msg = msg;
-                ms.type = "CHAT";
+                ms.type = SocketCommandType.CHAT;
                 this.app_controller.asyncClient.Send(JsonConvert.SerializeObject(ms), false);
                 txtHistory.AppendText("Me: " + msg + Environment.NewLine);
                 txtMesseage.Text = "";

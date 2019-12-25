@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ProGM.Business.Model
+{
+    public class SocketCommandType
+    {
+        public const string AUTHORIZE = "AUTHORIZE";
+        public const string CHAT = "CHAT";
+        public const string LOGIN = "LOGIN";
+        public const string OPENCLIENT = "OPENCLIENT";
+        public const string CLOSECLIENT = "CLOSECLIENT";
+        public const string LOGIN_SUCCESS = "LOGIN_SUCCESS";
+        public const string LOGIN_FALSED = "LOGIN_FALSED";
+
+    }
+}

@@ -14,18 +14,31 @@ using ProGM.Client.View.Chat;
 using ProGM.Client.View.Login;
 using ProGM.Client.View.GoiDo;
 using ProGM.Business.Model;
+using ProGM.Business.ApiBusiness;
 
 namespace ProGM.Client
 {
-    public partial class App : DevExpress.XtraEditors.XtraForm {
+    public partial class App : DevExpress.XtraEditors.XtraForm
+    {
         public IAsyncClient asyncClient;
         public frmChat frmChat;
         public frmDangNhap frmDangNhap;
         public frmLock frmLock;
+
         bool isVerifyAccount = false;
         bool isConnectServer = false;
+        public string ComputerDetail = "";
+        string IpManager = "";
         public App()
         {
+            string mac = PCExtention.GetMacId();
+            var detail = RestshapCommand.ComputerDetail(mac);
+            if (detail != null && detail.computeDetail.Count() > 0)
+            {
+                this.ComputerDetail = JsonConvert.SerializeObject(detail);
+                this.IpManager = detail.computeDetail[0].strManagerPcIP;
+            }
+
             InitializeComponent();
             this.Location = new Point(Screen.PrimaryScreen.Bounds.Right - this.Width, //should be (0,0)
                           Screen.PrimaryScreen.Bounds.Y);
@@ -41,7 +54,7 @@ namespace ProGM.Client
 
         }
 
-       
+
         #region event socket
         private void AsyncClient_MessageSubmitted(IAsyncClient a, bool close)
         {
@@ -76,10 +89,14 @@ namespace ProGM.Client
 
                 switch (obj.type)
                 {
-                    case "AUTHORIZE":
+                    #region AUTHORIZE
+                    case SocketCommandType.AUTHORIZE:
 
                         break;
-                    case "CHAT":
+                    #endregion
+
+                    #region CHAT
+                    case SocketCommandType.CHAT:
                         if (this.frmChat == null || (this.frmChat != null && this.frmChat.Disposing))
                         {
                             this.frmChat = new frmChat(this);
@@ -91,38 +108,10 @@ namespace ProGM.Client
                             this.frmChat.Show();
                         });
                         break;
-                    case "OPEN":
-                            this.Invoke((Action)delegate
-                            {
-                                this.Show();
-                                if (this.frmDangNhap != null)
-                                {
-                                    this.frmDangNhap.Hide();
-                                }
-                                if (this.frmLock != null)
-                                {
-                                    this.frmLock.Hide();
-                                }
-                            });
-                        break;
-                    case "CLOSE":
-             
-                            this.Invoke((Action)delegate
-                            {
-                                this.Hide();
-                                if (this.frmDangNhap != null)
-                                {
-                                    this.frmDangNhap.Show();
-                                }
-                                if (this.frmLock != null)
-                                {
-                                    this.frmLock.Show();
-                                }
-                            });
+                    #endregion
 
-                      
-                        break;
-                    case "LOGIN_SUCCESS":
+                    #region OPENCLIENT
+                    case SocketCommandType.OPENCLIENT:
                         this.Invoke((Action)delegate
                         {
                             this.Show();
@@ -136,12 +125,55 @@ namespace ProGM.Client
                             }
                         });
                         break;
-                    case "LOGIN_FALSED":
-                        MessageBox.Show(obj.msg, "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                       
+                    #endregion
+
+                    #region CLOSECLIENT
+                    case SocketCommandType.CLOSECLIENT:
+
+                        this.Invoke((Action)delegate
+                        {
+                            this.Hide();
+                            if (this.frmDangNhap != null)
+                            {
+                                this.frmDangNhap.Show();
+                            }
+                            if (this.frmLock != null)
+                            {
+                                this.frmLock.Show();
+                            }
+                        });
+
+
                         break;
+                    #endregion
+
+                    #region LOGIN_SUCCESS
+                    case SocketCommandType.LOGIN_SUCCESS:
+                        this.Invoke((Action)delegate
+                        {
+                            this.Show();
+                            if (this.frmDangNhap != null)
+                            {
+                                this.frmDangNhap.Hide();
+                            }
+                            if (this.frmLock != null)
+                            {
+                                this.frmLock.Hide();
+                            }
+                        });
+                        break;
+                    #endregion
+
+                    #region LOGIN_FALSED
+                    case SocketCommandType.LOGIN_FALSED:
+                        MessageBox.Show(obj.msg, "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                        break;
+                    #endregion
+
                     default:
                         break;
+
                 }
 
             }
@@ -152,7 +184,7 @@ namespace ProGM.Client
             }
         }
 
-       
+
         #endregion
 
         #region form event
@@ -186,7 +218,7 @@ namespace ProGM.Client
             ms.msgFrom = "Linh";
             ms.msgTo = "SERVER";
             ms.macAddressFrom = macaddress;
-            ms.type = "AUTHORIZE";
+            ms.type = SocketCommandType.AUTHORIZE;
             this.asyncClient.Send(JsonConvert.SerializeObject(ms), false);
         }
 

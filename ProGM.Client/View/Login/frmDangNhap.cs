@@ -13,12 +13,12 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Management.FormState;
 using System.Net;
-using RestSharp;
 using System.Net.NetworkInformation;
 using QRCoder;
 using ProGM.Business.SocketBusiness;
 using ProGM.Business.Model;
 using Newtonsoft.Json;
+using ProGM.Business.ApiBusiness;
 
 namespace ProGM.Client.View.Login
 {
@@ -183,26 +183,13 @@ namespace ProGM.Client.View.Login
                 ms.msgFrom = "Linh";
                 ms.msgTo = "SERVER";
                 ms.macAddressFrom = PCExtention.GetMacId();
-                ms.type = "LOGIN";
+                ms.type = SocketCommandType.LOGIN;
                 ms.username = userName;
                 ms.password = passWord;
                 this.app_controller.asyncClient.Send(JsonConvert.SerializeObject(ms), false);
             }
-            //if (txtTaiKhoan.Text == "quoctv" || txtMatKhau.Text == "123456789")
-            //{
-            //    HookStop();
-            //    this.Hide();
-            //    //frmState.Restore(frmMain);
-            //    frmMain.Hide();
-            //    //frmState.Restore(frmMain);
-            //    ////frmMain.Hide();
-            //    frmTinhTien frmNguoiChoi = new frmTinhTien(this.app_controller);
-            //    app_controller.frmTinhTien = frmNguoiChoi;
-            //    frmNguoiChoi.Show();
-            //    frmNguoiChoi.TopMost = true;
-            //}
-        }
 
+        }
         public frmDangNhap(FormState frmState, frmLock frmMain, App _app)
         {
             this.frmState = frmState;
@@ -223,17 +210,9 @@ namespace ProGM.Client.View.Login
             // DisableTaskManager();
             // disable_Ctrl_Alt_Del();
             // HookStart();
-            string mac = GetMacId();
-
-            var client = new RestClient("http://40.74.77.139/api?key=computer-detail&_strMacAddress=" + mac);
-            client.Timeout = -1;
-            var request = new RestRequest(Method.GET);
-            request.AddHeader("Content-Type", "application/json");
-            request.AddHeader("Authorization", "Basic d2ViOjEyMw==");
-            IRestResponse response = client.Execute(request);
-
+            
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
-            QRCodeData qrCodeData = qrGenerator.CreateQrCode(response.Content, QRCodeGenerator.ECCLevel.Q);
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(JsonConvert.SerializeObject(this.app_controller.ComputerDetail), QRCodeGenerator.ECCLevel.Q);
             QRCode qrCode = new QRCode(qrCodeData);
             Bitmap qrCodeImage = qrCode.GetGraphic(20);
             pictureBox1.Image = qrCodeImage;
@@ -247,39 +226,6 @@ namespace ProGM.Client.View.Login
                 e.Handled = true;
             }
 
-        }
-
-
-
-
-        private string GetMacId()
-        {
-            var macAddr =
-            (
-                from nic in NetworkInterface.GetAllNetworkInterfaces()
-                where nic.OperationalStatus == OperationalStatus.Up
-                select nic.GetPhysicalAddress().ToString()
-            ).FirstOrDefault();
-
-
-
-            string mac = "";
-            int dem = 1;
-            for (int i = 0; i < macAddr.Length; i++)
-            {
-                if (dem == 2 && i != macAddr.Length - 1)
-                {
-                    mac += macAddr[i] + ":";
-                    dem = 0;
-                }
-                else
-                {
-                    mac += macAddr[i];
-                }
-                dem++;
-            }
-            mac = mac.ToLower();
-            return mac;
         }
     }
 }

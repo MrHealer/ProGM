@@ -105,11 +105,11 @@ namespace ProGM.Business.SocketBusiness
 
                 state.Listener.BeginReceive(state.Buffer, 0, state.BufferSize, SocketFlags.None, new AsyncCallback(this.ReceiveCallback), state);
             }
-            catch (SocketException)
+            catch (SocketException ex)
             {
                 // TODO:
             }
-            catch (Exception)
+            catch (Exception x)
             {
 
             }
@@ -254,14 +254,14 @@ namespace ProGM.Business.SocketBusiness
 
         public void Dispose()
         {
-            var lsClient = this.clients;
+            var lsClient = this.clients.ToList();
             lock(lsClient)
             {
                 if (lsClient!=null && lsClient.Count>0)
                 {
-                    foreach (var id in lsClient.Keys)
+                    foreach (var id in lsClient)
                     {
-                        this.Close(id);
+                        this.Close(id.Key);
                     }
                 }
                

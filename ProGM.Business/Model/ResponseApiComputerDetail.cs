@@ -4,9 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProGM.Management.Model
+namespace ProGM.Business.Model
 {
-    public class ComputerList
+    public class ResponseApiComputerDetail
+    {
+        public Computedetail[] computeDetail { get; set; }
+    }
+
+    public class Computedetail
     {
         public string strId { get; set; }
         public string strGroupId { get; set; }
@@ -18,15 +23,9 @@ namespace ProGM.Management.Model
         public string strCreatedDate { get; set; }
         public string strCreatedByAccountId { get; set; }
         public string strModifiedDate { get; set; }
-        public string strModifiedByAccountId { get; set; }
-        public string strCompanyId { get; set; }
-        public string strGroupName { get; set; }
-        public string strDesc { get; set; }
-        public string iPrice { get; set; }
+        public string strModifiedByAccountId { get; set; } 
+        public string strManagerPcIP { get; set; }
+        public string strManagerPcMac { get; set; }
     }
 
-    public class responseListPC
-    {
-        public List<ComputerList> computerList { get; set; }
-    }
 }

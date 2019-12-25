@@ -48,7 +48,7 @@ namespace ProGM.Management.Views.Chat
                 SocketReceivedData ms = new SocketReceivedData();
                 ms.msgFrom = "Nhân viên:";
                 ms.msg = msg;
-                ms.type = "CHAT";
+                ms.type = SocketCommandType.CHAT;
                 this.app_controller.asyncSocketListener.Send(this.IdClient,JsonConvert.SerializeObject(ms), false);
                 txtHistory.AppendText("Me: " + msg + Environment.NewLine);
                 txtMesseage.Text = "";
