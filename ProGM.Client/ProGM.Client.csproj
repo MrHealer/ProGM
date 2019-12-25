@@ -150,6 +150,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <EmbeddedResource Include="View\Chat\frmChat.resx">
       <DependentUpon>frmChat.cs</DependentUpon>
@@ -188,6 +189,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\1.jpg" />
+    <None Include="Resources\1phut.mp3" />
+    <None Include="Resources\2phut.mp3" />
+    <None Include="Resources\3phut.mp3" />
+    <None Include="Resources\4phut.mp3" />
+    <None Include="Resources\5phut.mp3" />
+    <None Include="Resources\1phut.wav" />
+    <None Include="Resources\2phut.wav" />
+    <None Include="Resources\3phut.wav" />
+    <None Include="Resources\4phut.wav" />
+    <None Include="Resources\5phut.wav" />
     <Content Include="Resources\bar-chart.png" />
     <Content Include="Resources\boorderitem_32x32.png" />
     <Content Include="Resources\clear.png" />

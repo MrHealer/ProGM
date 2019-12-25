@@ -15,6 +15,9 @@ using ProGM.Client.View.Login;
 using ProGM.Client.View.GoiDo;
 using ProGM.Business.Model;
 using ProGM.Business.ApiBusiness;
+using ProGM.Business.Extention;
+using System.Media;
+using System.Globalization;
 
 namespace ProGM.Client
 {
@@ -28,6 +31,7 @@ namespace ProGM.Client
         bool isVerifyAccount = false;
         bool isConnectServer = false;
         public string ComputerDetail = "";
+        int timeWarning = 0;
         string IpManager = "";
         public App()
         {
@@ -155,6 +159,12 @@ namespace ProGM.Client
                     case SocketCommandType.LOGIN_SUCCESS:
                         this.Invoke((Action)delegate
                         {
+                            lbAccountBlance.Text = FormatExtention.Money(obj.accountBlance.ToString());
+                            lbTimeStart.Text = obj.timeStart.ToString("HH:mm:ss");
+                            lbTimeUser.Text = FormatExtention.FormartMinute(obj.timeUsed);
+                            lbTimeRemaining.Text = FormatExtention.FormartMinute(obj.timeRemaining);
+                            lbPrice.Text = FormatExtention.Money(obj.price.ToString());
+
                             this.Show();
                             if (this.frmDangNhap != null)
                             {
@@ -175,6 +185,64 @@ namespace ProGM.Client
                         break;
                     #endregion
 
+                    #region UPDATE_INFO_USED
+                    case SocketCommandType.UPDATE_INFO_USED:
+                        this.Invoke((Action)delegate
+                        {
+                          
+                            lbTimeStart.Text = obj.timeStart.ToString("HH:mm:ss");
+                            lbTimeUser.Text = FormatExtention.FormartMinute(obj.timeUsed);
+                            lbPrice.Text = FormatExtention.Money(obj.price.ToString());
+
+                            if (string.IsNullOrEmpty(obj.username))
+                            {
+                                var thanhtien = obj.price / 60 * obj.timeUsed;
+                                lbTimeRemaining.Text = FormatExtention.Money(thanhtien.ToString());
+                                lbTimeRemainingTitle.Text = "Thành tiền";
+                            }
+                            else
+                            {
+
+                                lbAccountBlance.Text = FormatExtention.Money(obj.accountBlance.ToString());
+                                if (obj.timeRemaining == 6 || obj.timeRemaining == 7)
+                                {
+                                    timeWarning = obj.timeRemaining;
+                                    timerWarning.Interval = 5000;
+                                    timerWarning.Enabled = true;
+                                }
+                            }
+                           
+
+                        });
+
+                        break;
+                    #endregion
+
+                    #region OUT_OF_MONEY
+                    case SocketCommandType.OUT_OF_MONEY:
+                        this.Invoke((Action)delegate
+                        {
+                            //lbAccountBlance.Text = obj.accountBlance.ToString();
+                            //lbTimeStart.Text = obj.timeStart.ToString("HH:mm:ss");
+                            //lbTimeUser.Text = obj.timeUsed.ToString();
+                            //lbTimeRemaining.Text = obj.timeRemaining.ToString();
+                            //lbPrice.Text = obj.price.ToString();
+                            this.Hide();
+                            if (this.frmLock != null)
+                            {
+                                this.frmLock.TopMost = true;
+                                this.frmLock.Show();
+                            }
+                            if (this.frmDangNhap != null)
+                            {
+                                this.frmDangNhap.TopMost = true;
+                                this.frmDangNhap.btnLogin.Enabled = true;
+                                this.frmDangNhap.Show();
+                            }
+
+                        });
+                        break;
+                    #endregion
                     default:
                         break;
 
@@ -211,6 +279,47 @@ namespace ProGM.Client
             this.frmChat.Show();
         }
 
+        private void btnOrder_Click(object sender, EventArgs e)
+        {
+            frmGoiDo _frmGoiDo = new frmGoiDo();
+            _frmGoiDo.Show();
+        }
+        System.Media.SoundPlayer player = new System.Media.SoundPlayer();
+        private void timerWarning_Tick(object sender, EventArgs e)
+        {
+            if (timeWarning <= 5)
+            {
+                switch (timeWarning)
+                {
+                    case 5:
+                        SoundPlayer audio5 = new SoundPlayer(Properties.Resources._5phut);
+                        audio5.Play();
+                        break;
+                    case 4:
+                        SoundPlayer audio4 = new SoundPlayer(Properties.Resources._4phut);
+                        audio4.Play();
+                        break;
+                    case 3:
+                        SoundPlayer audio3 = new SoundPlayer(Properties.Resources._3phut);
+                        audio3.Play();
+                        break;
+                    case 2:
+                        SoundPlayer audio2 = new SoundPlayer(Properties.Resources._2phut);
+                        audio2.Play();
+                        break;
+                    case 1:
+                        SoundPlayer audio1 = new SoundPlayer(Properties.Resources._1phut);
+                        audio1.Play();
+                        break;
+                    case 0:
+                        timerWarning.Enabled = false;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            timeWarning--;
+        }
         #endregion
 
         #region  other method
@@ -228,10 +337,5 @@ namespace ProGM.Client
 
         #endregion
 
-        private void btnOrder_Click(object sender, EventArgs e)
-        {
-            frmGoiDo _frmGoiDo = new frmGoiDo();
-            _frmGoiDo.Show();
-        }
     }
 }

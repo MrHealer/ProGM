@@ -29,6 +29,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelControl7 = new DevExpress.XtraEditors.LabelControl();
             this.labelControl2 = new DevExpress.XtraEditors.LabelControl();
             this.separatorControl1 = new DevExpress.XtraEditors.SeparatorControl();
@@ -36,12 +37,12 @@
             this.labelControl4 = new DevExpress.XtraEditors.LabelControl();
             this.labelControl5 = new DevExpress.XtraEditors.LabelControl();
             this.labelControl6 = new DevExpress.XtraEditors.LabelControl();
-            this.labelControl8 = new DevExpress.XtraEditors.LabelControl();
-            this.labelControl9 = new DevExpress.XtraEditors.LabelControl();
-            this.labelControl10 = new DevExpress.XtraEditors.LabelControl();
-            this.labelControl11 = new DevExpress.XtraEditors.LabelControl();
-            this.labelControl12 = new DevExpress.XtraEditors.LabelControl();
-            this.labelControl13 = new DevExpress.XtraEditors.LabelControl();
+            this.lbTimeRemainingTitle = new DevExpress.XtraEditors.LabelControl();
+            this.lbTimeStart = new DevExpress.XtraEditors.LabelControl();
+            this.lbTimeUser = new DevExpress.XtraEditors.LabelControl();
+            this.lbPrice = new DevExpress.XtraEditors.LabelControl();
+            this.lbAccountBlance = new DevExpress.XtraEditors.LabelControl();
+            this.lbTimeRemaining = new DevExpress.XtraEditors.LabelControl();
             this.separatorControl2 = new DevExpress.XtraEditors.SeparatorControl();
             this.labelControl1 = new DevExpress.XtraEditors.LabelControl();
             this.labelControl14 = new DevExpress.XtraEditors.LabelControl();
@@ -52,13 +53,14 @@
             this.checkEdit5 = new DevExpress.XtraEditors.CheckEdit();
             this.separatorControl3 = new DevExpress.XtraEditors.SeparatorControl();
             this.labelControl15 = new DevExpress.XtraEditors.LabelControl();
-            this.btnOrder = new DevExpress.XtraEditors.SimpleButton();
-            this.simpleButton3 = new DevExpress.XtraEditors.SimpleButton();
-            this.btnOpenChat = new DevExpress.XtraEditors.SimpleButton();
             this.pictureEdit2 = new DevExpress.XtraEditors.PictureEdit();
             this.pictureEdit1 = new DevExpress.XtraEditors.PictureEdit();
             this.labelControl16 = new DevExpress.XtraEditors.LabelControl();
             this.labelControl17 = new DevExpress.XtraEditors.LabelControl();
+            this.btnOrder = new DevExpress.XtraEditors.SimpleButton();
+            this.simpleButton3 = new DevExpress.XtraEditors.SimpleButton();
+            this.btnOpenChat = new DevExpress.XtraEditors.SimpleButton();
+            this.timerWarning = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.separatorControl1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.separatorControl2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.checkEdit1.Properties)).BeginInit();
@@ -144,71 +146,71 @@
             this.labelControl6.TabIndex = 13;
             this.labelControl6.Text = "Số tiền còn lại";
             // 
-            // labelControl8
+            // lbTimeRemainingTitle
             // 
-            this.labelControl8.Appearance.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelControl8.Appearance.Options.UseFont = true;
-            this.labelControl8.Location = new System.Drawing.Point(25, 266);
-            this.labelControl8.Margin = new System.Windows.Forms.Padding(4);
-            this.labelControl8.Name = "labelControl8";
-            this.labelControl8.Size = new System.Drawing.Size(107, 17);
-            this.labelControl8.TabIndex = 13;
-            this.labelControl8.Text = "Thời gian còn lại";
+            this.lbTimeRemainingTitle.Appearance.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbTimeRemainingTitle.Appearance.Options.UseFont = true;
+            this.lbTimeRemainingTitle.Location = new System.Drawing.Point(25, 266);
+            this.lbTimeRemainingTitle.Margin = new System.Windows.Forms.Padding(4);
+            this.lbTimeRemainingTitle.Name = "lbTimeRemainingTitle";
+            this.lbTimeRemainingTitle.Size = new System.Drawing.Size(107, 17);
+            this.lbTimeRemainingTitle.TabIndex = 13;
+            this.lbTimeRemainingTitle.Text = "Thời gian còn lại";
             // 
-            // labelControl9
+            // lbTimeStart
             // 
-            this.labelControl9.Appearance.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelControl9.Appearance.Options.UseFont = true;
-            this.labelControl9.Location = new System.Drawing.Point(152, 113);
-            this.labelControl9.Margin = new System.Windows.Forms.Padding(4);
-            this.labelControl9.Name = "labelControl9";
-            this.labelControl9.Size = new System.Drawing.Size(48, 17);
-            this.labelControl9.TabIndex = 13;
-            this.labelControl9.Text = "10:20:30";
+            this.lbTimeStart.Appearance.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbTimeStart.Appearance.Options.UseFont = true;
+            this.lbTimeStart.Location = new System.Drawing.Point(152, 113);
+            this.lbTimeStart.Margin = new System.Windows.Forms.Padding(4);
+            this.lbTimeStart.Name = "lbTimeStart";
+            this.lbTimeStart.Size = new System.Drawing.Size(48, 17);
+            this.lbTimeStart.TabIndex = 13;
+            this.lbTimeStart.Text = "10:20:30";
             // 
-            // labelControl10
+            // lbTimeUser
             // 
-            this.labelControl10.Appearance.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelControl10.Appearance.Options.UseFont = true;
-            this.labelControl10.Location = new System.Drawing.Point(152, 149);
-            this.labelControl10.Margin = new System.Windows.Forms.Padding(4);
-            this.labelControl10.Name = "labelControl10";
-            this.labelControl10.Size = new System.Drawing.Size(31, 17);
-            this.labelControl10.TabIndex = 13;
-            this.labelControl10.Text = "00:10";
+            this.lbTimeUser.Appearance.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbTimeUser.Appearance.Options.UseFont = true;
+            this.lbTimeUser.Location = new System.Drawing.Point(152, 149);
+            this.lbTimeUser.Margin = new System.Windows.Forms.Padding(4);
+            this.lbTimeUser.Name = "lbTimeUser";
+            this.lbTimeUser.Size = new System.Drawing.Size(31, 17);
+            this.lbTimeUser.TabIndex = 13;
+            this.lbTimeUser.Text = "00:10";
             // 
-            // labelControl11
+            // lbPrice
             // 
-            this.labelControl11.Appearance.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelControl11.Appearance.Options.UseFont = true;
-            this.labelControl11.Location = new System.Drawing.Point(152, 188);
-            this.labelControl11.Margin = new System.Windows.Forms.Padding(4);
-            this.labelControl11.Name = "labelControl11";
-            this.labelControl11.Size = new System.Drawing.Size(32, 17);
-            this.labelControl11.TabIndex = 13;
-            this.labelControl11.Text = "5.000";
+            this.lbPrice.Appearance.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbPrice.Appearance.Options.UseFont = true;
+            this.lbPrice.Location = new System.Drawing.Point(152, 188);
+            this.lbPrice.Margin = new System.Windows.Forms.Padding(4);
+            this.lbPrice.Name = "lbPrice";
+            this.lbPrice.Size = new System.Drawing.Size(32, 17);
+            this.lbPrice.TabIndex = 13;
+            this.lbPrice.Text = "5.000";
             // 
-            // labelControl12
+            // lbAccountBlance
             // 
-            this.labelControl12.Appearance.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelControl12.Appearance.Options.UseFont = true;
-            this.labelControl12.Location = new System.Drawing.Point(152, 226);
-            this.labelControl12.Margin = new System.Windows.Forms.Padding(4);
-            this.labelControl12.Name = "labelControl12";
-            this.labelControl12.Size = new System.Drawing.Size(39, 17);
-            this.labelControl12.TabIndex = 13;
-            this.labelControl12.Text = "50.000";
+            this.lbAccountBlance.Appearance.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbAccountBlance.Appearance.Options.UseFont = true;
+            this.lbAccountBlance.Location = new System.Drawing.Point(152, 226);
+            this.lbAccountBlance.Margin = new System.Windows.Forms.Padding(4);
+            this.lbAccountBlance.Name = "lbAccountBlance";
+            this.lbAccountBlance.Size = new System.Drawing.Size(39, 17);
+            this.lbAccountBlance.TabIndex = 13;
+            this.lbAccountBlance.Text = "50.000";
             // 
-            // labelControl13
+            // lbTimeRemaining
             // 
-            this.labelControl13.Appearance.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelControl13.Appearance.Options.UseFont = true;
-            this.labelControl13.Location = new System.Drawing.Point(152, 266);
-            this.labelControl13.Margin = new System.Windows.Forms.Padding(4);
-            this.labelControl13.Name = "labelControl13";
-            this.labelControl13.Size = new System.Drawing.Size(31, 17);
-            this.labelControl13.TabIndex = 13;
-            this.labelControl13.Text = "02:30";
+            this.lbTimeRemaining.Appearance.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbTimeRemaining.Appearance.Options.UseFont = true;
+            this.lbTimeRemaining.Location = new System.Drawing.Point(152, 266);
+            this.lbTimeRemaining.Margin = new System.Windows.Forms.Padding(4);
+            this.lbTimeRemaining.Name = "lbTimeRemaining";
+            this.lbTimeRemaining.Size = new System.Drawing.Size(31, 17);
+            this.lbTimeRemaining.TabIndex = 13;
+            this.lbTimeRemaining.Text = "02:30";
             // 
             // separatorControl2
             // 
@@ -302,42 +304,6 @@
             this.labelControl15.TabIndex = 13;
             this.labelControl15.Text = "Đánh giá nhân viên phục vụ";
             // 
-            // btnOrder
-            // 
-            this.btnOrder.Appearance.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnOrder.Appearance.Options.UseFont = true;
-            this.btnOrder.ImageOptions.Image = global::ProGM.Client.Properties.Resources.boorderitem_32x32;
-            this.btnOrder.Location = new System.Drawing.Point(174, 327);
-            this.btnOrder.Name = "btnOrder";
-            this.btnOrder.Size = new System.Drawing.Size(125, 55);
-            this.btnOrder.TabIndex = 15;
-            this.btnOrder.Text = "Đặt hàng";
-            this.btnOrder.Click += new System.EventHandler(this.btnOrder_Click);
-            // 
-            // simpleButton3
-            // 
-            this.simpleButton3.Appearance.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.simpleButton3.Appearance.Options.UseFont = true;
-            this.simpleButton3.ImageOptions.Image = global::ProGM.Client.Properties.Resources.mail_32x32;
-            this.simpleButton3.ImageOptions.SvgImageSize = new System.Drawing.Size(25, 25);
-            this.simpleButton3.Location = new System.Drawing.Point(86, 516);
-            this.simpleButton3.Name = "simpleButton3";
-            this.simpleButton3.Size = new System.Drawing.Size(145, 29);
-            this.simpleButton3.TabIndex = 15;
-            this.simpleButton3.Text = "Gửi đánh giá";
-            // 
-            // btnOpenChat
-            // 
-            this.btnOpenChat.Appearance.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnOpenChat.Appearance.Options.UseFont = true;
-            this.btnOpenChat.ImageOptions.Image = global::ProGM.Client.Properties.Resources.newcomment_32x32;
-            this.btnOpenChat.Location = new System.Drawing.Point(19, 327);
-            this.btnOpenChat.Name = "btnOpenChat";
-            this.btnOpenChat.Size = new System.Drawing.Size(133, 55);
-            this.btnOpenChat.TabIndex = 15;
-            this.btnOpenChat.Text = "Trò chuyện";
-            this.btnOpenChat.Click += new System.EventHandler(this.btnOpenChat_Click);
-            // 
             // pictureEdit2
             // 
             this.pictureEdit2.Location = new System.Drawing.Point(9, 50);
@@ -384,6 +350,46 @@
             this.labelControl17.TabIndex = 13;
             this.labelControl17.Text = "Đang chuẩn bị";
             // 
+            // btnOrder
+            // 
+            this.btnOrder.Appearance.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnOrder.Appearance.Options.UseFont = true;
+            this.btnOrder.ImageOptions.Image = global::ProGM.Client.Properties.Resources.boorderitem_32x32;
+            this.btnOrder.Location = new System.Drawing.Point(174, 327);
+            this.btnOrder.Name = "btnOrder";
+            this.btnOrder.Size = new System.Drawing.Size(125, 55);
+            this.btnOrder.TabIndex = 15;
+            this.btnOrder.Text = "Đặt hàng";
+            this.btnOrder.Click += new System.EventHandler(this.btnOrder_Click);
+            // 
+            // simpleButton3
+            // 
+            this.simpleButton3.Appearance.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.simpleButton3.Appearance.Options.UseFont = true;
+            this.simpleButton3.ImageOptions.Image = global::ProGM.Client.Properties.Resources.mail_32x32;
+            this.simpleButton3.ImageOptions.SvgImageSize = new System.Drawing.Size(25, 25);
+            this.simpleButton3.Location = new System.Drawing.Point(86, 516);
+            this.simpleButton3.Name = "simpleButton3";
+            this.simpleButton3.Size = new System.Drawing.Size(145, 29);
+            this.simpleButton3.TabIndex = 15;
+            this.simpleButton3.Text = "Gửi đánh giá";
+            // 
+            // btnOpenChat
+            // 
+            this.btnOpenChat.Appearance.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnOpenChat.Appearance.Options.UseFont = true;
+            this.btnOpenChat.ImageOptions.Image = global::ProGM.Client.Properties.Resources.newcomment_32x32;
+            this.btnOpenChat.Location = new System.Drawing.Point(19, 327);
+            this.btnOpenChat.Name = "btnOpenChat";
+            this.btnOpenChat.Size = new System.Drawing.Size(133, 55);
+            this.btnOpenChat.TabIndex = 15;
+            this.btnOpenChat.Text = "Trò chuyện";
+            this.btnOpenChat.Click += new System.EventHandler(this.btnOpenChat_Click);
+            // 
+            // timerWarning
+            // 
+            this.timerWarning.Tick += new System.EventHandler(this.timerWarning_Tick);
+            // 
             // App
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -400,16 +406,16 @@
             this.Controls.Add(this.separatorControl3);
             this.Controls.Add(this.separatorControl2);
             this.Controls.Add(this.separatorControl1);
-            this.Controls.Add(this.labelControl8);
+            this.Controls.Add(this.lbTimeRemainingTitle);
             this.Controls.Add(this.labelControl6);
             this.Controls.Add(this.labelControl4);
             this.Controls.Add(this.labelControl3);
             this.Controls.Add(this.labelControl17);
-            this.Controls.Add(this.labelControl13);
-            this.Controls.Add(this.labelControl12);
-            this.Controls.Add(this.labelControl11);
-            this.Controls.Add(this.labelControl10);
-            this.Controls.Add(this.labelControl9);
+            this.Controls.Add(this.lbTimeRemaining);
+            this.Controls.Add(this.lbAccountBlance);
+            this.Controls.Add(this.lbPrice);
+            this.Controls.Add(this.lbTimeUser);
+            this.Controls.Add(this.lbTimeStart);
             this.Controls.Add(this.labelControl16);
             this.Controls.Add(this.labelControl15);
             this.Controls.Add(this.labelControl2);
@@ -447,12 +453,12 @@
         private DevExpress.XtraEditors.LabelControl labelControl4;
         private DevExpress.XtraEditors.LabelControl labelControl5;
         private DevExpress.XtraEditors.LabelControl labelControl6;
-        private DevExpress.XtraEditors.LabelControl labelControl8;
-        private DevExpress.XtraEditors.LabelControl labelControl9;
-        private DevExpress.XtraEditors.LabelControl labelControl10;
-        private DevExpress.XtraEditors.LabelControl labelControl11;
-        private DevExpress.XtraEditors.LabelControl labelControl12;
-        private DevExpress.XtraEditors.LabelControl labelControl13;
+        private DevExpress.XtraEditors.LabelControl lbTimeRemainingTitle;
+        private DevExpress.XtraEditors.LabelControl lbTimeStart;
+        private DevExpress.XtraEditors.LabelControl lbTimeUser;
+        private DevExpress.XtraEditors.LabelControl lbPrice;
+        private DevExpress.XtraEditors.LabelControl lbAccountBlance;
+        private DevExpress.XtraEditors.LabelControl lbTimeRemaining;
         private DevExpress.XtraEditors.SeparatorControl separatorControl2;
         private DevExpress.XtraEditors.SimpleButton btnOpenChat;
         private DevExpress.XtraEditors.SimpleButton btnOrder;
@@ -469,5 +475,6 @@
         private DevExpress.XtraEditors.SimpleButton simpleButton3;
         private DevExpress.XtraEditors.LabelControl labelControl16;
         private DevExpress.XtraEditors.LabelControl labelControl17;
+        private System.Windows.Forms.Timer timerWarning;
     }
 }

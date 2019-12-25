@@ -15,6 +15,8 @@ namespace ProGM.Business.Model
         public const string CLOSECLIENT = "CLOSECLIENT";
         public const string LOGIN_SUCCESS = "LOGIN_SUCCESS";
         public const string LOGIN_FALSED = "LOGIN_FALSED";
+        public const string UPDATE_INFO_USED = "UPDATE_INFO_USED";
+        public const string OUT_OF_MONEY = "OUT_OF_MONEY";
 
     }
 }

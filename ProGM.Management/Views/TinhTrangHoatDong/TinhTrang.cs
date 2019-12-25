@@ -17,6 +17,7 @@ using DevExpress.XtraGrid.Views.Tile.ViewInfo;
 using DevExpress.XtraGrid.Views.Grid;
 using ProGM.Business.Model;
 using ProGM.Business.ApiBusiness;
+using Timer = System.Timers.Timer;
 
 namespace ProGM.Management.Views.TinhTrangHoatDong
 {
@@ -153,8 +154,15 @@ namespace ProGM.Management.Views.TinhTrangHoatDong
             var client = this.app_controller.clients.Where(n => n.macaddress.Equals(mac)).SingleOrDefault();
             if (client != null)
             {
+                client.timerStart = DateTime.Now;
+                client.Price = decimal.Parse(tileView1.GetFocusedRowCellValue("Price").ToString()); 
+                this.app_controller.CreateJobPay(client.id);
+
+
                 SocketReceivedData ms = new SocketReceivedData();
                 ms.type = SocketCommandType.OPENCLIENT;
+                ms.timeStart = client.timerStart;
+                ms.price = client.Price;
                 this.app_controller.asyncSocketListener.Send(client.id, JsonConvert.SerializeObject(ms), false);
                 this.UpdateStatusPC(mac, 2, DateTime.Now.ToString("HH:mm:ss"));
             }

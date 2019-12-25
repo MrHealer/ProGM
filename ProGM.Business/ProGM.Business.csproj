@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extention\FormatExtention.cs" />
     <Compile Include="Model\ResponseApiComputerDetail.cs" />
     <Compile Include="Model\responseListPC.cs" />
     <Compile Include="ApiBusiness\RestshapCommand.cs" />

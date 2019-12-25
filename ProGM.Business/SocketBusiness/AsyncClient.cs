@@ -17,6 +17,7 @@ namespace ProGM.Business.SocketBusiness
     public sealed class AsyncClient : IAsyncClient
     {
         private const ushort Port = 8000;
+        private const string IP = "127.0.0.1";
 
         private Socket listener;
         private bool close;
@@ -33,7 +34,7 @@ namespace ProGM.Business.SocketBusiness
         public void StartClient()
         {
             var host = Dns.GetHostEntry(string.Empty);
-            var ip = IPAddress.Parse("192.168.0.100");
+            var ip = IPAddress.Parse(IP);
             var endpoint = new IPEndPoint(ip, Port);
 
             try

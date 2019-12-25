@@ -31,6 +31,7 @@ using System.Collections;
 using ProGM.Management.Controller;
 using ProGM.Management.Views.Chat;
 using ProGM.Business.ApiBusiness;
+using Quobject.SocketIoClientDotNet.Client;
 using Timer = System.Timers.Timer;
 
 namespace ProGM.Management
@@ -43,15 +44,35 @@ namespace ProGM.Management
 
         public IAsyncSocketListener asyncSocketListener;
         public List<SocketClients> clients = new List<SocketClients>();
+        public IDictionary<int, Timer> lsTimerPay = new Dictionary<int, Timer>();
         Thread threadListen;
         public bool isVerifyAccount = false;
+        public string ManagerLoginName = "";
         public string CompanyId = "";
         public App()
         {
             InitializeComponent();
             SocketEventRegistration();
         }
+        #region socket.io Server
+        Quobject.SocketIoClientDotNet.Client.Socket _socket;
+        public void ConnectSocketToServer()
+        {
+            //_socket = IO.Socket("http://40.74.77.139:8888/");
+            _socket = IO.Socket("http://125.212.225.24:8000");
 
+            _socket.On(Quobject.SocketIoClientDotNet.Client.Socket.EVENT_CONNECT, () =>
+            {
+                //socket.Emit("hi");
+                MessageBox.Show("Connect node js Ok");
+            });
+            _socket.On("hi", (data) =>
+            {
+                Console.WriteLine(data);
+                _socket.Disconnect();
+            });
+        }
+        #endregion
         #region socket event  
 
         private void SocketEventRegistration()
@@ -65,10 +86,14 @@ namespace ProGM.Management
         private void AsyncSocketListener_Disconnected(int id)
         {
             var _cl = this.clients.Where(n => n.id == id).SingleOrDefault();
-            if (_cl!=null)
+            if (_cl != null)
             {
                 this.userTinhTrang.UpdateStatusPC(_cl.macaddress, 0, "00:00:00");
                 asyncSocketListener.Close(id);
+                var tm = (Timer)lsTimerPay.Where(n => n.Key == id).SingleOrDefault().Value;
+                tm.Enabled = false;
+                tm.Dispose();
+                lsTimerPay.Remove(id);
                 this.clients = this.clients.Where(n => n.id != id).ToList();
             }
         }
@@ -85,7 +110,7 @@ namespace ProGM.Management
                         client.id = id;
                         client.macaddress = obj.macAddressFrom;
                         clients.Add(client);
-                        if (this.userTinhTrang!=null)
+                        if (this.userTinhTrang != null)
                         {
                             this.userTinhTrang.UpdateStatusPC(obj.macAddressFrom, 1, "00:00:00");
                         }
@@ -119,24 +144,30 @@ namespace ProGM.Management
                         SocketReceivedData ms = new SocketReceivedData();
                         if (loginResponse != null)
                         {
-                           
+
                             if (loginResponse.result[0].status == "SUCCESS")
                             {
                                 #region đăng nhập thánh  công
                                 var _clientsk = clients.Where(c => c.macaddress == obj.macAddressFrom).SingleOrDefault();
                                 if (_clientsk != null)
                                 {
+                                    _clientsk.userLogin = obj.username;
                                     _clientsk.timerStart = DateTime.Now;
                                     _clientsk.accountBlance = loginResponse.result[0].dBalance;
                                     _clientsk.macaddress = obj.macAddressFrom;
                                     _clientsk.Price = decimal.Parse(this.userTinhTrang.datasource.Where(n => n.MacID == obj.macAddressFrom).SingleOrDefault().Price);
-   
-                                }
-                                Timer timerpay = new Timer();
-                                timerpay.Elapsed += (sender, eventArgs) => Timerpay_Tick(sender, eventArgs, id);
-                                timerpay.Interval = 10000;
-                                timerpay.Enabled = true;
 
+                                }
+
+                                CreateJobPay(id, true);
+
+                                var thoigianconlai = _clientsk.accountBlance / _clientsk.Price * 60;
+                                ms.accountBlance = _clientsk.accountBlance;
+                                ms.timeStart = _clientsk.timerStart;
+                                ms.timeUpdate = DateTime.Now;
+                                ms.timeUsed = _clientsk.timeUsed;
+                                ms.timeRemaining = Decimal.ToInt32(thoigianconlai);
+                                ms.price = _clientsk.Price;
                                 ms.type = SocketCommandType.LOGIN_SUCCESS;
 
                                 this.userTinhTrang.UpdateStatusPC(obj.macAddressFrom, 2, string.Format("{0:HH:mm:ss}", _clientsk.timerStart));
@@ -176,23 +207,56 @@ namespace ProGM.Management
         {
             Timer tt = sender as Timer;
             var _clientItem = clients.Where(n => n.id == id).SingleOrDefault();
-            if (_clientItem!=null)
+            if (_clientItem != null)
             {
-                _clientItem.accountBlance = _clientItem.accountBlance - (_clientItem.Price / 60 * 2);
-                var thoigianconlai = _clientItem.accountBlance / _clientItem.Price * 60;
-                if (thoigianconlai<=0)
-                {
-                    SocketReceivedData ms = new SocketReceivedData();
-                    ms.type = SocketCommandType.CLOSECLIENT;
-                    this.asyncSocketListener.Send(id, JsonConvert.SerializeObject(ms), false);
-                    _clientItem.timerStart = DateTime.MinValue;
-                    _clientItem.userLogin = "";
-                    _clientItem.accountBlance = 0;
-                    _clientItem.frmChat  = null;
-                    tt.Enabled = false;
-                    tt.Dispose();
+                _clientItem.timeUsed += 2;
 
-                    this.userTinhTrang.UpdateStatusPC(_clientItem.macaddress, 1, "00:00:00");
+                // trường hợp đăng nhập bằng tài khoản
+                if (!string.IsNullOrEmpty(_clientItem.userLogin))
+                {
+                    _clientItem.accountBlance = _clientItem.accountBlance - (_clientItem.Price / 60 * 2);
+                    var thoigianconlai = _clientItem.accountBlance / _clientItem.Price * 60;
+                    if (thoigianconlai <= 0)
+                    {
+                        _clientItem.timerStart = DateTime.MinValue;
+                        _clientItem.userLogin = "";
+                        _clientItem.accountBlance = 0;
+                        _clientItem.timeUsed = 0;
+                        _clientItem.frmChat = null;
+                        tt.Enabled = false;
+                        tt.Dispose();
+                        //hiển thị tiền ở client
+                        SocketReceivedData ms = new SocketReceivedData();
+                        ms.type = SocketCommandType.OUT_OF_MONEY;
+                        this.asyncSocketListener.Send(id, JsonConvert.SerializeObject(ms), false);
+                        this.userTinhTrang.UpdateStatusPC(_clientItem.macaddress, 1, "00:00:00");
+                    }
+                    else
+                    {
+                        SocketReceivedData ms = new SocketReceivedData();
+                        ms.username = _clientItem.userLogin;
+                        ms.accountBlance = _clientItem.accountBlance;
+                        ms.timeStart = _clientItem.timerStart;
+                        ms.timeUpdate = DateTime.Now;
+                        ms.timeUsed = _clientItem.timeUsed;
+                        ms.timeRemaining = Decimal.ToInt32(thoigianconlai);
+                        ms.price = _clientItem.Price;
+                        ms.type = SocketCommandType.UPDATE_INFO_USED;
+                        this.asyncSocketListener.Send(id, JsonConvert.SerializeObject(ms), false);
+                    }
+                }
+                //trường hợp mở máy
+                else
+                {
+
+                    SocketReceivedData ms = new SocketReceivedData();
+                    ms.msgFrom = "SERVER";
+                    ms.timeStart = _clientItem.timerStart;
+                    ms.timeUpdate = DateTime.Now;
+                    ms.timeUsed = _clientItem.timeUsed;
+                    ms.price = _clientItem.Price;
+                    ms.type = SocketCommandType.UPDATE_INFO_USED;
+                    this.asyncSocketListener.Send(id, JsonConvert.SerializeObject(ms), false);
                 }
             }
         }
@@ -205,7 +269,19 @@ namespace ProGM.Management
             DangNhap frmlogin = new DangNhap(this);
             frmlogin.ShowDialog();
         }
+        private void App_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.asyncSocketListener.Dispose();
+            this.threadListen.Abort();
+        }
 
+        private void tileNavPaneMenu_ElementClick(object sender, NavElementEventArgs e)
+        {
+            if (e.Element.Name == "mTinhtrang")
+            {
+
+            }
+        }
 
         #endregion
 
@@ -227,22 +303,19 @@ namespace ProGM.Management
 
         }
 
+        public void CreateJobPay(int id, bool login = false)
+        {
+            Timer timerpay = new Timer();
+            timerpay.Elapsed += (sender, eventArgs) => Timerpay_Tick(sender, eventArgs, id);
+            timerpay.Interval = 5000;
+            timerpay.Enabled = true;
+            lsTimerPay.Add(id, timerpay);
+        }
+
 
         #endregion
 
-        private void App_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            this.asyncSocketListener.Dispose();
-            this.threadListen.Abort();
-        }
 
-        private void tileNavPaneMenu_ElementClick(object sender, NavElementEventArgs e)
-        {
-            if (e.Element.Name=="mTinhtrang")
-            {
-
-            }
-        }
     }
 
     public class SocketClients
@@ -254,5 +327,7 @@ namespace ProGM.Management
         public string userLogin { set; get; }
         public decimal accountBlance { set; get; }
         public decimal Price { set; get; }
+
+        public int timeUsed { set; get; }
     }
 }

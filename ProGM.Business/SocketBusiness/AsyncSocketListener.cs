@@ -17,7 +17,7 @@ namespace ProGM.Business.SocketBusiness
     {
         private const ushort Port = 8000;
         private const ushort Limit = 250;
-        private const string Ip = "192.168.0.100";
+        private const string Ip = "127.0.0.1";
 
         private static readonly IAsyncSocketListener instance = new AsyncSocketListener();
 
