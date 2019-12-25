@@ -36,9 +36,12 @@ namespace ProGM.Client
             asyncClient.Connected += AsyncClient_Connected;
             asyncClient.MessageReceived += AsyncClient_MessageReceived;
             asyncClient.MessageSubmitted += AsyncClient_MessageSubmitted;
+            asyncClient.Disconnected += AsyncClient_Disconnected;
             new Thread(new ThreadStart(asyncClient.StartClient)).Start();
 
         }
+
+       
         #region event socket
         private void AsyncClient_MessageSubmitted(IAsyncClient a, bool close)
         {
@@ -49,6 +52,21 @@ namespace ProGM.Client
             isConnectServer = true;
             resgisterMac();
             asyncClient.Receive();
+        }
+        private void AsyncClient_Disconnected()
+        {
+
+            isConnectServer = false;
+            this.Invoke((Action)delegate
+            {
+                this.Hide();
+                if (this.frmDangNhap != null)
+                {
+                    this.frmDangNhap.Parent = this.frmLock;
+                    this.Show();
+                    MessageBox.Show("Không thể sử dụng dịch vụ vào lúc này!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            });
         }
         private void AsyncClient_MessageReceived(IAsyncClient a, string msg)
         {

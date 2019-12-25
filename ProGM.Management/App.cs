@@ -63,8 +63,13 @@ namespace ProGM.Management
         }
         private void AsyncSocketListener_Disconnected(int id)
         {
-            asyncSocketListener.Dispose();
-            this.clients = this.clients.Where(n => n.id != id).ToList();    
+            var _cl = this.clients.Where(n => n.id == id).SingleOrDefault();
+            if (_cl!=null)
+            {
+                this.userTinhTrang.UpdateStatusPC(_cl.macaddress, 0, "00:00:00");
+                asyncSocketListener.Close(id);
+                this.clients = this.clients.Where(n => n.id != id).ToList();
+            }
         }
         private void AsyncSocketListener_MessageReceived(int id, string msg)
         {
@@ -78,10 +83,10 @@ namespace ProGM.Management
                         client.id = id;
                         client.macaddress = obj.macAddressFrom;
                         clients.Add(client);
-                        this.Invoke((Action)delegate
+                        if (this.userTinhTrang!=null)
                         {
-                            this.userTinhTrang.UpdateStatusPC(obj.macAddressFrom, 1, null);
-                        });
+                            this.userTinhTrang.UpdateStatusPC(obj.macAddressFrom, 1, "00:00:00");
+                        }
                         break;
                     case "CHAT":
                         var _client = clients.Where(c => c.macaddress == obj.macAddressFrom).SingleOrDefault();
@@ -124,10 +129,8 @@ namespace ProGM.Management
                                     _clientsk.timerStart = DateTime.Now;
                                 }
                                 ms.type = "LOGIN_SUCCESS";
-                                this.Invoke((Action)delegate
-                                {
-                                    this.userTinhTrang.UpdateStatusPC(obj.macAddressFrom, 2, string.Format("{0:HH:ss:mm}", _clientsk.timerStart));
-                                });
+                             
+                                this.userTinhTrang.UpdateStatusPC(obj.macAddressFrom, 2, string.Format("{0:HH:ss:mm}", _clientsk.timerStart));
                             }
                             else if (loginResponse.result[0].status == "FALSED")
                             {
@@ -144,7 +147,7 @@ namespace ProGM.Management
                 }
 
             }
-            catch (Exception)
+            catch (Exception exx)
             {
 
 
@@ -167,23 +170,17 @@ namespace ProGM.Management
 
         public void UpdateGui()
         {
-            userTinhTrang = new TinhTrang(objMenu, this);
-            UpdateLayoutMenu();
-        }
-        public void UpdateLayoutMenu()
-        {
             ngFrameMenu.Width = this.Width;
             ngFrameMenu.Height = this.Height;
             ngPage1.Width = this.Width;
             ngPage1.Height = this.Height;
-
             objMenu = new MenuObject();
             objMenu.frmHeight = this.Height;
             objMenu.frmWidth = this.Width;
             objMenu.frmMenuHeight = tileNavPaneMenu.Height;
             objMenu.frmMenuWidth = tileNavPaneMenu.Width;
-            TinhTrang usTinhTrang = new TinhTrang(objMenu, this);
-            ngPage1.Controls.Add(usTinhTrang);
+            userTinhTrang = new TinhTrang(objMenu, this);
+            ngPage1.Controls.Add(userTinhTrang);
 
         }
 

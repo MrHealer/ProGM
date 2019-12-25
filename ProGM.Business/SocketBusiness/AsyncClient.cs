@@ -11,6 +11,7 @@ namespace ProGM.Business.SocketBusiness
     public delegate void ConnectedHandler(IAsyncClient a);
     public delegate void ClientMessageReceivedHandler(IAsyncClient a, string msg);
     public delegate void ClientMessageSubmittedHandler(IAsyncClient a, bool close);
+    public delegate void ServerDisconnectedHandler();
 
 
     public sealed class AsyncClient : IAsyncClient
@@ -23,12 +24,10 @@ namespace ProGM.Business.SocketBusiness
         private readonly ManualResetEvent connected = new ManualResetEvent(false);
         private readonly ManualResetEvent sent = new ManualResetEvent(false);
         private readonly ManualResetEvent received = new ManualResetEvent(false);
-        public delegate void DisconnectedHandler();
+
         public event ConnectedHandler Connected;
-        public event DisconnectedHandler Disconnected;
-
+        public event ServerDisconnectedHandler Disconnected;
         public event ClientMessageReceivedHandler MessageReceived;
-
         public event ClientMessageSubmittedHandler MessageSubmitted;
 
         public void StartClient()

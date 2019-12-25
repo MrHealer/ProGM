@@ -8,9 +8,8 @@ namespace ProGM.Business.SocketBusiness
     public interface IAsyncClient : IDisposable
     {
         event ConnectedHandler Connected;
-
+        event ServerDisconnectedHandler Disconnected;
         event ClientMessageReceivedHandler MessageReceived;
-
         event ClientMessageSubmittedHandler MessageSubmitted;
 
         void StartClient();

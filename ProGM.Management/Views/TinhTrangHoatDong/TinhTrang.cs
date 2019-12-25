@@ -23,6 +23,7 @@ namespace ProGM.Management.Views.TinhTrangHoatDong
     public partial class TinhTrang : DevExpress.XtraEditors.XtraUserControl
     {
         App app_controller;
+        List<gridViewDataItem> datasource = new List<gridViewDataItem>();
         public TinhTrang(MenuObject obj, App app)
         {
             this.app_controller = app;
@@ -33,15 +34,6 @@ namespace ProGM.Management.Views.TinhTrangHoatDong
         }
         public void InitData()
         {
-            DataTable dt = new DataTable();
-            dt.Columns.Add("NamePC");
-            dt.Columns.Add("Old");
-            dt.Columns.Add("Group");
-            dt.Columns.Add("Price");
-            dt.Columns.Add("MacID");
-            dt.Columns.Add("Status");
-            dt.Columns.Add("timeLogin");
-
             var client = new RestClient("http://40.74.77.139/api/?key=computerList&companyId=cf09c7b5-254e-11ea-b536-005056b97a5d&groupId=ALL");
             var request = new RestRequest(Method.GET);
             request.AddHeader("cache-control", "no-cache");
@@ -80,7 +72,17 @@ namespace ProGM.Management.Views.TinhTrangHoatDong
                     {
                         countOffline++;
                     }
-                    dt.Rows.Add(item.strName, item.strName, item.strGroupName, item.iPrice, item.strMacAddress, status,"00:00:00");
+
+                    datasource.Add(new gridViewDataItem()
+                    {
+                        NamePC = item.strName,
+                        Old = item.strName,
+                        Group = item.strGroupName,
+                        Price = item.iPrice,
+                        MacID = item.strMacAddress,
+                        Status = status,
+                        timeLogin = "00:00:00"
+                    });
                 }
                 lbCountOffline.Text = countOffline.ToString();
                 lbCountOnline.Text = countOnline.ToString();
@@ -88,7 +90,7 @@ namespace ProGM.Management.Views.TinhTrangHoatDong
 
 
             }
-            grdTinhTrang.DataSource = dt;
+            grdTinhTrang.DataSource = datasource;
         }
 
         private void pictureEdit1_EditValueChanged(object sender, EventArgs e)
@@ -158,13 +160,14 @@ namespace ProGM.Management.Views.TinhTrangHoatDong
         private void btnOpenPC_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
             string mac = tileView1.GetFocusedRowCellValue("MacID").ToString();
-           // mac = "60:03:08:99:0a:fe";
+            // mac = "60:03:08:99:0a:fe";
             var client = this.app_controller.clients.Where(n => n.macaddress.Equals(mac)).SingleOrDefault();
             if (client != null)
             {
                 SocketReceivedData ms = new SocketReceivedData();
                 ms.type = "OPEN";
                 this.app_controller.asyncSocketListener.Send(client.id, JsonConvert.SerializeObject(ms), false);
+                this.UpdateStatusPC(mac, 2,DateTime.Now.ToString("HH:mm:ss"));
             }
 
         }
@@ -172,13 +175,13 @@ namespace ProGM.Management.Views.TinhTrangHoatDong
         private void menuBlockPC_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
             string mac = tileView1.GetFocusedRowCellValue("MacID").ToString();
-            mac = "60:03:08:99:0a:fe";
             var client = this.app_controller.clients.Where(n => n.macaddress.Equals(mac)).SingleOrDefault();
             if (client != null)
             {
                 SocketReceivedData ms = new SocketReceivedData();
                 ms.type = "CLOSE";
                 this.app_controller.asyncSocketListener.Send(client.id, JsonConvert.SerializeObject(ms), false);
+                this.UpdateStatusPC(mac, 0, "00:00:00");
             }
         }
 
@@ -205,34 +208,45 @@ namespace ProGM.Management.Views.TinhTrangHoatDong
         #region orther method
         public void UpdateStatusPC(string mac, int status, string time)
         {
-            DataTable dtTable = ((DataView)tileView1.DataSource).Table;
-            int indexRow = 0;
-            int indexRowHandle = 0;
-            foreach (DataRow dtRow in dtTable.Rows)
+            var item = datasource.Where(n => n.MacID == mac).SingleOrDefault();
+            if (item != null)
             {
-                string macID = dtRow["MacID"].ToString();
-                if (macID == mac)
-                {
-                    dtRow["Status"] = status;
-                    if (status==2)
-                    {
-                        dtRow["timeLogin"] = time;
-                    }
-                    indexRowHandle = indexRow;
-                }
-
-                indexRow++;
+                item.Status = status;
+                item.timeLogin = time;
             }
-          
+            this.Invoke((Action)delegate
+            {
+                string cOnline = datasource.Where(n => n.Status == 2).Count().ToString();
+                string cReady = datasource.Where(n => n.Status == 1).Count().ToString();
+                string cOffline = datasource.Where(n => n.Status == 0).Count().ToString();
+                lbCountOffline.Text = cOffline;
+                lbCountReady.Text = cReady;
+                lbCountOnline.Text = cOnline;
+                grdTinhTrang.RefreshDataSource();
+            });
 
-            //grdTinhTrang.DataSource = null;
-            //tileView1.Columns.Clear();
-    
-
-            tileView1.RefreshRow(indexRowHandle);
+            // Application.DoEvents();
 
 
         }
         #endregion
+
+        private void txtSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                string text = txtSearch.Text;
+                if (!string.IsNullOrEmpty(text))
+                {
+                    var data = datasource.Where(n => n.NamePC.Contains(text)).ToList();
+                    grdTinhTrang.DataSource = data;
+                }
+                else
+                {
+                    grdTinhTrang.DataSource = datasource;
+                }
+                grdTinhTrang.RefreshDataSource();
+            }
+        }
     }
 }

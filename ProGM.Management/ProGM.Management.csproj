@@ -90,6 +90,7 @@
     </Compile>
     <Compile Include="Controller\ConfigLayout.cs" />
     <Compile Include="FormState.cs" />
+    <Compile Include="Model\gridViewDataItem.cs" />
     <Compile Include="Model\MenuObject.cs" />
     <Compile Include="Model\responseListPC.cs" />
     <Compile Include="Program.cs" />

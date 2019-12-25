@@ -36,6 +36,7 @@ namespace ProGM.Client
                 dem++;
             }
             mac = mac.ToLower();
+            mac = "30:85:a9:1d:a7:51";
             return mac;
         }
     }

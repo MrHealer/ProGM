@@ -44,6 +44,7 @@
             DevExpress.XtraGrid.Views.Tile.TileViewItemElement tileViewItemElement3 = new DevExpress.XtraGrid.Views.Tile.TileViewItemElement();
             DevExpress.XtraGrid.Views.Tile.TileViewItemElement tileViewItemElement4 = new DevExpress.XtraGrid.Views.Tile.TileViewItemElement();
             this.NamePC = new DevExpress.XtraGrid.Columns.TileViewColumn();
+            this.timeLogin = new DevExpress.XtraGrid.Columns.TileViewColumn();
             this.Price = new DevExpress.XtraGrid.Columns.TileViewColumn();
             this.Status = new DevExpress.XtraGrid.Columns.TileViewColumn();
             this.MacID = new DevExpress.XtraGrid.Columns.TileViewColumn();
@@ -61,7 +62,7 @@
             this.pictureEdit2 = new DevExpress.XtraEditors.PictureEdit();
             this.pictureEdit1 = new DevExpress.XtraEditors.PictureEdit();
             this.labelControl1 = new DevExpress.XtraEditors.LabelControl();
-            this.searchControl1 = new DevExpress.XtraEditors.SearchControl();
+            this.txtSearch = new DevExpress.XtraEditors.SearchControl();
             this.tileView1 = new DevExpress.XtraGrid.Views.Tile.TileView();
             this.Group = new DevExpress.XtraGrid.Columns.TileViewColumn();
             this.grdTinhTrang = new DevExpress.XtraGrid.GridControl();
@@ -78,14 +79,13 @@
             this.barDockControlBottom = new DevExpress.XtraBars.BarDockControl();
             this.barDockControlLeft = new DevExpress.XtraBars.BarDockControl();
             this.barDockControlRight = new DevExpress.XtraBars.BarDockControl();
-            this.timeLogin = new DevExpress.XtraGrid.Columns.TileViewColumn();
             ((System.ComponentModel.ISupportInitialize)(this.panelTinhTrang)).BeginInit();
             this.panelTinhTrang.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureEdit4.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureEdit3.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureEdit2.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureEdit1.Properties)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.searchControl1.Properties)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtSearch.Properties)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tileView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.grdTinhTrang)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.popupMenuPC)).BeginInit();
@@ -99,6 +99,14 @@
             this.NamePC.Name = "NamePC";
             this.NamePC.Visible = true;
             this.NamePC.VisibleIndex = 0;
+            // 
+            // timeLogin
+            // 
+            this.timeLogin.Caption = "timeLogin";
+            this.timeLogin.FieldName = "timeLogin";
+            this.timeLogin.Name = "timeLogin";
+            this.timeLogin.Visible = true;
+            this.timeLogin.VisibleIndex = 5;
             // 
             // Price
             // 
@@ -212,7 +220,7 @@
             this.panelTinhTrang.Controls.Add(this.pictureEdit1);
             this.panelTinhTrang.Controls.Add(this.labelControl3);
             this.panelTinhTrang.Controls.Add(this.labelControl1);
-            this.panelTinhTrang.Controls.Add(this.searchControl1);
+            this.panelTinhTrang.Controls.Add(this.txtSearch);
             this.panelTinhTrang.Location = new System.Drawing.Point(0, 0);
             this.panelTinhTrang.Name = "panelTinhTrang";
             this.panelTinhTrang.Size = new System.Drawing.Size(1211, 49);
@@ -283,19 +291,20 @@
             this.labelControl1.TabIndex = 1;
             this.labelControl1.Text = "Đang chơi: ";
             // 
-            // searchControl1
+            // txtSearch
             // 
-            this.searchControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.searchControl1.Location = new System.Drawing.Point(887, 9);
-            this.searchControl1.Margin = new System.Windows.Forms.Padding(3, 3, 15, 3);
-            this.searchControl1.Name = "searchControl1";
-            this.searchControl1.Properties.AutoHeight = false;
-            this.searchControl1.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
+            this.txtSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSearch.Location = new System.Drawing.Point(887, 9);
+            this.txtSearch.Margin = new System.Windows.Forms.Padding(3, 3, 15, 3);
+            this.txtSearch.Name = "txtSearch";
+            this.txtSearch.Properties.AutoHeight = false;
+            this.txtSearch.Properties.Buttons.AddRange(new DevExpress.XtraEditors.Controls.EditorButton[] {
             new DevExpress.XtraEditors.Repository.ClearButton(),
             new DevExpress.XtraEditors.Repository.SearchButton()});
-            this.searchControl1.Properties.NullValuePrompt = "Nhập tên máy tính và ấn enter để tìm kiếm";
-            this.searchControl1.Size = new System.Drawing.Size(322, 31);
-            this.searchControl1.TabIndex = 0;
+            this.txtSearch.Properties.NullValuePrompt = "Nhập tên máy tính và ấn enter để tìm kiếm";
+            this.txtSearch.Size = new System.Drawing.Size(322, 31);
+            this.txtSearch.TabIndex = 0;
+            this.txtSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearch_KeyDown);
             // 
             // tileView1
             // 
@@ -524,14 +533,6 @@
             this.barDockControlRight.Manager = this.barManager1;
             this.barDockControlRight.Size = new System.Drawing.Size(0, 282);
             // 
-            // timeLogin
-            // 
-            this.timeLogin.Caption = "timeLogin";
-            this.timeLogin.FieldName = "timeLogin";
-            this.timeLogin.Name = "timeLogin";
-            this.timeLogin.Visible = true;
-            this.timeLogin.VisibleIndex = 5;
-            // 
             // TinhTrang
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -551,7 +552,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureEdit3.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureEdit2.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureEdit1.Properties)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.searchControl1.Properties)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.txtSearch.Properties)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.tileView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.grdTinhTrang)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.popupMenuPC)).EndInit();
@@ -576,7 +577,7 @@
         private DevExpress.XtraEditors.LabelControl labelControl3;
         private DevExpress.XtraEditors.PanelControl panelTinhTrang;
         private DevExpress.XtraEditors.LabelControl labelControl1;
-        public DevExpress.XtraEditors.SearchControl searchControl1;
+        public DevExpress.XtraEditors.SearchControl txtSearch;
         private DevExpress.XtraGrid.Columns.TileViewColumn Group;
         private DevExpress.XtraGrid.Views.Tile.TileView tileView1;
         private DevExpress.XtraGrid.Columns.TileViewColumn NamePC;

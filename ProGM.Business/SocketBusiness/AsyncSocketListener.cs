@@ -254,11 +254,18 @@ namespace ProGM.Business.SocketBusiness
 
         public void Dispose()
         {
-            foreach (var id in this.clients.Keys)
+            var lsClient = this.clients;
+            lock(lsClient)
             {
-                this.Close(id);
+                if (lsClient!=null && lsClient.Count>0)
+                {
+                    foreach (var id in lsClient.Keys)
+                    {
+                        this.Close(id);
+                    }
+                }
+               
             }
-
             this.mre.Dispose();
         }
     }
