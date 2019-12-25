@@ -11,7 +11,6 @@ using DevExpress.XtraEditors;
 using Microsoft.Win32;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using ProGM.Client.View.TinhTien;
 using Management.FormState;
 using System.Net;
 using RestSharp;

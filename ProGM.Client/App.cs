@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 using ProGM.Business.SocketBusiness;
 using ProGM.Client.View.Chat;
 using ProGM.Client.View.Login;
-using ProGM.Client.View.TinhTien;
+using ProGM.Client.View.GoiDo;
 using ProGM.Business.Model;
 
 namespace ProGM.Client
@@ -21,7 +21,6 @@ namespace ProGM.Client
         public IAsyncClient asyncClient;
         public frmChat frmChat;
         public frmDangNhap frmDangNhap;
-        public frmTinhTien frmTinhTien;
         public frmLock frmLock;
         bool isVerifyAccount = false;
         bool isConnectServer = false;
@@ -172,8 +171,13 @@ namespace ProGM.Client
             ms.type = "AUTHORIZE";
             this.asyncClient.Send(JsonConvert.SerializeObject(ms), false);
         }
+
         #endregion
 
-    
+        private void btnOrder_Click(object sender, EventArgs e)
+        {
+            frmGoiDo _frmGoiDo = new frmGoiDo();
+            _frmGoiDo.Show();
+        }
     }
 }

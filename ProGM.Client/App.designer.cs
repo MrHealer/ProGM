@@ -52,7 +52,7 @@
             this.checkEdit5 = new DevExpress.XtraEditors.CheckEdit();
             this.separatorControl3 = new DevExpress.XtraEditors.SeparatorControl();
             this.labelControl15 = new DevExpress.XtraEditors.LabelControl();
-            this.simpleButton2 = new DevExpress.XtraEditors.SimpleButton();
+            this.btnOrder = new DevExpress.XtraEditors.SimpleButton();
             this.simpleButton3 = new DevExpress.XtraEditors.SimpleButton();
             this.btnOpenChat = new DevExpress.XtraEditors.SimpleButton();
             this.pictureEdit2 = new DevExpress.XtraEditors.PictureEdit();
@@ -302,16 +302,17 @@
             this.labelControl15.TabIndex = 13;
             this.labelControl15.Text = "Đánh giá nhân viên phục vụ";
             // 
-            // simpleButton2
+            // btnOrder
             // 
-            this.simpleButton2.Appearance.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.simpleButton2.Appearance.Options.UseFont = true;
-            this.simpleButton2.ImageOptions.Image = global::ProGM.Client.Properties.Resources.boorderitem_32x32;
-            this.simpleButton2.Location = new System.Drawing.Point(174, 327);
-            this.simpleButton2.Name = "simpleButton2";
-            this.simpleButton2.Size = new System.Drawing.Size(125, 55);
-            this.simpleButton2.TabIndex = 15;
-            this.simpleButton2.Text = "Đặt hàng";
+            this.btnOrder.Appearance.Font = new System.Drawing.Font("Times New Roman", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnOrder.Appearance.Options.UseFont = true;
+            this.btnOrder.ImageOptions.Image = global::ProGM.Client.Properties.Resources.boorderitem_32x32;
+            this.btnOrder.Location = new System.Drawing.Point(174, 327);
+            this.btnOrder.Name = "btnOrder";
+            this.btnOrder.Size = new System.Drawing.Size(125, 55);
+            this.btnOrder.TabIndex = 15;
+            this.btnOrder.Text = "Đặt hàng";
+            this.btnOrder.Click += new System.EventHandler(this.btnOrder_Click);
             // 
             // simpleButton3
             // 
@@ -393,7 +394,7 @@
             this.Controls.Add(this.checkEdit3);
             this.Controls.Add(this.checkEdit2);
             this.Controls.Add(this.checkEdit1);
-            this.Controls.Add(this.simpleButton2);
+            this.Controls.Add(this.btnOrder);
             this.Controls.Add(this.simpleButton3);
             this.Controls.Add(this.btnOpenChat);
             this.Controls.Add(this.separatorControl3);
@@ -454,7 +455,7 @@
         private DevExpress.XtraEditors.LabelControl labelControl13;
         private DevExpress.XtraEditors.SeparatorControl separatorControl2;
         private DevExpress.XtraEditors.SimpleButton btnOpenChat;
-        private DevExpress.XtraEditors.SimpleButton simpleButton2;
+        private DevExpress.XtraEditors.SimpleButton btnOrder;
         private DevExpress.XtraEditors.PictureEdit pictureEdit2;
         private DevExpress.XtraEditors.LabelControl labelControl1;
         private DevExpress.XtraEditors.LabelControl labelControl14;
