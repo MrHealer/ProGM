@@ -33,7 +33,7 @@ namespace ProGM.Business.SocketBusiness
         public void StartClient()
         {
             var host = Dns.GetHostEntry(string.Empty);
-            var ip = IPAddress.Parse("127.0.0.1");
+            var ip = IPAddress.Parse("192.168.0.100");
             var endpoint = new IPEndPoint(ip, Port);
 
             try

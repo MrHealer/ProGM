@@ -224,7 +224,6 @@ namespace ProGM.Client.View.Login
         private DevExpress.XtraEditors.GroupControl groupControl1;
         private DevExpress.XtraEditors.PictureEdit pictureEdit2;
         private DevExpress.XtraEditors.PictureEdit pictureEdit1;
-        private DevExpress.XtraEditors.SimpleButton btnLogin;
         private DevExpress.XtraEditors.LabelControl labelControl5;
         private DevExpress.XtraEditors.LabelControl labelControl4;
         private DevExpress.XtraEditors.TextEdit txtTaiKhoan;
@@ -232,5 +231,6 @@ namespace ProGM.Client.View.Login
         private DevExpress.XtraEditors.LabelControl labelControl1;
         private DevExpress.XtraEditors.LabelControl labelControl7;
         private System.Windows.Forms.PictureBox pictureBox1;
+        public DevExpress.XtraEditors.SimpleButton btnLogin;
     }
 }

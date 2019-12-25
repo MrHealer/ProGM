@@ -75,8 +75,9 @@ namespace ProGM.Client
                 this.Hide();
                 if (this.frmDangNhap != null)
                 {
-                    this.frmDangNhap.Parent = this.frmLock;
-                    this.Show();
+                    this.frmLock.Show();
+                    this.frmDangNhap.ShowDialog();
+            
                     MessageBox.Show("Không thể sử dụng dịch vụ vào lúc này!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             });
@@ -133,14 +134,17 @@ namespace ProGM.Client
                         this.Invoke((Action)delegate
                         {
                             this.Hide();
-                            if (this.frmDangNhap != null)
-                            {
-                                this.frmDangNhap.Show();
-                            }
                             if (this.frmLock != null)
                             {
                                 this.frmLock.Show();
                             }
+                            if (this.frmDangNhap != null)
+                            {
+                                this.frmDangNhap.TopMost = true;
+                                this.frmDangNhap.btnLogin.Enabled = true;
+                                this.frmDangNhap.Show();
+                            }
+                           
                         });
 
 
