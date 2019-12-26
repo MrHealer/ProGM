@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using  ProGM.Client.Model;
+using ProGM.Client.Model;
 
-namespace  ProGM.Client.View.GoiDo
+namespace ProGM.Client.View.GoiDo
 {
     public partial class uctrCartItem : UserControl
     {

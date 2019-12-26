@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using  ProGM.Client.Model;
+using ProGM.Client.Model;
 
-namespace  ProGM.Client.View.GoiDo
+namespace ProGM.Client.View.GoiDo
 {
     public partial class uctrItem : UserControl
     {
@@ -19,7 +19,7 @@ namespace  ProGM.Client.View.GoiDo
         {
             InitializeComponent();
             this.food = food;
-            ptImage.ImageLocation = food.Image;
+            ptImage.Image = food.Image;
             lbName.Text = food.Name;
             String price = food.Price.ToString();
             if (price.Length > 3)
@@ -27,11 +27,11 @@ namespace  ProGM.Client.View.GoiDo
                 price = price.Insert(price.Length - 3, ".");
             }
             lbPrice.Text = price;
-            label2.Parent = ptImage;
-            label2.BackColor = Color.Transparent;
+            pictureEdit1.Parent = ptImage;
+            pictureEdit1.BackColor = Color.Transparent;
             if (!food.IsHot)
             {
-                label2.Visible = false;
+                pictureEdit1.Visible = false;
             }
         }
         public void SetCallback(FoodItemCallback foodItemCallback)

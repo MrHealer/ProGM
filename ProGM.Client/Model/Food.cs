@@ -11,7 +11,7 @@ namespace ProGM.Client.Model
     {
         private String id;
         private String name;
-        private string image;
+        private Image image;
         private int price;
         private String category;
         private bool isHot;
@@ -20,14 +20,14 @@ namespace ProGM.Client.Model
         {
         }
 
-        public Food(string name, string image, int price)
+        public Food(string name, Image image, int price)
         {
             this.name = name;
             this.image = image;
             this.price = price;
         }
 
-        public Food(string name, string image, int price, bool isHot)
+        public Food(string name, Image image, int price, bool isHot)
         {
             this.name = name;
             this.image = image;
@@ -35,7 +35,7 @@ namespace ProGM.Client.Model
             this.isHot = isHot;
         }
 
-        public Food(string id, string name, string image, int price, bool isHot)
+        public Food(string id, string name, Image image, int price, bool isHot)
         {
             this.id = id;
             this.name = name;
@@ -43,16 +43,8 @@ namespace ProGM.Client.Model
             this.price = price;
             this.isHot = isHot;
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="name"></param>
-        /// <param name="image"></param>
-        /// <param name="price"></param>
-        /// <param name="category"></param>
-        /// <param name="isHot"></param>
-        public Food(string id, string name, string image, int price, string category, bool isHot)
+
+        public Food(string id, string name, Image image, int price, string category, bool isHot)
         {
             this.id = id;
             this.name = name;
@@ -63,7 +55,7 @@ namespace ProGM.Client.Model
         }
 
         public string Name { get => name; set => name = value; }
-        public string Image { get => image; set => image = value; }
+        public Image Image { get => image; set => image = value; }
         public int Price { get => price; set => price = value; }
         public bool IsHot { get => isHot; set => isHot = value; }
         public string Id { get => id; set => id = value; }
