@@ -47,6 +47,7 @@ namespace ProGM.Management
         #region public param 
         public bool isVerifyAccount = false;
         public string ManagerLoginName = "";
+        public string ManagerDisplayName = "";
         public string ManagerLoginId = "";
         public string CompanyId = "";
         public IAsyncSocketListener asyncSocketListener;
@@ -161,7 +162,7 @@ namespace ProGM.Management
 
                     #region LOGIN
                     case SocketCommandType.LOGIN:
-                        astring messeage = "";
+                        string messeage = "";
                         LoginResponse loginResponse = RestshapCommand.Login(obj.username, obj.password, ref messeage);
                         SocketReceivedData ms = new SocketReceivedData();
                         if (loginResponse != null)
@@ -295,11 +296,20 @@ namespace ProGM.Management
         }
         private void App_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (this.asyncSocketListener != null)
+            if (!string.IsNullOrEmpty(ManagerLoginName))
             {
-                this.asyncSocketListener.Dispose();
-                this.threadListen.Abort();
+                this.WindowState = FormWindowState.Minimized;
+                e.Cancel = true;
             }
+            else
+            {
+                if (this.asyncSocketListener != null)
+                {
+                    this.asyncSocketListener.Dispose();
+                    this.threadListen.Abort();
+                }
+            }
+            
         }
 
         private void tileNavPaneMenu_ElementClick(object sender, NavElementEventArgs e)
@@ -309,13 +319,30 @@ namespace ProGM.Management
 
             }
         }
+        private void App_Resize(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized)
+            {
+                notifyIcon.Visible = true;
+                notifyIcon.ShowBalloonTip(3000);
+                this.ShowInTaskbar = false;
+            }
+        }
 
+        private void notifyIcon_Click(object sender, EventArgs e)
+        {
+            this.Show();
+            this.WindowState = FormWindowState.Maximized;
+            this.ShowInTaskbar = true;
+            notifyIcon.Visible = false;
+        }
         #endregion
 
         #region Orther Method
 
         public void UpdateGui()
         {
+            navButtonUser.Caption ="[Administrator - "+ManagerDisplayName+"]";
             ngFrameMenu.Width = this.Width;
             ngFrameMenu.Height = this.Height;
             ngPage1.Width = this.Width;
@@ -341,6 +368,8 @@ namespace ProGM.Management
 
 
         #endregion
+
+      
     }
 
     public class SocketClients

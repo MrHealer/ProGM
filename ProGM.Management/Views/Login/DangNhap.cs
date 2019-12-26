@@ -54,6 +54,7 @@ namespace ProGM.Management.Views.DangNhap
                             this.Hide();
                             this.app_controller.ManagerLoginName = userName;
                             this.app_controller.ManagerLoginId = loginResponse.result[0].strId; 
+                            this.app_controller.ManagerDisplayName = loginResponse.result[0].strFullName; 
                             this.app_controller.CompanyId = loginResponse.result[0].companyId;
                             this.app_controller.UpdateGui();
                             this.app_controller.ConnectSocketToServer();

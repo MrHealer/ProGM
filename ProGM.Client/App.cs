@@ -56,7 +56,6 @@ namespace ProGM.Client
 
         }
 
-
         #region event socket
 
         private void regiterClientConnect()
@@ -295,6 +294,41 @@ namespace ProGM.Client
             }
             this.frmGoiDo.Show();
         }
+
+
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
+        }
+
+        private void notifyIcon1_Click(object sender, EventArgs e)
+        {
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
+            notifyIcon.Visible = false;
+        }
+
+        private void App_Resize(object sender, EventArgs e)
+        {
+
+            if (this.WindowState == FormWindowState.Minimized)
+            {
+                notifyIcon.Visible = true;
+                notifyIcon.ShowBalloonTip(3000);
+                this.ShowInTaskbar = false;
+            }
+        }
+
+        private void App_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
+            e.Cancel = true;
+        }
         System.Media.SoundPlayer player = new System.Media.SoundPlayer();
         private void timerWarning_Tick(object sender, EventArgs e)
         {
@@ -348,22 +382,5 @@ namespace ProGM.Client
 
         #endregion
 
-        private void btnLogout_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnClose_Click(object sender, EventArgs e)
-        {
-            this.Hide();
-            notifyIcon1.Visible = true;
-        }
-
-        private void notifyIcon1_Click(object sender, EventArgs e)
-        {
-            this.Show();
-            this.WindowState = FormWindowState.Normal;
-            notifyIcon1.Visible = false;
-        }
     }
 }

@@ -31,19 +31,12 @@ namespace ProGM.Client
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
-            frmDangNhap frmDangNhap = new frmDangNhap(frmMax, this, this.app_controller);
-    //        frmDangNhap.TopLevel = false;
-    //        frmDangNhap.Anchor = AnchorStyles.None;
-    //        frmDangNhap.Location =
-    //new Point(ClientSize.Width / 2 - this.Size.Width / 2,
-    //          ClientSize.Height / 2 - this.Size.Height / 2);
-    //        this.Controls.Add(frmDangNhap);
-            frmDangNhap.KeyPreview = true;
-            frmDangNhap.Show();
-
-            //frmDangNhap frmDangNhap = new frmDangNhap(frmMax, this, this.app_controller);
-            //frmDangNhap.Show(this);
+            if (this.app_controller.frmDangNhap==null || this.app_controller.frmDangNhap.IsDisposed)
+            {
+                this.app_controller.frmDangNhap = new frmDangNhap(frmMax, this, this.app_controller);
+            }
+            this.app_controller.frmDangNhap.KeyPreview = true;
+            this.app_controller.frmDangNhap.ShowDialog();
         }
     }
 }
