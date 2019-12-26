@@ -12,7 +12,7 @@ namespace ProGM.Business.SocketBusiness
         event ClientMessageReceivedHandler MessageReceived;
         event ClientMessageSubmittedHandler MessageSubmitted;
 
-        void StartClient();
+        void StartClient(bool tryConnectAgain =false);
 
         bool IsConnected();
 

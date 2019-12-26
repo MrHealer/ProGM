@@ -23,6 +23,7 @@ using ProGM.Business.ApiBusiness;
 namespace ProGM.Client.View.Login
 {
     public partial class frmDangNhap : DevExpress.XtraEditors.XtraForm
+    //public partial class frmDangNhap : UserControl
     {
         App app_controller;
         FormState frmState;
@@ -167,29 +168,8 @@ namespace ProGM.Client.View.Login
         #endregion
 
 
+        #region form event
 
-        private void simpleButton1_Click(object sender, EventArgs e)
-        {
-            btnLogin.Enabled = false;
-            string userName = txtTaiKhoan.Text;
-            string passWord = txtMatKhau.Text;
-            if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(passWord))
-            {
-                MessageBox.Show("Vui lòng nhập thông tin tài khoản","Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-            else
-            {
-                SocketReceivedData ms = new SocketReceivedData();
-                ms.msgFrom = "Linh";
-                ms.msgTo = "SERVER";
-                ms.macAddressFrom = PCExtention.GetMacId();
-                ms.type = SocketCommandType.LOGIN;
-                ms.username = userName;
-                ms.password = passWord;
-                this.app_controller.asyncClient.Send(JsonConvert.SerializeObject(ms), false);
-            }
-
-        }
         public frmDangNhap(FormState frmState, frmLock frmMain, App _app)
         {
             this.frmState = frmState;
@@ -210,7 +190,7 @@ namespace ProGM.Client.View.Login
             // DisableTaskManager();
             // disable_Ctrl_Alt_Del();
             // HookStart();
-            
+
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(JsonConvert.SerializeObject(this.app_controller.ComputerDetail), QRCodeGenerator.ECCLevel.Q);
             QRCode qrCode = new QRCode(qrCodeData);
@@ -227,5 +207,36 @@ namespace ProGM.Client.View.Login
             }
 
         }
+        private void simpleButton1_Click(object sender, EventArgs e)
+        {
+            if (this.app_controller.isConnectServer)
+            {
+                btnLogin.Enabled = false;
+                string userName = txtTaiKhoan.Text;
+                string passWord = txtMatKhau.Text;
+                if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(passWord))
+                {
+                    MessageBox.Show("Vui lòng nhập thông tin tài khoản", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else
+                {
+                    SocketReceivedData ms = new SocketReceivedData();
+                    ms.msgFrom = "Linh";
+                    ms.msgTo = "SERVER";
+                    ms.macAddressFrom = PCExtention.GetMacId();
+                    ms.type = SocketCommandType.LOGIN;
+                    ms.username = userName;
+                    ms.password = passWord;
+                    this.app_controller.asyncClient.Send(JsonConvert.SerializeObject(ms), false);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Chưa kết nối được tới server vui lòng không đăng nhập lúc này", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+        }
+       
+        #endregion
     }
 }

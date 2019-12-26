@@ -30,28 +30,39 @@ namespace ProGM.Business.SocketBusiness
         public event ServerDisconnectedHandler Disconnected;
         public event ClientMessageReceivedHandler MessageReceived;
         public event ClientMessageSubmittedHandler MessageSubmitted;
+        IPHostEntry host = Dns.GetHostEntry(string.Empty);
+        IPEndPoint endpoint = new IPEndPoint(IPAddress.Parse(IP), Port);
 
-        public void StartClient()
+        public void StartClient(bool tryConnectAgain = false)
         {
-            var host = Dns.GetHostEntry(string.Empty);
-            var ip = IPAddress.Parse(IP);
-            var endpoint = new IPEndPoint(ip, Port);
-
+           
             try
             {
-                this.listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                if (this.listener==null)
+                {
+                    this.listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                }
+                
                 this.listener.BeginConnect(endpoint, this.OnConnectCallback, this.listener);
                 this.connected.WaitOne();
 
-                var connectedHandler = this.Connected;
-
-                if (connectedHandler != null)
+                if (!tryConnectAgain)
                 {
-                    connectedHandler(this);
+                    var connectedHandler = this.Connected;
+
+                    if (connectedHandler != null)
+                    {
+                        connectedHandler(this);
+                    }
                 }
+                
             }
-            catch (SocketException)
+            catch (SocketException ex)
             {
+                if (ex.ErrorCode==10054)
+                {
+
+                }
                 // TODO:
             }
         }
@@ -70,10 +81,18 @@ namespace ProGM.Business.SocketBusiness
                 server.EndConnect(result);
                 this.connected.Set();
             }
-            catch (SocketException)
+            catch (SocketException ex)
             {
+                //không có connect
+                if (ex.ErrorCode ==  10061)
+                {
+                    StartClient(true);
+                }
+                
             }
         }
+
+
 
         #region Receive data
         public void Receive()
@@ -88,25 +107,40 @@ namespace ProGM.Business.SocketBusiness
             var state = (IStateObject)result.AsyncState;
             try
             {
-                var receive = state.Listener.EndReceive(result);
-
-                if (receive > 0)
+                if (this.IsConnected())
                 {
-                    state.Append(Encoding.UTF8.GetString(state.Buffer, 0, receive));
+                    var receive = state.Listener.EndReceive(result);
+
+                    if (receive > 0)
+                    {
+                        state.Append(Encoding.UTF8.GetString(state.Buffer, 0, receive));
+                    }
+
+
+                    state.Listener.BeginReceive(state.Buffer, 0, state.BufferSize, SocketFlags.None, this.ReceiveCallback, state);
+
+
+                    var messageReceived = this.MessageReceived;
+
+                    if (messageReceived != null)
+                    {
+                        messageReceived(this, state.Text);
+                    }
+
+                    state.Reset();
+                    this.received.Set();
                 }
-
-
-                state.Listener.BeginReceive(state.Buffer, 0, state.BufferSize, SocketFlags.None, this.ReceiveCallback, state);
-
-                var messageReceived = this.MessageReceived;
-
-                if (messageReceived != null)
+                else
                 {
-                    messageReceived(this, state.Text);
-                }
+                    var disconnected = this.Disconnected;
 
-                state.Reset();
-                this.received.Set();
+                    if (disconnected != null)
+                    {
+                        disconnected();
+                    }
+                    state.Listener.Close();
+                }
+                
             }
             catch (SocketException socketException)
             {
@@ -141,15 +175,14 @@ namespace ProGM.Business.SocketBusiness
         #region Send data
         public void Send(string msg, bool close)
         {
-            if (!this.IsConnected())
+            if (this.IsConnected())
             {
-                throw new Exception("Destination socket is not connected.");
+                var response = Encoding.UTF8.GetBytes(msg);
+
+                this.close = close;
+                this.listener.BeginSend(response, 0, response.Length, SocketFlags.None, this.SendCallback, this.listener);
             }
 
-            var response = Encoding.UTF8.GetBytes(msg);
-
-            this.close = close;
-            this.listener.BeginSend(response, 0, response.Length, SocketFlags.None, this.SendCallback, this.listener);
         }
 
         private void SendCallback(IAsyncResult result)

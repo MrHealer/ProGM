@@ -74,7 +74,7 @@ namespace ProGM.Client.View.Login
             this.groupControl1.Controls.Add(this.txtMatKhau);
             this.groupControl1.Controls.Add(this.labelControl1);
             this.groupControl1.Controls.Add(this.labelControl7);
-            this.groupControl1.Location = new System.Drawing.Point(36, 47);
+            this.groupControl1.Location = new System.Drawing.Point(25, 27);
             this.groupControl1.Name = "groupControl1";
             this.groupControl1.Size = new System.Drawing.Size(625, 301);
             this.groupControl1.TabIndex = 9;
@@ -195,9 +195,11 @@ namespace ProGM.Client.View.Login
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(699, 389);
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ClientSize = new System.Drawing.Size(679, 357);
             this.Controls.Add(this.groupControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.MaximizeBox = false;
             this.Name = "frmDangNhap";
             this.Opacity = 0.9D;
             this.RightToLeftLayout = true;

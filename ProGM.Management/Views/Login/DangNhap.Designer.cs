@@ -69,7 +69,7 @@
             this.groupControl1.Controls.Add(this.txtMatKhau);
             this.groupControl1.Controls.Add(this.labelControl1);
             this.groupControl1.Controls.Add(this.labelControl7);
-            this.groupControl1.Location = new System.Drawing.Point(33, 33);
+            this.groupControl1.Location = new System.Drawing.Point(21, 25);
             this.groupControl1.Name = "groupControl1";
             this.groupControl1.Size = new System.Drawing.Size(625, 301);
             this.groupControl1.TabIndex = 8;
@@ -193,8 +193,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(670, 375);
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ClientSize = new System.Drawing.Size(670, 348);
             this.Controls.Add(this.groupControl1);
+            this.MaximizeBox = false;
             this.Name = "DangNhap";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Đăng nhập";

@@ -19,7 +19,7 @@ namespace  ProGM.Client.View.GoiDo
         {
             InitializeComponent();
             this.food = food;
-            ptImage.Image = food.Image;
+            ptImage.ImageLocation = food.Image;
             lbName.Text = food.Name;
             String price = food.Price.ToString();
             if (price.Length > 3)

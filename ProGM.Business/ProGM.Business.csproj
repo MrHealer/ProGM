@@ -50,6 +50,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extention\FormatExtention.cs" />
+    <Compile Include="Model\CategoryListResponse.cs" />
+    <Compile Include="Model\ProductResponse.cs" />
     <Compile Include="Model\ResponseApiComputerDetail.cs" />
     <Compile Include="Model\responseListPC.cs" />
     <Compile Include="ApiBusiness\RestshapCommand.cs" />

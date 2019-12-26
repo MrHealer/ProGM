@@ -37,7 +37,6 @@ namespace ProGM.Business.ApiBusiness
 
 
         }
-
         public static responseListPC GetAllComputerByCompany(string id)
         {
             //var client = new RestClient("http://40.74.77.139/api/?key=groupComputerList&companyId="+id);
@@ -65,9 +64,8 @@ namespace ProGM.Business.ApiBusiness
 
                 return null;
             }
-            
-        }
 
+        }
         public static ResponseApiComputerDetail ComputerDetail(string mac)
         {
             try
@@ -91,6 +89,47 @@ namespace ProGM.Business.ApiBusiness
             }
             return null;
         }
-        
+        public static CategoryListResponse ListCategorys(string companyId)
+        {
+            var client = new RestClient(url + "?key=productCategoryList&categoryId=ALL&companyId=" + companyId);
+            client.Timeout = -1;
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Authorization", "Basic d2ViOjEyMw==");
+            try
+            {
+                IRestResponse response = client.Execute(request);
+                if (!string.IsNullOrEmpty(response.Content))
+                {
+                    return JsonConvert.DeserializeObject<CategoryListResponse>(response.Content);
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+            return null;
+        }
+        public static ProductResponse ListProducts(string categoryId = "ALL")
+        {
+            var client = new RestClient(url + "?key=productList&categoryId=" + categoryId);
+            client.Timeout = -1;
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Authorization", "Basic d2ViOjEyMw==");
+            try
+            {
+                IRestResponse response = client.Execute(request);
+                if (!string.IsNullOrEmpty(response.Content))
+                {
+                    return JsonConvert.DeserializeObject<ProductResponse>(response.Content);
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+            return null;
+        }
     }
 }

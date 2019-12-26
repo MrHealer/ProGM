@@ -19,6 +19,7 @@ using ProGM.Business.Extention;
 using System.Media;
 using System.Globalization;
 
+
 namespace ProGM.Client
 {
     public partial class App : DevExpress.XtraEditors.XtraForm
@@ -27,12 +28,14 @@ namespace ProGM.Client
         public frmChat frmChat;
         public frmDangNhap frmDangNhap;
         public frmLock frmLock;
+        public frmGoiDo frmGoiDo;
 
         bool isVerifyAccount = false;
-        bool isConnectServer = false;
+        public bool isConnectServer = false;
         public string ComputerDetail = "";
         int timeWarning = 0;
         string IpManager = "";
+        Thread threadListen;
         public App()
         {
             string mac = PCExtention.GetMacId();
@@ -46,23 +49,25 @@ namespace ProGM.Client
             InitializeComponent();
             this.Location = new Point(Screen.PrimaryScreen.Bounds.Right - this.Width, //should be (0,0)
                           Screen.PrimaryScreen.Bounds.Y);
-            this.TopMost = true;
+            //this.TopMost = true;
             this.StartPosition = FormStartPosition.Manual;
             // kết nối tới máy trạm
-            asyncClient = new AsyncClient();
-            asyncClient.Connected += AsyncClient_Connected;
-            asyncClient.MessageReceived += AsyncClient_MessageReceived;
-            asyncClient.MessageSubmitted += AsyncClient_MessageSubmitted;
-            asyncClient.Disconnected += AsyncClient_Disconnected;
-            new Thread(new ThreadStart(asyncClient.StartClient)).Start();
+            regiterClientConnect();
 
         }
 
 
         #region event socket
-        private void AsyncClient_MessageSubmitted(IAsyncClient a, bool close)
+
+        private void regiterClientConnect()
         {
-            //throw new NotImplementedException();
+            asyncClient = new AsyncClient();
+            asyncClient.Connected += AsyncClient_Connected;
+            asyncClient.MessageReceived += AsyncClient_MessageReceived;
+            asyncClient.Disconnected += AsyncClient_Disconnected;
+
+            threadListen = new Thread(() => asyncClient.StartClient());
+            threadListen.Start();
         }
         private void AsyncClient_Connected(IAsyncClient a)
         {
@@ -79,9 +84,11 @@ namespace ProGM.Client
                 this.Hide();
                 if (this.frmDangNhap != null)
                 {
+                    asyncClient.Dispose();
+                    threadListen.Abort();
+                    regiterClientConnect();
                     this.frmLock.Show();
-                    this.frmDangNhap.ShowDialog();
-            
+                    this.frmDangNhap.Show();
                     MessageBox.Show("Không thể sử dụng dịch vụ vào lúc này!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             });
@@ -144,7 +151,7 @@ namespace ProGM.Client
                             }
                             if (this.frmDangNhap != null)
                             {
-                                this.frmDangNhap.TopMost = true;
+                               
                                 this.frmDangNhap.btnLogin.Enabled = true;
                                 this.frmDangNhap.Show();
                             }
@@ -203,6 +210,7 @@ namespace ProGM.Client
                             else
                             {
 
+                                lbTimeRemaining.Text = FormatExtention.FormartMinute(obj.timeRemaining);
                                 lbAccountBlance.Text = FormatExtention.Money(obj.accountBlance.ToString());
                                 if (obj.timeRemaining == 6 || obj.timeRemaining == 7)
                                 {
@@ -230,12 +238,11 @@ namespace ProGM.Client
                             this.Hide();
                             if (this.frmLock != null)
                             {
-                                this.frmLock.TopMost = true;
+                                //this.frmLock.TopMost = true;
                                 this.frmLock.Show();
                             }
                             if (this.frmDangNhap != null)
                             {
-                                this.frmDangNhap.TopMost = true;
                                 this.frmDangNhap.btnLogin.Enabled = true;
                                 this.frmDangNhap.Show();
                             }
@@ -266,7 +273,7 @@ namespace ProGM.Client
 
             this.frmLock = new frmLock(this);
             this.Hide();
-            this.frmLock.ShowDialog();
+            this.frmLock.Show();
         }
         private void btnOpenChat_Click(object sender, EventArgs e)
         {
@@ -281,8 +288,12 @@ namespace ProGM.Client
 
         private void btnOrder_Click(object sender, EventArgs e)
         {
-            frmGoiDo _frmGoiDo = new frmGoiDo();
-            _frmGoiDo.Show();
+            if (this.frmGoiDo == null || this.frmGoiDo.IsDisposed)
+            {
+                this.frmGoiDo = new frmGoiDo();
+
+            }
+            this.frmGoiDo.Show();
         }
         System.Media.SoundPlayer player = new System.Media.SoundPlayer();
         private void timerWarning_Tick(object sender, EventArgs e)
@@ -337,5 +348,22 @@ namespace ProGM.Client
 
         #endregion
 
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            notifyIcon1.Visible = true;
+        }
+
+        private void notifyIcon1_Click(object sender, EventArgs e)
+        {
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
+            notifyIcon1.Visible = false;
+        }
     }
 }

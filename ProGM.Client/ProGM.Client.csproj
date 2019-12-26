@@ -53,6 +53,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\DevExpress 19.1\Components\Bin\Framework\DevExpress.Utils.v19.1.dll</HintPath>
     </Reference>
+    <Reference Include="DevExpress.XtraBars.v19.1, Version=19.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\DevExpress 19.1\Components\Bin\Framework\DevExpress.XtraBars.v19.1.dll</HintPath>
+    </Reference>
     <Reference Include="DevExpress.XtraEditors.v19.1, Version=19.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>C:\Program Files (x86)\DevExpress 19.1\Components\Bin\Framework\DevExpress.XtraEditors.v19.1.dll</HintPath>
@@ -207,12 +211,15 @@
     <Content Include="Resources\emailtemplate_32x32.png" />
     <Content Include="Resources\emailtemplate_32x321.png" />
     <Content Include="Resources\feature_32x32.png" />
+    <None Include="Resources\logout.ico" />
     <Content Include="Resources\mail_32x32.png" />
     <Content Include="Resources\money.png" />
     <Content Include="Resources\newcomment_32x32.png" />
     <Content Include="Resources\QR-code.png" />
     <Content Include="Resources\QR-code1.png" />
     <Content Include="Resources\us-01.png" />
+    <None Include="Resources\user-image.png" />
+    <None Include="Resources\user.ico" />
     <Content Include="Resources\vn.png" />
     <Content Include="Resources\vn2.png" />
     <Content Include="Resources\vn3.jpg" />

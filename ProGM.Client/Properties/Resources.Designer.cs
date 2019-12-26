@@ -198,6 +198,16 @@ namespace ProGM.Client.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap logout {
+            get {
+                object obj = ResourceManager.GetObject("logout", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap mail_32x32 {
             get {
                 object obj = ResourceManager.GetObject("mail_32x32", resourceCulture);
@@ -251,6 +261,26 @@ namespace ProGM.Client.Properties {
         internal static System.Drawing.Bitmap us_01 {
             get {
                 object obj = ResourceManager.GetObject("us-01", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap user {
+            get {
+                object obj = ResourceManager.GetObject("user", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap user_image {
+            get {
+                object obj = ResourceManager.GetObject("user-image", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

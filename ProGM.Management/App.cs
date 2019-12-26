@@ -38,44 +38,62 @@ namespace ProGM.Management
 {
     public partial class App : DevExpress.XtraEditors.XtraForm
     {
+        #region private param 
         MenuObject objMenu = new MenuObject();
         TinhTrang userTinhTrang;
+        Thread threadListen;
+        #endregion
 
-
+        #region public param 
+        public bool isVerifyAccount = false;
+        public string ManagerLoginName = "";
+        public string ManagerLoginId = "";
+        public string CompanyId = "";
         public IAsyncSocketListener asyncSocketListener;
         public List<SocketClients> clients = new List<SocketClients>();
         public IDictionary<int, Timer> lsTimerPay = new Dictionary<int, Timer>();
-        Thread threadListen;
-        public bool isVerifyAccount = false;
-        public string ManagerLoginName = "";
-        public string CompanyId = "";
+        #endregion
         public App()
         {
             InitializeComponent();
-            SocketEventRegistration();
         }
         #region socket.io Server
         Quobject.SocketIoClientDotNet.Client.Socket _socket;
         public void ConnectSocketToServer()
         {
-            //_socket = IO.Socket("http://40.74.77.139:8888/");
-            _socket = IO.Socket("http://125.212.225.24:8000");
+            _socket = IO.Socket("http://40.74.77.139:8888/");
+            //_socket = IO.Socket("http://125.212.225.24:8000");
 
             _socket.On(Quobject.SocketIoClientDotNet.Client.Socket.EVENT_CONNECT, () =>
             {
-                //socket.Emit("hi");
-                MessageBox.Show("Connect node js Ok");
+                var objparam = new
+                {
+                    idUser = ManagerLoginId,
+                    userName = ManagerLoginName
+                };
+                _socket.Emit("registration-user", JsonConvert.SerializeObject(objparam));
+
             });
-            _socket.On("hi", (data) =>
+            _socket.On("register-pc-status", (data) =>
             {
                 Console.WriteLine(data);
-                _socket.Disconnect();
+            }); 
+            _socket.On("login-pc", (data) =>
+            {
+                //{idUser:" ",userName:" ",mac:" "}
+                Console.WriteLine(data);
+            });
+            _socket.On("login-pc", (data) =>
+            {
+                //{idUser:" ",userName:" ",mac:" "}
+                Console.WriteLine(data);
             });
         }
         #endregion
+
         #region socket event  
 
-        private void SocketEventRegistration()
+        public void SocketEventRegistration()
         {
             asyncSocketListener = AsyncSocketListener.Instance;
             asyncSocketListener.MessageReceived += AsyncSocketListener_MessageReceived;
@@ -91,9 +109,13 @@ namespace ProGM.Management
                 this.userTinhTrang.UpdateStatusPC(_cl.macaddress, 0, "00:00:00");
                 asyncSocketListener.Close(id);
                 var tm = (Timer)lsTimerPay.Where(n => n.Key == id).SingleOrDefault().Value;
-                tm.Enabled = false;
-                tm.Dispose();
-                lsTimerPay.Remove(id);
+                if (tm != null)
+                {
+                    tm.Enabled = false;
+                    tm.Dispose();
+                    lsTimerPay.Remove(id);
+                }
+
                 this.clients = this.clients.Where(n => n.id != id).ToList();
             }
         }
@@ -139,7 +161,7 @@ namespace ProGM.Management
 
                     #region LOGIN
                     case SocketCommandType.LOGIN:
-                        string messeage = "";
+                        astring messeage = "";
                         LoginResponse loginResponse = RestshapCommand.Login(obj.username, obj.password, ref messeage);
                         SocketReceivedData ms = new SocketReceivedData();
                         if (loginResponse != null)
@@ -154,6 +176,7 @@ namespace ProGM.Management
                                     _clientsk.userLogin = obj.username;
                                     _clientsk.timerStart = DateTime.Now;
                                     _clientsk.accountBlance = loginResponse.result[0].dBalance;
+                                    _clientsk.accountBlance = 10000;
                                     _clientsk.macaddress = obj.macAddressFrom;
                                     _clientsk.Price = decimal.Parse(this.userTinhTrang.datasource.Where(n => n.MacID == obj.macAddressFrom).SingleOrDefault().Price);
 
@@ -225,6 +248,7 @@ namespace ProGM.Management
                         _clientItem.frmChat = null;
                         tt.Enabled = false;
                         tt.Dispose();
+                        lsTimerPay.Remove(id);
                         //hiển thị tiền ở client
                         SocketReceivedData ms = new SocketReceivedData();
                         ms.type = SocketCommandType.OUT_OF_MONEY;
@@ -271,8 +295,11 @@ namespace ProGM.Management
         }
         private void App_FormClosing(object sender, FormClosingEventArgs e)
         {
-            this.asyncSocketListener.Dispose();
-            this.threadListen.Abort();
+            if (this.asyncSocketListener != null)
+            {
+                this.asyncSocketListener.Dispose();
+                this.threadListen.Abort();
+            }
         }
 
         private void tileNavPaneMenu_ElementClick(object sender, NavElementEventArgs e)
@@ -314,8 +341,6 @@ namespace ProGM.Management
 
 
         #endregion
-
-
     }
 
     public class SocketClients

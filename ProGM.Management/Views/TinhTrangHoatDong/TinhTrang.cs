@@ -175,6 +175,14 @@ namespace ProGM.Management.Views.TinhTrangHoatDong
             var client = this.app_controller.clients.Where(n => n.macaddress.Equals(mac)).SingleOrDefault();
             if (client != null)
             {
+                //sop timer 
+                var timerPay = this.app_controller.lsTimerPay.Where(n => n.Key == client.id).SingleOrDefault();
+                if (timerPay.Value!=null && timerPay.Value.Enabled)
+                {
+                    timerPay.Value.Enabled = false;
+                    timerPay.Value.Dispose();
+                    this.app_controller.lsTimerPay.Remove(client.id);
+                }
                 SocketReceivedData ms = new SocketReceivedData();
                 ms.type = SocketCommandType.CLOSECLIENT;
                 this.app_controller.asyncSocketListener.Send(client.id, JsonConvert.SerializeObject(ms), false);
