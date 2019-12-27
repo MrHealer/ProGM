@@ -1,4 +1,4 @@
-﻿namespace  ProGM.Client.View.GoiDo
+﻿namespace ProGM.Client.View.GoiDo
 {
     partial class uctrCartItem
     {
@@ -59,7 +59,7 @@
             // 
             this.btnDelete.FlatAppearance.BorderSize = 0;
             this.btnDelete.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDelete.Image = global:: ProGM.Client.Properties.Resources.clear;
+            this.btnDelete.Image = global::ProGM.Client.Properties.Resources.clear;
             this.btnDelete.Location = new System.Drawing.Point(183, 24);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(27, 23);

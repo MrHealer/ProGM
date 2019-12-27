@@ -205,6 +205,7 @@
     <None Include="Resources\5phut.wav" />
     <Content Include="Resources\bar-chart.png" />
     <Content Include="Resources\boorderitem_32x32.png" />
+    <None Include="Resources\cart-15-16.ico" />
     <Content Include="Resources\clear.png" />
     <Content Include="Resources\discount.png" />
     <Content Include="Resources\education.png" />
@@ -212,11 +213,16 @@
     <Content Include="Resources\emailtemplate_32x321.png" />
     <Content Include="Resources\feature_32x32.png" />
     <None Include="Resources\logout.ico" />
+    <None Include="Resources\generic-sorting-2-24.ico" />
+    <None Include="Resources\gold-icon1.png" />
+    <None Include="Resources\hot-burst.png" />
     <Content Include="Resources\mail_32x32.png" />
     <Content Include="Resources\money.png" />
     <Content Include="Resources\newcomment_32x32.png" />
     <Content Include="Resources\QR-code.png" />
     <Content Include="Resources\QR-code1.png" />
+    <None Include="Resources\search-3-24.ico" />
+    <None Include="Resources\star-8-24.ico" />
     <Content Include="Resources\us-01.png" />
     <None Include="Resources\user-image.png" />
     <None Include="Resources\user.ico" />

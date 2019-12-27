@@ -1,4 +1,4 @@
-﻿using  ProGM.Client.View.GoiDo;
+﻿using ProGM.Client.View.GoiDo;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace  ProGM.Client.View.Custom
+namespace ProGM.Client.View.Custom
 {
     public class ButtonCustom : System.Windows.Forms.Label
     {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace  ProGM.Client.View.Custom
+namespace ProGM.Client.View.Custom
 {
     public class Constant
     {
