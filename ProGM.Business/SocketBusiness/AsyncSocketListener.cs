@@ -1,4 +1,5 @@
 ﻿
+using ProGM.Business.Extention;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,20 +10,19 @@ using System.Threading;
 
 namespace ProGM.Business.SocketBusiness
 {
-    public delegate void MessageReceivedHandler(int id, string msg);
-    public delegate void MessageSubmittedHandler(int id, bool close);
-    public delegate void DisconnectedHandler(int id);
+    public delegate void MessageReceivedHandler(string ipAddress, string msg);
+    public delegate void MessageSubmittedHandler(string ipAddress, bool close);
+    public delegate void DisconnectedHandler(string ipAddress);
 
     public sealed class AsyncSocketListener : IAsyncSocketListener
     {
         private const ushort Port = 8000;
         private const ushort Limit = 250;
-        private const string Ip = "127.0.0.1";
 
         private static readonly IAsyncSocketListener instance = new AsyncSocketListener();
 
         private readonly ManualResetEvent mre = new ManualResetEvent(false);
-        private readonly IDictionary<int, IStateObject> clients = new Dictionary<int, IStateObject>();
+        private readonly IDictionary<string, IStateObject> clients = new Dictionary<string, IStateObject>();
 
         public event MessageReceivedHandler MessageReceived;
         public event MessageSubmittedHandler MessageSubmitted;
@@ -43,16 +43,15 @@ namespace ProGM.Business.SocketBusiness
         /* Starts the AsyncSocketListener */
         public void StartListening()
         {
-            var host = Dns.GetHostEntry(string.Empty);
-            var ip = IPAddress.Parse(Ip);
-            var endpoint = new IPEndPoint(ip, Port);
-
+            string IP = PCExtention.GetLocalIPAddress();
+            var endpoint = new IPEndPoint(IPAddress.Parse(IP), Port);
             try
             {
                 using (var listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
                 {
                     listener.Bind(endpoint);
                     listener.Listen(Limit);
+                    Console.WriteLine("=>> Server start listen in  " + IP + ":" + Port);
                     while (true)
                     {
                         this.mre.Reset();
@@ -66,19 +65,18 @@ namespace ProGM.Business.SocketBusiness
                 // TODO:
             }
         }
-
         /* Gets a socket from the clients dictionary by his Id. */
-        private IStateObject GetClient(int id)
+        private IStateObject GetClient(string ipaddress)
         {
             IStateObject state;
 
-            return this.clients.TryGetValue(id, out state) ? state : null;
+            return this.clients.TryGetValue(ipaddress, out state) ? state : null;
         }
 
         /* Checks if the socket is connected. */
-        public bool IsConnected(int id)
+        public bool IsConnected(string ipaddress)
         {
-            var state = this.GetClient(id);
+            var state = this.GetClient(ipaddress);
 
             return !(state.Listener.Poll(1000, SelectMode.SelectRead) && state.Listener.Available == 0);
         }
@@ -96,11 +94,23 @@ namespace ProGM.Business.SocketBusiness
 
                 lock (this.clients)
                 {
-                    var id = !this.clients.Any() ? 1 : this.clients.Keys.Max() + 1;
-
-                    state = new StateObject(((Socket)result.AsyncState).EndAccept(result), id);
-                    this.clients.Add(id, state);
-                    Console.WriteLine("Client connected. Get Id " + id);
+                   // var id = !this.clients.Any() ? 1 : this.clients.Keys.Max() + 1;
+                    var socketclient = (Socket)result.AsyncState;
+                    string IP = ((IPEndPoint)socketclient.LocalEndPoint).Address.ToString();
+                    var checkExit = this.clients.Where(n => n.Key == IP).SingleOrDefault();
+                    if (this.clients.ContainsKey(IP))
+                    {
+                        this.clients[IP].Listener.Close();
+                        this.clients[IP].Listener.Dispose();
+                        state = new StateObject(((Socket)result.AsyncState).EndAccept(result), IP);
+                        this.clients[IP] = state;
+                    }
+                    else
+                    {
+                        state = new StateObject(((Socket)result.AsyncState).EndAccept(result), IP);
+                        this.clients.Add(IP, state);
+                    }
+                    Console.WriteLine("==> Client connected. IP  " + IP);
                 }
 
                 state.Listener.BeginReceive(state.Buffer, 0, state.BufferSize, SocketFlags.None, new AsyncCallback(this.ReceiveCallback), state);
@@ -134,7 +144,7 @@ namespace ProGM.Business.SocketBusiness
 
                 if (messageReceived != null)
                 {
-                    messageReceived(state.Id, state.Text);
+                    messageReceived(state.IpAddress, state.Text);
                 }
 
                 state.Reset();
@@ -150,7 +160,7 @@ namespace ProGM.Business.SocketBusiness
 
                     if (disconnected != null)
                     {
-                        disconnected(state.Id);
+                        disconnected(state.IpAddress);
                     }
 
                     state.Listener.Close();
@@ -166,16 +176,16 @@ namespace ProGM.Business.SocketBusiness
 
         /* Send(int id, String msg, bool close) use bool to close the connection after the message sent. */
         #region Send data
-        public void Send(int id, string msg, bool close)
+        public void Send(string ipaddress , string msg, bool close)
         {
-            var state = this.GetClient(id);
+            var state = this.GetClient(ipaddress);
 
             if (state == null)
             {
                 throw new Exception("Client does not exist.");
             }
 
-            if (!this.IsConnected(state.Id))
+            if (!this.IsConnected(state.IpAddress))
             {
                 throw new Exception("Destination socket is not connected.");
             }
@@ -219,14 +229,14 @@ namespace ProGM.Business.SocketBusiness
 
                 if (messageSubmitted != null)
                 {
-                    messageSubmitted(state.Id, state.Close);
+                    messageSubmitted(state.IpAddress, state.Close);
                 }
             }
         }
         #endregion
-        public void Close(int id)
+        public void Close(string ipaddress)
         {
-            var state = this.GetClient(id);
+            var state = this.GetClient(ipaddress);
 
             if (state == null)
             {
@@ -246,12 +256,11 @@ namespace ProGM.Business.SocketBusiness
             {
                 lock (this.clients)
                 {
-                    this.clients.Remove(state.Id);
-                    Console.WriteLine("Client disconnected with Id {0}", state.Id);
+                    this.clients.Remove(state.IpAddress);
+                    Console.WriteLine("==> Client disconnected with IP {0}", state.IpAddress);
                 }
             }
         }
-
         public void Dispose()
         {
             var lsClient = this.clients.ToList();

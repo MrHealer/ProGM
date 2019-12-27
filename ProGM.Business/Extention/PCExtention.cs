@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProGM.Client
+namespace ProGM.Business.Extention
 {
-    class PCExtention
+    public class PCExtention
     {
         public static string GetMacId()
         {
@@ -36,8 +38,20 @@ namespace ProGM.Client
                 dem++;
             }
             mac = mac.ToLower();
-            mac = "30:85:a9:1d:a7:51";
             return mac;
+        }
+
+        public static string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var _ip in host.AddressList)
+            {
+                if (_ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return _ip.ToString();
+                }
+            }
+            throw new Exception("No network adapters with an IPv4 address in the system!");
         }
     }
 }

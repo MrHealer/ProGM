@@ -19,6 +19,7 @@ using ProGM.Business.SocketBusiness;
 using ProGM.Business.Model;
 using Newtonsoft.Json;
 using ProGM.Business.ApiBusiness;
+using ProGM.Business.Extention;
 
 namespace ProGM.Client.View.Login
 {
@@ -221,7 +222,7 @@ namespace ProGM.Client.View.Login
                 else
                 {
                     SocketReceivedData ms = new SocketReceivedData();
-                    ms.msgFrom = "Linh";
+                    ms.msgFrom = this.app_controller.ComputerName;
                     ms.msgTo = "SERVER";
                     ms.macAddressFrom = PCExtention.GetMacId();
                     ms.type = SocketCommandType.LOGIN;

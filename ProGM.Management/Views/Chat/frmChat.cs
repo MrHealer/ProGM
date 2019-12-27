@@ -20,10 +20,10 @@ namespace ProGM.Management.Views.Chat
     {
         public delegate void UpdateTextBoxMethod(string text);
         App app_controller;
-        int IdClient;
-        public frmChat(int idClient, App app)
+        string IdClient;
+        public frmChat(string IpClient, App app)
         {
-            this.IdClient = idClient;
+            this.IdClient = IpClient;
             this.app_controller = app;
             InitializeComponent();
         }

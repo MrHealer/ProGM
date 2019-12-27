@@ -34,8 +34,10 @@ namespace ProGM.Client
         public bool isConnectServer = false;
         public string ComputerDetail = "";
         int timeWarning = 0;
-        string IpManager = "";
+        public string ComputerName = "";
         Thread threadListen;
+
+        public string ManagerPcIP = "";
         public App()
         {
             string mac = PCExtention.GetMacId();
@@ -43,7 +45,8 @@ namespace ProGM.Client
             if (detail != null && detail != null && detail.computeDetail.Count() > 0)
             {
                 this.ComputerDetail = JsonConvert.SerializeObject(detail);
-                this.IpManager = detail.computeDetail[0].strManagerPcIP;
+                this.ManagerPcIP = detail.computeDetail[0].strManagerPcIP;
+                this.ComputerName = detail.computeDetail[0].strName;
             }
 
             InitializeComponent();
@@ -52,20 +55,19 @@ namespace ProGM.Client
             //this.TopMost = true;
             this.StartPosition = FormStartPosition.Manual;
             // kết nối tới máy trạm
-            regiterClientConnect();
+            regiterClientConnect(ManagerPcIP);
 
         }
 
         #region event socket
 
-        private void regiterClientConnect()
+        private void regiterClientConnect(string ManagerPcIP)
         {
             asyncClient = new AsyncClient();
             asyncClient.Connected += AsyncClient_Connected;
             asyncClient.MessageReceived += AsyncClient_MessageReceived;
             asyncClient.Disconnected += AsyncClient_Disconnected;
-
-            threadListen = new Thread(() => asyncClient.StartClient());
+            threadListen = new Thread(() => asyncClient.StartClient(ManagerPcIP));
             threadListen.Start();
         }
         private void AsyncClient_Connected(IAsyncClient a)
@@ -85,7 +87,7 @@ namespace ProGM.Client
                 {
                     asyncClient.Dispose();
                     threadListen.Abort();
-                    regiterClientConnect();
+                    regiterClientConnect(this.ManagerPcIP);
                     this.frmLock.Show();
                     this.frmDangNhap.Show();
                     MessageBox.Show("Không thể sử dụng dịch vụ vào lúc này!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -373,7 +375,7 @@ namespace ProGM.Client
         {
             string macaddress = PCExtention.GetMacId();
             SocketReceivedData ms = new SocketReceivedData();
-            ms.msgFrom = "Linh";
+            ms.msgFrom =this.ComputerName;
             ms.msgTo = "SERVER";
             ms.macAddressFrom = macaddress;
             ms.type = SocketCommandType.AUTHORIZE;

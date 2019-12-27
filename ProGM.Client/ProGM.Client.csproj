@@ -87,7 +87,6 @@
     <Compile Include="App.designer.cs">
       <DependentUpon>App.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controller\PCExtention.cs" />
     <Compile Include="Controller\SocketController.cs" />
     <Compile Include="FormState.cs" />
     <Compile Include="Model\Food.cs" />

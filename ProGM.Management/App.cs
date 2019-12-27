@@ -13,10 +13,7 @@ using ProGM.Business.Model;
 using Newtonsoft.Json;
 using ProGM.Management.Views;
 using System.Threading;
-using DevExpress.XtraEditors;
 using DevExpress.XtraBars.Navigation;
-using ProGM.Management.FormState;
-using DevExpress.Utils.Svg;
 using ProGM.Management.Model;
 using ProGM.Management.Views.TinhTrangHoatDong;
 using ProGM.Management.Views.TaiKhoan;
@@ -24,15 +21,9 @@ using ProGM.Management.Views.NhatKyHeThong;
 using ProGM.Management.Views.NhatKySuDung;
 using ProGM.Management.Views.NhomNguoiDung;
 using ProGM.Management.Views.NhomMay;
-using System.Web.UI.WebControls;
-using System.Net;
-using System.Collections;
-using ProGM.Management.Controller;
 using ProGM.Management.Views.Chat;
 using ProGM.Business.ApiBusiness;
-
 using Timer = System.Timers.Timer;
-using ProGM.Business.SocketServer;
 using Quobject.SocketIoClientDotNet.Client;
 using Newtonsoft.Json.Linq;
 
@@ -44,6 +35,8 @@ namespace ProGM.Management
         MenuObject objMenu = new MenuObject();
         TinhTrang userTinhTrang;
         Thread threadListen;
+        Socket socket;
+
         #endregion
 
         #region public param 
@@ -54,7 +47,7 @@ namespace ProGM.Management
         public string CompanyId = "";
         public IAsyncSocketListener asyncSocketListener;
         public List<SocketClients> clients = new List<SocketClients>();
-        public IDictionary<int, Timer> lsTimerPay = new Dictionary<int, Timer>();
+        public IDictionary<string, Timer> lsTimerPay = new Dictionary<string, Timer>();
         #endregion
         public App()
         {
@@ -62,12 +55,10 @@ namespace ProGM.Management
 
         }
         #region socket.io Server
-        Socket socket;
 
         public void ConnectSocketToServer()
         {
-            this.socket = IO.Socket("http://40.74.77.139:8888", CreateOptions());
-            //this.socket = IO.Socket("http://125.212.225.24:8000");
+            this.socket = IO.Socket("http://40.74.77.139:8888");
             this.socket.On(Socket.EVENT_CONNECT, () =>
             {
                 Console.WriteLine("Connect OK");
@@ -76,10 +67,6 @@ namespace ProGM.Management
                 user["idUser"] = "5f543a6d-2560-11ea-b536-005056b97a5d";
                 user["userName"] = "admin";
                 this.socket.Emit("registration-user", user);
-
-                var pc = new JObject();
-                pc["mac"] = "30:85:a9:1d:a7:51";
-                this.socket.Emit("registration-pc", pc);
             });
 
             //sự kiện yêu cầu mở máy từ QR
@@ -98,9 +85,9 @@ namespace ProGM.Management
                 // kiểm tra có máy tính đang kết nối bắng địa chỉ mác ở trên k
                 //1: lấy thông tin của tài khoản
                 var acountDetail = RestshapCommand.AccountDetail(idUser);
-                if (acountDetail != null && acountDetail.accountDetails.Length==1)
+                if (acountDetail != null && acountDetail.accountDetails.Length == 1)
                 {
-                    if (acountDetail.accountDetails[0].iActive ==1)
+                    if (acountDetail.accountDetails[0].iActive == 1)
                     {
                         OpenComputerByAccount(mac, userName, acountDetail.accountDetails[0].dBalance);
                     }
@@ -120,7 +107,7 @@ namespace ProGM.Management
                 Console.WriteLine("register-pc-status: " + data);
             });
         }
-        private Quobject.SocketIoClientDotNet.Client.IO.Options CreateOptions()
+        private IO.Options CreateOptions()
         {
             Quobject.SocketIoClientDotNet.Client.IO.Options op = new Quobject.SocketIoClientDotNet.Client.IO.Options();
             op.AutoConnect = true;
@@ -133,7 +120,19 @@ namespace ProGM.Management
             op.Multiplex = true;
             return op;
         }
+        private void ReadyClient(string mac)
+        {
+            var pc = new JObject();
+            pc["mac"] = mac;
+            this.socket.Emit("registration-pc", pc);
+        }
 
+        private void OfflineClient(string mac)
+        {
+            var pc = new JObject();
+            pc["mac"] = mac;
+            this.socket.Emit("logout-pc", pc);
+        }
         #endregion
 
         #region socket event  
@@ -146,25 +145,26 @@ namespace ProGM.Management
             threadListen = new Thread(new ThreadStart(asyncSocketListener.StartListening));
             threadListen.Start();
         }
-        private void AsyncSocketListener_Disconnected(int id)
+        private void AsyncSocketListener_Disconnected(string ipaddress)
         {
-            var _cl = this.clients.Where(n => n.id == id).SingleOrDefault();
+            var _cl = this.clients.Where(n => n.ipaddress == ipaddress).SingleOrDefault();
             if (_cl != null)
             {
+                OfflineClient(_cl.macaddress);
                 this.userTinhTrang.UpdateStatusPC(_cl.macaddress, 0, "00:00:00");
-                asyncSocketListener.Close(id);
-                var tm = (Timer)lsTimerPay.Where(n => n.Key == id).SingleOrDefault().Value;
+                asyncSocketListener.Close(ipaddress);
+                var tm = (Timer)lsTimerPay.Where(n => n.Key == ipaddress).SingleOrDefault().Value;
                 if (tm != null)
                 {
                     tm.Enabled = false;
                     tm.Dispose();
-                    lsTimerPay.Remove(id);
+                    lsTimerPay.Remove(ipaddress);
                 }
 
-                this.clients = this.clients.Where(n => n.id != id).ToList();
+                this.clients = this.clients.Where(n => n.ipaddress != ipaddress).ToList();
             }
         }
-        private void AsyncSocketListener_MessageReceived(int id, string msg)
+        private void AsyncSocketListener_MessageReceived(string ipaddress, string msg)
         {
             try
             {
@@ -174,7 +174,7 @@ namespace ProGM.Management
                     #region AUTHORIZE
                     case SocketCommandType.AUTHORIZE:
                         SocketClients client = new SocketClients();
-                        client.id = id;
+                        client.ipaddress = ipaddress;
                         client.status = PCStatus.READY;
                         client.macaddress = obj.macAddressFrom;
                         clients.Add(client);
@@ -182,6 +182,8 @@ namespace ProGM.Management
                         {
                             this.userTinhTrang.UpdateStatusPC(obj.macAddressFrom, 1, "00:00:00");
                         }
+                        ReadyClient(obj.macAddressFrom);
+                        // đăng ký online
                         break;
                     #endregion
 
@@ -192,7 +194,7 @@ namespace ProGM.Management
                         {
                             if (_client.frmChat == null || (_client.frmChat != null && _client.frmChat.Disposing))
                             {
-                                _client.frmChat = new frmChat(id, this);
+                                _client.frmChat = new frmChat(ipaddress, this);
 
                             }
                             this.Invoke((Action)delegate
@@ -218,7 +220,7 @@ namespace ProGM.Management
 
 
                                 #region đăng nhập thánh  công
-                                OpenComputerByAccount(obj.macAddressFrom, obj.username, obj.accountBlance);
+                                OpenComputerByAccount(obj.macAddressFrom, obj.username, loginResponse.result[0].dBalance);
 
                                 //var _clientsk = clients.Where(c => c.macaddress == obj.macAddressFrom).SingleOrDefault();
                                 //if (_clientsk != null)
@@ -251,16 +253,16 @@ namespace ProGM.Management
                             {
                                 ms.type = SocketCommandType.LOGIN_FALSED;
                                 ms.msg = "Đăng nhập thất bại";
-                                this.asyncSocketListener.Send(id, JsonConvert.SerializeObject(ms), false);
+                                this.asyncSocketListener.Send(ipaddress, JsonConvert.SerializeObject(ms), false);
                             }
                         }
                         else
                         {
                             ms.type = SocketCommandType.LOGIN_FALSED;
                             ms.msg = "Đăng nhập thất bại";
-                            this.asyncSocketListener.Send(id, JsonConvert.SerializeObject(ms), false);
+                            this.asyncSocketListener.Send(ipaddress, JsonConvert.SerializeObject(ms), false);
                         }
-                      
+
                         break;
                     #endregion
 
@@ -280,12 +282,12 @@ namespace ProGM.Management
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        /// <param name="id"></param>
-        private void Timerpay_Tick(object sender, EventArgs e, int id)
+        /// <param name="ipaddress"></param>
+        private void Timerpay_Tick(object sender, EventArgs e, string ipaddress)
         {
             Timer tt = sender as Timer;
-            var _clientItem = clients.Where(n => n.id == id).SingleOrDefault();
-            if (_clientItem != null && _clientItem.status==PCStatus.ONLINE)
+            var _clientItem = clients.Where(n => n.ipaddress == ipaddress).FirstOrDefault();
+            if (_clientItem != null && _clientItem.status == PCStatus.ONLINE)
             {
                 _clientItem.timeUsed += 2;
 
@@ -301,18 +303,19 @@ namespace ProGM.Management
                         _clientItem.accountBlance = 0;
                         _clientItem.timeUsed = 0;
                         _clientItem.frmChat = null;
+                        _clientItem.status = 1;
                         tt.Enabled = false;
                         tt.Dispose();
-                        lsTimerPay.Remove(id);
+                        lsTimerPay.Remove(ipaddress);
                         //hiển thị tiền ở client
                         SocketReceivedData ms = new SocketReceivedData();
                         ms.type = SocketCommandType.OUT_OF_MONEY;
-                        this.asyncSocketListener.Send(id, JsonConvert.SerializeObject(ms), false);
+                        this.asyncSocketListener.Send(ipaddress, JsonConvert.SerializeObject(ms), false);
                         this.userTinhTrang.UpdateStatusPC(_clientItem.macaddress, 1, "00:00:00");
                     }
                     else
                     {
-                        _clientItem.status = 1;
+
                         SocketReceivedData ms = new SocketReceivedData();
                         ms.username = _clientItem.userLogin;
                         ms.accountBlance = _clientItem.accountBlance;
@@ -322,7 +325,7 @@ namespace ProGM.Management
                         ms.timeRemaining = Decimal.ToInt32(thoigianconlai);
                         ms.price = _clientItem.Price;
                         ms.type = SocketCommandType.UPDATE_INFO_USED;
-                        this.asyncSocketListener.Send(id, JsonConvert.SerializeObject(ms), false);
+                        this.asyncSocketListener.Send(ipaddress, JsonConvert.SerializeObject(ms), false);
                     }
                 }
                 //trường hợp mở máy
@@ -336,7 +339,7 @@ namespace ProGM.Management
                     ms.timeUsed = _clientItem.timeUsed;
                     ms.price = _clientItem.Price;
                     ms.type = SocketCommandType.UPDATE_INFO_USED;
-                    this.asyncSocketListener.Send(id, JsonConvert.SerializeObject(ms), false);
+                    this.asyncSocketListener.Send(ipaddress, JsonConvert.SerializeObject(ms), false);
                 }
             }
         }
@@ -484,13 +487,13 @@ namespace ProGM.Management
         /// </summary>
         /// <param name="id"></param>
         /// <param name="login"></param>
-        public void CreateJobPay(int id, bool login = false)
+        public void CreateJobPay(string ipaddress, bool login = false)
         {
             Timer timerpay = new Timer();
-            timerpay.Elapsed += (sender, eventArgs) => Timerpay_Tick(sender, eventArgs, id);
-            timerpay.Interval = 5000;
+            timerpay.Elapsed += (sender, eventArgs) => Timerpay_Tick(sender, eventArgs, ipaddress);
+            timerpay.Interval = 10000;
             timerpay.Enabled = true;
-            lsTimerPay.Add(id, timerpay);
+            lsTimerPay.Add(ipaddress, timerpay);
         }
 
         /// <summary>
@@ -501,7 +504,7 @@ namespace ProGM.Management
         /// <param name="userName"></param>
         /// <param name="dBalance"></param>
         /// <returns></returns>
-        public bool OpenComputerByAccount(string mac,string userName,decimal dBalance)
+        public bool OpenComputerByAccount(string mac, string userName, decimal dBalance)
         {
             SocketReceivedData ms = new SocketReceivedData();
             var _clientsk = clients.Where(c => c.macaddress == mac).SingleOrDefault();
@@ -510,11 +513,10 @@ namespace ProGM.Management
                 _clientsk.userLogin = userName;
                 _clientsk.timerStart = DateTime.Now;
                 _clientsk.accountBlance = dBalance;
-                _clientsk.accountBlance = 10000;
                 _clientsk.macaddress = mac;
                 _clientsk.status = 2;
                 _clientsk.Price = decimal.Parse(this.userTinhTrang.datasource.Where(n => n.MacID == mac).SingleOrDefault().Price);
-                CreateJobPay(_clientsk.id, true);
+                CreateJobPay(_clientsk.ipaddress, true);
                 var thoigianconlai = _clientsk.accountBlance / _clientsk.Price * 60;
                 ms.accountBlance = _clientsk.accountBlance;
                 ms.timeStart = _clientsk.timerStart;
@@ -523,7 +525,7 @@ namespace ProGM.Management
                 ms.timeRemaining = Decimal.ToInt32(thoigianconlai);
                 ms.price = _clientsk.Price;
                 ms.type = SocketCommandType.LOGIN_SUCCESS;
-                this.asyncSocketListener.Send(_clientsk.id, JsonConvert.SerializeObject(ms), false);
+                this.asyncSocketListener.Send(_clientsk.ipaddress, JsonConvert.SerializeObject(ms), false);
                 this.userTinhTrang.UpdateStatusPC(mac, 2, string.Format("{0:HH:mm:ss}", _clientsk.timerStart));
                 return true;
             }
@@ -538,7 +540,7 @@ namespace ProGM.Management
 
     public class SocketClients
     {
-        public int id { set; get; }
+        public string ipaddress { set; get; }
         public string macaddress { set; get; }
         public frmChat frmChat { set; get; }
         public DateTime timerStart { set; get; }

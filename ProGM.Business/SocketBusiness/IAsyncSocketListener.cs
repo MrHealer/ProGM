@@ -15,14 +15,14 @@ namespace ProGM.Business.SocketBusiness
         
         void StartListening();
 
-        bool IsConnected(int id);
+        bool IsConnected(string ipaddress);
 
         void OnClientConnect(IAsyncResult result);
 
         void ReceiveCallback(IAsyncResult result);
 
-        void Send(int id, string msg, bool close);
+        void Send(string ipaddress, string msg, bool close);
 
-        void Close(int id);
+        void Close(string ipaddress);
     }
 }

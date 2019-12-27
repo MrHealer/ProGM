@@ -38,9 +38,6 @@
     <Reference Include="RestSharp, Version=106.6.10.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
       <HintPath>..\packages\RestSharp.106.6.10\lib\net452\RestSharp.dll</HintPath>
     </Reference>
-    <Reference Include="SuperSocket.ClientEngine, Version=0.10.0.0, Culture=neutral, PublicKeyToken=ee9af13f57f00acc, processorArchitecture=MSIL">
-      <HintPath>..\packages\SuperSocket.ClientEngine.Core.0.10.0\lib\net45\SuperSocket.ClientEngine.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
@@ -50,12 +47,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="WebSocket4Net, Version=0.15.2.11, Culture=neutral, PublicKeyToken=eb4e154b696bf72a, processorArchitecture=MSIL">
-      <HintPath>..\packages\WebSocket4Net.0.15.2\lib\net45\WebSocket4Net.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extention\FormatExtention.cs" />
+    <Compile Include="Extention\PCExtention.cs" />
     <Compile Include="Model\CategoryListResponse.cs" />
     <Compile Include="Model\ProductResponse.cs" />
     <Compile Include="Model\responseAccountDetail.cs" />
@@ -73,8 +68,6 @@
     <Compile Include="SocketBusiness\IAsyncSocketListener.cs" />
     <Compile Include="SocketBusiness\IStateObject.cs" />
     <Compile Include="SocketBusiness\StateObject.cs" />
-    <Compile Include="SocketServer\DataLoginPC.cs" />
-    <Compile Include="SocketServer\WebSocketManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

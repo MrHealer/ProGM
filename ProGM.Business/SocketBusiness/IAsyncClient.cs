@@ -12,7 +12,7 @@ namespace ProGM.Business.SocketBusiness
         event ClientMessageReceivedHandler MessageReceived;
         event ClientMessageSubmittedHandler MessageSubmitted;
 
-        void StartClient(bool tryConnectAgain =false);
+        void StartClient(string ManagerPcIP,bool tryConnectAgain =false);
 
         bool IsConnected();
 
