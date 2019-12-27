@@ -26,13 +26,15 @@ using ProGM.Management.Views.NhomNguoiDung;
 using ProGM.Management.Views.NhomMay;
 using System.Web.UI.WebControls;
 using System.Net;
-using System.Net.Sockets;
 using System.Collections;
 using ProGM.Management.Controller;
 using ProGM.Management.Views.Chat;
 using ProGM.Business.ApiBusiness;
-using Quobject.SocketIoClientDotNet.Client;
+
 using Timer = System.Timers.Timer;
+using ProGM.Business.SocketServer;
+using Quobject.SocketIoClientDotNet.Client;
+using Newtonsoft.Json.Linq;
 
 namespace ProGM.Management
 {
@@ -57,39 +59,81 @@ namespace ProGM.Management
         public App()
         {
             InitializeComponent();
+
         }
         #region socket.io Server
-        Quobject.SocketIoClientDotNet.Client.Socket _socket;
+        Socket socket;
+
         public void ConnectSocketToServer()
         {
-            _socket = IO.Socket("http://40.74.77.139:8888/");
-            //_socket = IO.Socket("http://125.212.225.24:8000");
-
-            _socket.On(Quobject.SocketIoClientDotNet.Client.Socket.EVENT_CONNECT, () =>
+            this.socket = IO.Socket("http://40.74.77.139:8888", CreateOptions());
+            //this.socket = IO.Socket("http://125.212.225.24:8000");
+            this.socket.On(Socket.EVENT_CONNECT, () =>
             {
-                var objparam = new
+                Console.WriteLine("Connect OK");
+
+                var user = new JObject();
+                user["idUser"] = "5f543a6d-2560-11ea-b536-005056b97a5d";
+                user["userName"] = "admin";
+                this.socket.Emit("registration-user", user);
+
+                var pc = new JObject();
+                pc["mac"] = "30:85:a9:1d:a7:51";
+                this.socket.Emit("registration-pc", pc);
+            });
+
+            //sự kiện yêu cầu mở máy từ QR
+            this.socket.On("login-pc", (data) =>
+            {
+                Console.WriteLine("login-pc: " + data);
+                JObject jsonData = JObject.Parse(data.ToString());
+                string mac = jsonData.GetValue("mac").ToString();
+                string idUser = jsonData.GetValue("idUser").ToString();
+                string userName = jsonData.GetValue("userName").ToString();
+
+
+                // xử lý mở máy ở đây
+                // thông tin: Mac,idUser,userName
+                //-- lấy thông tin tiền của user
+                // kiểm tra có máy tính đang kết nối bắng địa chỉ mác ở trên k
+                //1: lấy thông tin của tài khoản
+                var acountDetail = RestshapCommand.AccountDetail(idUser);
+                if (acountDetail != null && acountDetail.accountDetails.Length==1)
                 {
-                    idUser = ManagerLoginId,
-                    userName = ManagerLoginName
-                };
-                _socket.Emit("registration-user", JsonConvert.SerializeObject(objparam));
+                    if (acountDetail.accountDetails[0].iActive ==1)
+                    {
+                        OpenComputerByAccount(mac, userName, acountDetail.accountDetails[0].dBalance);
+                    }
+                }
 
+
+                var status = new JObject();
+                status["idUser"] = "984f2670-2561-11ea-b536-005056b97a5d";
+                status["userName"] = "gammer02";
+                status["mac"] = "30:85:a9:1d:a7:51";
+                status["status"] = "dm lắm lỗi vc";
+                this.socket.Emit("login-pc-status", status);
             });
-            _socket.On("register-pc-status", (data) =>
+
+            this.socket.On("register-pc-status", (data) =>
             {
-                Console.WriteLine(data);
-            }); 
-            _socket.On("login-pc", (data) =>
-            {
-                //{idUser:" ",userName:" ",mac:" "}
-                Console.WriteLine(data);
-            });
-            _socket.On("login-pc", (data) =>
-            {
-                //{idUser:" ",userName:" ",mac:" "}
-                Console.WriteLine(data);
+                Console.WriteLine("register-pc-status: " + data);
             });
         }
+        private Quobject.SocketIoClientDotNet.Client.IO.Options CreateOptions()
+        {
+            Quobject.SocketIoClientDotNet.Client.IO.Options op = new Quobject.SocketIoClientDotNet.Client.IO.Options();
+            op.AutoConnect = true;
+            op.Reconnection = true;
+            op.ReconnectionAttempts = 5;
+            op.ReconnectionDelay = 5;
+            op.Timeout = 1000;
+            op.Secure = true;
+            op.ForceNew = true;
+            op.Multiplex = true;
+            return op;
+        }
+
         #endregion
 
         #region socket event  
@@ -131,6 +175,7 @@ namespace ProGM.Management
                     case SocketCommandType.AUTHORIZE:
                         SocketClients client = new SocketClients();
                         client.id = id;
+                        client.status = PCStatus.READY;
                         client.macaddress = obj.macAddressFrom;
                         clients.Add(client);
                         if (this.userTinhTrang != null)
@@ -170,31 +215,33 @@ namespace ProGM.Management
 
                             if (loginResponse.result[0].status == "SUCCESS")
                             {
+
+
                                 #region đăng nhập thánh  công
-                                var _clientsk = clients.Where(c => c.macaddress == obj.macAddressFrom).SingleOrDefault();
-                                if (_clientsk != null)
-                                {
-                                    _clientsk.userLogin = obj.username;
-                                    _clientsk.timerStart = DateTime.Now;
-                                    _clientsk.accountBlance = loginResponse.result[0].dBalance;
-                                    _clientsk.accountBlance = 10000;
-                                    _clientsk.macaddress = obj.macAddressFrom;
-                                    _clientsk.Price = decimal.Parse(this.userTinhTrang.datasource.Where(n => n.MacID == obj.macAddressFrom).SingleOrDefault().Price);
+                                OpenComputerByAccount(obj.macAddressFrom, obj.username, obj.accountBlance);
 
-                                }
+                                //var _clientsk = clients.Where(c => c.macaddress == obj.macAddressFrom).SingleOrDefault();
+                                //if (_clientsk != null)
+                                //{
+                                //    _clientsk.userLogin = obj.username;
+                                //    _clientsk.timerStart = DateTime.Now;
+                                //    _clientsk.accountBlance = loginResponse.result[0].dBalance;
+                                //    _clientsk.accountBlance = 10000;
+                                //    _clientsk.macaddress = obj.macAddressFrom;
+                                //    _clientsk.Price = decimal.Parse(this.userTinhTrang.datasource.Where(n => n.MacID == obj.macAddressFrom).SingleOrDefault().Price);
+                                //    CreateJobPay(id, true);
+                                //    var thoigianconlai = _clientsk.accountBlance / _clientsk.Price * 60;
+                                //    ms.accountBlance = _clientsk.accountBlance;
+                                //    ms.timeStart = _clientsk.timerStart;
+                                //    ms.timeUpdate = DateTime.Now;
+                                //    ms.timeUsed = _clientsk.timeUsed;
+                                //    ms.timeRemaining = Decimal.ToInt32(thoigianconlai);
+                                //    ms.price = _clientsk.Price;
+                                //    ms.type = SocketCommandType.LOGIN_SUCCESS;
+                                //    this.userTinhTrang.UpdateStatusPC(obj.macAddressFrom, 2, string.Format("{0:HH:mm:ss}", _clientsk.timerStart));
 
-                                CreateJobPay(id, true);
+                                //}
 
-                                var thoigianconlai = _clientsk.accountBlance / _clientsk.Price * 60;
-                                ms.accountBlance = _clientsk.accountBlance;
-                                ms.timeStart = _clientsk.timerStart;
-                                ms.timeUpdate = DateTime.Now;
-                                ms.timeUsed = _clientsk.timeUsed;
-                                ms.timeRemaining = Decimal.ToInt32(thoigianconlai);
-                                ms.price = _clientsk.Price;
-                                ms.type = SocketCommandType.LOGIN_SUCCESS;
-
-                                this.userTinhTrang.UpdateStatusPC(obj.macAddressFrom, 2, string.Format("{0:HH:mm:ss}", _clientsk.timerStart));
 
 
                                 #endregion
@@ -204,14 +251,16 @@ namespace ProGM.Management
                             {
                                 ms.type = SocketCommandType.LOGIN_FALSED;
                                 ms.msg = "Đăng nhập thất bại";
+                                this.asyncSocketListener.Send(id, JsonConvert.SerializeObject(ms), false);
                             }
                         }
                         else
                         {
                             ms.type = SocketCommandType.LOGIN_FALSED;
                             ms.msg = "Đăng nhập thất bại";
+                            this.asyncSocketListener.Send(id, JsonConvert.SerializeObject(ms), false);
                         }
-                        this.asyncSocketListener.Send(id, JsonConvert.SerializeObject(ms), false);
+                      
                         break;
                     #endregion
 
@@ -226,12 +275,17 @@ namespace ProGM.Management
 
             }
         }
-
+        /// <summary>
+        /// trừ tiền
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <param name="id"></param>
         private void Timerpay_Tick(object sender, EventArgs e, int id)
         {
             Timer tt = sender as Timer;
             var _clientItem = clients.Where(n => n.id == id).SingleOrDefault();
-            if (_clientItem != null)
+            if (_clientItem != null && _clientItem.status==PCStatus.ONLINE)
             {
                 _clientItem.timeUsed += 2;
 
@@ -258,6 +312,7 @@ namespace ProGM.Management
                     }
                     else
                     {
+                        _clientItem.status = 1;
                         SocketReceivedData ms = new SocketReceivedData();
                         ms.username = _clientItem.userLogin;
                         ms.accountBlance = _clientItem.accountBlance;
@@ -309,14 +364,81 @@ namespace ProGM.Management
                     this.threadListen.Abort();
                 }
             }
-            
+
         }
 
         private void tileNavPaneMenu_ElementClick(object sender, NavElementEventArgs e)
         {
-            if (e.Element.Name == "mTinhtrang")
+            string itemTag = e.Element.Name;
+            switch (itemTag)
             {
+                //Tình trạng hoạt động
+                case "mDanhSachMayKhach":
+                    ngPage1.Controls.Add(userTinhTrang);
+                    ngFrameMenu.SelectedPage = ngPage1;
+                    break;
+                //Tài khoản
+                case "mTaiKhoan":
+                    TaiKhoan userTaiKhoan = new TaiKhoan(objMenu);
+                    ngPage2.Controls.Add(userTaiKhoan);
+                    ngFrameMenu.SelectedPage = ngPage2;
+                    break;
+                //Nhật ký hệ thống
+                case "mNhatKyHeThong":
+                    NhatKyHeThong userNKHeThong = new NhatKyHeThong(objMenu);
+                    ngPage3.Controls.Add(userNKHeThong);
+                    ngFrameMenu.SelectedPage = ngPage3;
+                    break;
+                //Nhật ký giao dịch
+                case "mNhatKyGiaoDich":
+                    NhatKySuDung userNhatKySuDung = new NhatKySuDung(objMenu);
+                    ngPage4.Controls.Add(userNhatKySuDung);
+                    ngFrameMenu.SelectedPage = ngPage4;
+                    break;
+                //Nhóm người dùng
+                case "mNhomNguoiDung":
+                    NhomNguoiDung userNhomNguoiDung = new NhomNguoiDung(objMenu);
+                    ngPage5.Controls.Add(userNhomNguoiDung);
+                    ngFrameMenu.SelectedPage = ngPage5;
+                    break;
+                //Nhóm máy
+                case "mNhomMay":
+                    NhomMay userNhomMay = new NhomMay(objMenu);
+                    ngPage6.Controls.Add(userNhomMay);
+                    ngFrameMenu.SelectedPage = ngPage6;
+                    break;
+                //Dịch vụ
+                case "mDichVu":
+                    break;
+                default:
+                    break;
+            }
 
+        }
+        private void navChiTiet_ElementClick(object sender, NavElementEventArgs e)
+        {
+            if (navChiTiet.Tag.ToString() == "detail")
+            {
+                ngPage1.Controls.Clear();
+                TinhTrangChiTiet userTinhTrangCT = new TinhTrangChiTiet(objMenu);
+                ngPage1.Controls.Add(userTinhTrangCT);
+                ngFrameMenu.SelectedPage = ngPage1;
+                navChiTiet.SuperTip.Items.Clear();
+                navChiTiet.SuperTip.Items.AddTitle("Hiển thị thông tin theo định dạng lưới");
+                navChiTiet.Tag = "big";
+            }
+            else
+            {
+                if (navChiTiet.Tag.ToString() == "big")
+                {
+                    ngPage1.Controls.Clear();
+                    TinhTrang userTinhTrang = new TinhTrang(objMenu, this);
+                    ngPage1.Controls.Add(userTinhTrang);
+                    ngFrameMenu.SelectedPage = ngPage1;
+                    navChiTiet.SuperTip.Items.Clear();
+                    navChiTiet.SuperTip.Items.AddTitle("Hiển thị thông tin theo định dạng lưới");
+                    navChiTiet.Tag = "detail";
+                }
             }
         }
         private void App_Resize(object sender, EventArgs e)
@@ -342,7 +464,7 @@ namespace ProGM.Management
 
         public void UpdateGui()
         {
-            navButtonUser.Caption ="[Administrator - "+ManagerDisplayName+"]";
+            navButtonUser.Caption = "[Administrator - " + ManagerDisplayName + "]";
             ngFrameMenu.Width = this.Width;
             ngFrameMenu.Height = this.Height;
             ngPage1.Width = this.Width;
@@ -352,11 +474,16 @@ namespace ProGM.Management
             objMenu.frmWidth = this.Width;
             objMenu.frmMenuHeight = tileNavPaneMenu.Height;
             objMenu.frmMenuWidth = tileNavPaneMenu.Width;
+            this.tileNavPaneMenu.SelectedElement = mDanhSachMayKhach;
             userTinhTrang = new TinhTrang(objMenu, this);
             ngPage1.Controls.Add(userTinhTrang);
 
         }
-
+        /// <summary>
+        /// Trừ tiền sử dụng
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="login"></param>
         public void CreateJobPay(int id, bool login = false)
         {
             Timer timerpay = new Timer();
@@ -366,10 +493,47 @@ namespace ProGM.Management
             lsTimerPay.Add(id, timerpay);
         }
 
+        /// <summary>
+        /// Mở máy bằng tài khoản
+        /// </summary>
+        /// <param name="clientID"></param>
+        /// <param name="mac"></param>
+        /// <param name="userName"></param>
+        /// <param name="dBalance"></param>
+        /// <returns></returns>
+        public bool OpenComputerByAccount(string mac,string userName,decimal dBalance)
+        {
+            SocketReceivedData ms = new SocketReceivedData();
+            var _clientsk = clients.Where(c => c.macaddress == mac).SingleOrDefault();
+            if (_clientsk != null && _clientsk.status == PCStatus.READY)
+            {
+                _clientsk.userLogin = userName;
+                _clientsk.timerStart = DateTime.Now;
+                _clientsk.accountBlance = dBalance;
+                _clientsk.accountBlance = 10000;
+                _clientsk.macaddress = mac;
+                _clientsk.status = 2;
+                _clientsk.Price = decimal.Parse(this.userTinhTrang.datasource.Where(n => n.MacID == mac).SingleOrDefault().Price);
+                CreateJobPay(_clientsk.id, true);
+                var thoigianconlai = _clientsk.accountBlance / _clientsk.Price * 60;
+                ms.accountBlance = _clientsk.accountBlance;
+                ms.timeStart = _clientsk.timerStart;
+                ms.timeUpdate = DateTime.Now;
+                ms.timeUsed = _clientsk.timeUsed;
+                ms.timeRemaining = Decimal.ToInt32(thoigianconlai);
+                ms.price = _clientsk.Price;
+                ms.type = SocketCommandType.LOGIN_SUCCESS;
+                this.asyncSocketListener.Send(_clientsk.id, JsonConvert.SerializeObject(ms), false);
+                this.userTinhTrang.UpdateStatusPC(mac, 2, string.Format("{0:HH:mm:ss}", _clientsk.timerStart));
+                return true;
+            }
+            return false;
+        }
+
 
         #endregion
 
-      
+
     }
 
     public class SocketClients
@@ -381,7 +545,7 @@ namespace ProGM.Management
         public string userLogin { set; get; }
         public decimal accountBlance { set; get; }
         public decimal Price { set; get; }
-
         public int timeUsed { set; get; }
+        public int status { set; get; }
     }
 }

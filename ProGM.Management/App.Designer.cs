@@ -29,16 +29,16 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            DevExpress.XtraEditors.TileItemElement tileItemElement8 = new DevExpress.XtraEditors.TileItemElement();
-            DevExpress.Utils.SuperToolTip superToolTip1 = new DevExpress.Utils.SuperToolTip();
-            DevExpress.Utils.ToolTipTitleItem toolTipTitleItem1 = new DevExpress.Utils.ToolTipTitleItem();
-            DevExpress.XtraEditors.TileItemElement tileItemElement1 = new DevExpress.XtraEditors.TileItemElement();
-            DevExpress.XtraEditors.TileItemElement tileItemElement2 = new DevExpress.XtraEditors.TileItemElement();
-            DevExpress.XtraEditors.TileItemElement tileItemElement3 = new DevExpress.XtraEditors.TileItemElement();
-            DevExpress.XtraEditors.TileItemElement tileItemElement4 = new DevExpress.XtraEditors.TileItemElement();
-            DevExpress.XtraEditors.TileItemElement tileItemElement5 = new DevExpress.XtraEditors.TileItemElement();
-            DevExpress.XtraEditors.TileItemElement tileItemElement6 = new DevExpress.XtraEditors.TileItemElement();
-            DevExpress.XtraEditors.TileItemElement tileItemElement7 = new DevExpress.XtraEditors.TileItemElement();
+            DevExpress.XtraEditors.TileItemElement tileItemElement16 = new DevExpress.XtraEditors.TileItemElement();
+            DevExpress.Utils.SuperToolTip superToolTip2 = new DevExpress.Utils.SuperToolTip();
+            DevExpress.Utils.ToolTipTitleItem toolTipTitleItem2 = new DevExpress.Utils.ToolTipTitleItem();
+            DevExpress.XtraEditors.TileItemElement tileItemElement9 = new DevExpress.XtraEditors.TileItemElement();
+            DevExpress.XtraEditors.TileItemElement tileItemElement10 = new DevExpress.XtraEditors.TileItemElement();
+            DevExpress.XtraEditors.TileItemElement tileItemElement11 = new DevExpress.XtraEditors.TileItemElement();
+            DevExpress.XtraEditors.TileItemElement tileItemElement12 = new DevExpress.XtraEditors.TileItemElement();
+            DevExpress.XtraEditors.TileItemElement tileItemElement13 = new DevExpress.XtraEditors.TileItemElement();
+            DevExpress.XtraEditors.TileItemElement tileItemElement14 = new DevExpress.XtraEditors.TileItemElement();
+            DevExpress.XtraEditors.TileItemElement tileItemElement15 = new DevExpress.XtraEditors.TileItemElement();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(App));
             this.tileBarGroup2 = new DevExpress.XtraBars.Navigation.TileBarGroup();
             this.tileNavPaneMenu = new DevExpress.XtraBars.Navigation.TileNavPane();
@@ -46,13 +46,13 @@
             this.navButtonUser = new DevExpress.XtraBars.Navigation.NavButton();
             this.navButton4 = new DevExpress.XtraBars.Navigation.NavButton();
             this.navChiTiet = new DevExpress.XtraBars.Navigation.NavButton();
+            this.mDanhSachMayKhach = new DevExpress.XtraBars.Navigation.TileNavCategory();
+            this.mDichVu = new DevExpress.XtraBars.Navigation.TileNavCategory();
             this.mTaiKhoan = new DevExpress.XtraBars.Navigation.TileNavCategory();
-            this.mNhatKyHeThong = new DevExpress.XtraBars.Navigation.TileNavCategory();
             this.mNhatKyGiaoDich = new DevExpress.XtraBars.Navigation.TileNavCategory();
+            this.mNhatKyHeThong = new DevExpress.XtraBars.Navigation.TileNavCategory();
             this.mNhomNguoiDung = new DevExpress.XtraBars.Navigation.TileNavCategory();
             this.mNhomMay = new DevExpress.XtraBars.Navigation.TileNavCategory();
-            this.mDichVu = new DevExpress.XtraBars.Navigation.TileNavCategory();
-            this.mTinhTrang = new DevExpress.XtraBars.Navigation.TileNavCategory();
             this.navButton1 = new DevExpress.XtraBars.Navigation.NavButton();
             this.tileNavCategory10 = new DevExpress.XtraBars.Navigation.TileNavCategory();
             this.ngFrameMenu = new DevExpress.XtraBars.Navigation.NavigationFrame();
@@ -89,13 +89,13 @@
             this.tileNavPaneMenu.Buttons.Add(this.navButton4);
             this.tileNavPaneMenu.Buttons.Add(this.navChiTiet);
             this.tileNavPaneMenu.Categories.AddRange(new DevExpress.XtraBars.Navigation.TileNavCategory[] {
-            this.mTaiKhoan,
-            this.mNhatKyHeThong,
-            this.mNhatKyGiaoDich,
-            this.mNhomNguoiDung,
-            this.mNhomMay,
+            this.mDanhSachMayKhach,
             this.mDichVu,
-            this.mTinhTrang});
+            this.mTaiKhoan,
+            this.mNhatKyGiaoDich,
+            this.mNhatKyHeThong,
+            this.mNhomNguoiDung,
+            this.mNhomMay});
             // 
             // tileNavCategory2
             // 
@@ -108,7 +108,7 @@
             // 
             // 
             this.tileNavPaneMenu.DefaultCategory.Tile.DropDownOptions.BeakColor = System.Drawing.Color.Empty;
-            this.tileNavPaneMenu.DefaultCategory.Tile.Elements.Add(tileItemElement8);
+            this.tileNavPaneMenu.DefaultCategory.Tile.Elements.Add(tileItemElement16);
             this.tileNavPaneMenu.Dock = System.Windows.Forms.DockStyle.Top;
             this.tileNavPaneMenu.Location = new System.Drawing.Point(0, 0);
             this.tileNavPaneMenu.LookAndFeel.SkinName = "Blue";
@@ -156,10 +156,47 @@
             this.navChiTiet.Caption = null;
             this.navChiTiet.ImageOptions.SvgImage = global::ProGM.Management.Properties.Resources.detail;
             this.navChiTiet.Name = "navChiTiet";
-            toolTipTitleItem1.Text = "Hiển thị theo định dạng danh sách";
-            superToolTip1.Items.Add(toolTipTitleItem1);
-            this.navChiTiet.SuperTip = superToolTip1;
+            toolTipTitleItem2.Text = "Hiển thị theo định dạng danh sách";
+            superToolTip2.Items.Add(toolTipTitleItem2);
+            this.navChiTiet.SuperTip = superToolTip2;
             this.navChiTiet.Tag = "detail";
+            this.navChiTiet.ElementClick += new DevExpress.XtraBars.Navigation.NavElementClickEventHandler(this.navChiTiet_ElementClick);
+            // 
+            // mDanhSachMayKhach
+            // 
+            this.mDanhSachMayKhach.Caption = "Quản lý máy khách";
+            this.mDanhSachMayKhach.ImageOptions.SvgImage = global::ProGM.Management.Properties.Resources.Icon;
+            this.mDanhSachMayKhach.Name = "mDanhSachMayKhach";
+            // 
+            // 
+            // 
+            this.mDanhSachMayKhach.Tile.AppearanceItem.Normal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(171)))), ((int)(((byte)(185)))));
+            this.mDanhSachMayKhach.Tile.AppearanceItem.Normal.Options.UseBackColor = true;
+            this.mDanhSachMayKhach.Tile.DropDownOptions.BeakColor = System.Drawing.Color.Empty;
+            tileItemElement9.Appearance.Normal.Font = new System.Drawing.Font("Times New Roman", 9F, System.Drawing.FontStyle.Bold);
+            tileItemElement9.Appearance.Normal.Options.UseFont = true;
+            tileItemElement9.ImageOptions.Image = global::ProGM.Management.Properties.Resources.Icon_32x321;
+            tileItemElement9.Text = "Quản lý máy khách";
+            this.mDanhSachMayKhach.Tile.Elements.Add(tileItemElement9);
+            this.mDanhSachMayKhach.Tile.Name = "tileBarItem9";
+            // 
+            // mDichVu
+            // 
+            this.mDichVu.Caption = "Dịch vụ";
+            this.mDichVu.ImageOptions.SvgImage = global::ProGM.Management.Properties.Resources.service;
+            this.mDichVu.Name = "mDichVu";
+            // 
+            // 
+            // 
+            this.mDichVu.Tile.AppearanceItem.Normal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(119)))), ((int)(((byte)(154)))), ((int)(((byte)(115)))));
+            this.mDichVu.Tile.AppearanceItem.Normal.Options.UseBackColor = true;
+            this.mDichVu.Tile.DropDownOptions.BeakColor = System.Drawing.Color.Empty;
+            tileItemElement10.Appearance.Normal.Font = new System.Drawing.Font("Times New Roman", 9F, System.Drawing.FontStyle.Bold);
+            tileItemElement10.Appearance.Normal.Options.UseFont = true;
+            tileItemElement10.ImageOptions.Image = global::ProGM.Management.Properties.Resources.Icon_32x326;
+            tileItemElement10.Text = "Dịch vụ";
+            this.mDichVu.Tile.Elements.Add(tileItemElement10);
+            this.mDichVu.Tile.Name = "tileBarItem8";
             // 
             // mTaiKhoan
             // 
@@ -170,32 +207,14 @@
             // 
             // 
             this.mTaiKhoan.Tile.DropDownOptions.BeakColor = System.Drawing.Color.Empty;
-            tileItemElement1.Appearance.Normal.Font = new System.Drawing.Font("Times New Roman", 9F, System.Drawing.FontStyle.Bold);
-            tileItemElement1.Appearance.Normal.Options.UseFont = true;
-            tileItemElement1.Appearance.Selected.Font = new System.Drawing.Font("Times New Roman", 9F, System.Drawing.FontStyle.Bold);
-            tileItemElement1.Appearance.Selected.Options.UseFont = true;
-            tileItemElement1.ImageOptions.Image = global::ProGM.Management.Properties.Resources.Icon_32x322;
-            tileItemElement1.Text = "Tài khoản";
-            this.mTaiKhoan.Tile.Elements.Add(tileItemElement1);
+            tileItemElement11.Appearance.Normal.Font = new System.Drawing.Font("Times New Roman", 9F, System.Drawing.FontStyle.Bold);
+            tileItemElement11.Appearance.Normal.Options.UseFont = true;
+            tileItemElement11.Appearance.Selected.Font = new System.Drawing.Font("Times New Roman", 9F, System.Drawing.FontStyle.Bold);
+            tileItemElement11.Appearance.Selected.Options.UseFont = true;
+            tileItemElement11.ImageOptions.Image = global::ProGM.Management.Properties.Resources.Icon_32x322;
+            tileItemElement11.Text = "Quản lý tài khoản";
+            this.mTaiKhoan.Tile.Elements.Add(tileItemElement11);
             this.mTaiKhoan.Tile.Name = "tileBarItem10";
-            // 
-            // mNhatKyHeThong
-            // 
-            this.mNhatKyHeThong.Caption = "Nhật ký hệ thống";
-            this.mNhatKyHeThong.ImageOptions.SvgImage = global::ProGM.Management.Properties.Resources.clock;
-            this.mNhatKyHeThong.Name = "mNhatKyHeThong";
-            // 
-            // 
-            // 
-            this.mNhatKyHeThong.Tile.AppearanceItem.Normal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(219)))), ((int)(((byte)(152)))), ((int)(((byte)(76)))));
-            this.mNhatKyHeThong.Tile.AppearanceItem.Normal.Options.UseBackColor = true;
-            this.mNhatKyHeThong.Tile.DropDownOptions.BeakColor = System.Drawing.Color.Empty;
-            tileItemElement2.Appearance.Normal.Font = new System.Drawing.Font("Times New Roman", 9F, System.Drawing.FontStyle.Bold);
-            tileItemElement2.Appearance.Normal.Options.UseFont = true;
-            tileItemElement2.ImageOptions.Image = global::ProGM.Management.Properties.Resources.Icon_32x323;
-            tileItemElement2.Text = "Nhật ký hệ thống";
-            this.mNhatKyHeThong.Tile.Elements.Add(tileItemElement2);
-            this.mNhatKyHeThong.Tile.Name = "tileBarItem11";
             // 
             // mNhatKyGiaoDich
             // 
@@ -208,12 +227,30 @@
             this.mNhatKyGiaoDich.Tile.AppearanceItem.Normal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(157)))), ((int)(((byte)(213)))));
             this.mNhatKyGiaoDich.Tile.AppearanceItem.Normal.Options.UseBackColor = true;
             this.mNhatKyGiaoDich.Tile.DropDownOptions.BeakColor = System.Drawing.Color.Empty;
-            tileItemElement3.Appearance.Normal.Font = new System.Drawing.Font("Times New Roman", 9F, System.Drawing.FontStyle.Bold);
-            tileItemElement3.Appearance.Normal.Options.UseFont = true;
-            tileItemElement3.ImageOptions.Image = global::ProGM.Management.Properties.Resources.Icon_32x324;
-            tileItemElement3.Text = "Nhật ký giao dịch";
-            this.mNhatKyGiaoDich.Tile.Elements.Add(tileItemElement3);
+            tileItemElement12.Appearance.Normal.Font = new System.Drawing.Font("Times New Roman", 9F, System.Drawing.FontStyle.Bold);
+            tileItemElement12.Appearance.Normal.Options.UseFont = true;
+            tileItemElement12.ImageOptions.Image = global::ProGM.Management.Properties.Resources.Icon_32x324;
+            tileItemElement12.Text = "Nhật ký giao dịch";
+            this.mNhatKyGiaoDich.Tile.Elements.Add(tileItemElement12);
             this.mNhatKyGiaoDich.Tile.Name = "tileBarItem12";
+            // 
+            // mNhatKyHeThong
+            // 
+            this.mNhatKyHeThong.Caption = "Nhật ký hệ thống";
+            this.mNhatKyHeThong.ImageOptions.SvgImage = global::ProGM.Management.Properties.Resources.clock;
+            this.mNhatKyHeThong.Name = "mNhatKyHeThong";
+            // 
+            // 
+            // 
+            this.mNhatKyHeThong.Tile.AppearanceItem.Normal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(219)))), ((int)(((byte)(152)))), ((int)(((byte)(76)))));
+            this.mNhatKyHeThong.Tile.AppearanceItem.Normal.Options.UseBackColor = true;
+            this.mNhatKyHeThong.Tile.DropDownOptions.BeakColor = System.Drawing.Color.Empty;
+            tileItemElement13.Appearance.Normal.Font = new System.Drawing.Font("Times New Roman", 9F, System.Drawing.FontStyle.Bold);
+            tileItemElement13.Appearance.Normal.Options.UseFont = true;
+            tileItemElement13.ImageOptions.Image = global::ProGM.Management.Properties.Resources.Icon_32x323;
+            tileItemElement13.Text = "Nhật ký hệ thống";
+            this.mNhatKyHeThong.Tile.Elements.Add(tileItemElement13);
+            this.mNhatKyHeThong.Tile.Name = "tileBarItem11";
             // 
             // mNhomNguoiDung
             // 
@@ -224,11 +261,11 @@
             // 
             // 
             this.mNhomNguoiDung.Tile.DropDownOptions.BeakColor = System.Drawing.Color.Empty;
-            tileItemElement4.Appearance.Normal.Font = new System.Drawing.Font("Times New Roman", 9F, System.Drawing.FontStyle.Bold);
-            tileItemElement4.Appearance.Normal.Options.UseFont = true;
-            tileItemElement4.ImageOptions.Image = global::ProGM.Management.Properties.Resources.Icon_32x325;
-            tileItemElement4.Text = "Nhóm người dùng";
-            this.mNhomNguoiDung.Tile.Elements.Add(tileItemElement4);
+            tileItemElement14.Appearance.Normal.Font = new System.Drawing.Font("Times New Roman", 9F, System.Drawing.FontStyle.Bold);
+            tileItemElement14.Appearance.Normal.Options.UseFont = true;
+            tileItemElement14.ImageOptions.Image = global::ProGM.Management.Properties.Resources.Icon_32x325;
+            tileItemElement14.Text = "Nhóm người dùng";
+            this.mNhomNguoiDung.Tile.Elements.Add(tileItemElement14);
             this.mNhomNguoiDung.Tile.Name = "tileBarItem13";
             // 
             // mNhomMay
@@ -242,48 +279,12 @@
             this.mNhomMay.Tile.AppearanceItem.Normal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(119)))), ((int)(((byte)(154)))), ((int)(((byte)(115)))));
             this.mNhomMay.Tile.AppearanceItem.Normal.Options.UseBackColor = true;
             this.mNhomMay.Tile.DropDownOptions.BeakColor = System.Drawing.Color.Empty;
-            tileItemElement5.Appearance.Normal.Font = new System.Drawing.Font("Times New Roman", 9F, System.Drawing.FontStyle.Bold);
-            tileItemElement5.Appearance.Normal.Options.UseFont = true;
-            tileItemElement5.ImageOptions.Image = global::ProGM.Management.Properties.Resources.Icon_32x327;
-            tileItemElement5.Text = "Nhóm máy";
-            this.mNhomMay.Tile.Elements.Add(tileItemElement5);
+            tileItemElement15.Appearance.Normal.Font = new System.Drawing.Font("Times New Roman", 9F, System.Drawing.FontStyle.Bold);
+            tileItemElement15.Appearance.Normal.Options.UseFont = true;
+            tileItemElement15.ImageOptions.Image = global::ProGM.Management.Properties.Resources.Icon_32x327;
+            tileItemElement15.Text = "Nhóm máy";
+            this.mNhomMay.Tile.Elements.Add(tileItemElement15);
             this.mNhomMay.Tile.Name = "tileBarItem14";
-            // 
-            // mDichVu
-            // 
-            this.mDichVu.Caption = "Dịch vụ";
-            this.mDichVu.ImageOptions.SvgImage = global::ProGM.Management.Properties.Resources.service;
-            this.mDichVu.Name = "mDichVu";
-            // 
-            // 
-            // 
-            this.mDichVu.Tile.AppearanceItem.Normal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(119)))), ((int)(((byte)(154)))), ((int)(((byte)(115)))));
-            this.mDichVu.Tile.AppearanceItem.Normal.Options.UseBackColor = true;
-            this.mDichVu.Tile.DropDownOptions.BeakColor = System.Drawing.Color.Empty;
-            tileItemElement6.Appearance.Normal.Font = new System.Drawing.Font("Times New Roman", 9F, System.Drawing.FontStyle.Bold);
-            tileItemElement6.Appearance.Normal.Options.UseFont = true;
-            tileItemElement6.ImageOptions.Image = global::ProGM.Management.Properties.Resources.Icon_32x326;
-            tileItemElement6.Text = "Dịch vụ";
-            this.mDichVu.Tile.Elements.Add(tileItemElement6);
-            this.mDichVu.Tile.Name = "tileBarItem8";
-            // 
-            // mTinhTrang
-            // 
-            this.mTinhTrang.Caption = "Tình trạng hoạt động";
-            this.mTinhTrang.ImageOptions.SvgImage = global::ProGM.Management.Properties.Resources.Icon;
-            this.mTinhTrang.Name = "mTinhTrang";
-            // 
-            // 
-            // 
-            this.mTinhTrang.Tile.AppearanceItem.Normal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(76)))), ((int)(((byte)(171)))), ((int)(((byte)(185)))));
-            this.mTinhTrang.Tile.AppearanceItem.Normal.Options.UseBackColor = true;
-            this.mTinhTrang.Tile.DropDownOptions.BeakColor = System.Drawing.Color.Empty;
-            tileItemElement7.Appearance.Normal.Font = new System.Drawing.Font("Times New Roman", 9F, System.Drawing.FontStyle.Bold);
-            tileItemElement7.Appearance.Normal.Options.UseFont = true;
-            tileItemElement7.ImageOptions.Image = global::ProGM.Management.Properties.Resources.Icon_32x321;
-            tileItemElement7.Text = "Tình trạng hoạt động";
-            this.mTinhTrang.Tile.Elements.Add(tileItemElement7);
-            this.mTinhTrang.Tile.Name = "tileBarItem9";
             // 
             // navButton1
             // 
@@ -323,7 +324,6 @@
             // 
             // ngPage1
             // 
-            this.ngPage1.Caption = "ngPage1";
             this.ngPage1.Name = "ngPage1";
             this.ngPage1.Size = new System.Drawing.Size(1317, 400);
             // 
@@ -373,7 +373,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(1317, 513);
             this.Controls.Add(this.ngFrameMenu);
             this.Controls.Add(this.tileNavPaneMenu);
@@ -398,7 +397,7 @@
         private DevExpress.XtraBars.Navigation.TileNavPane tileNavPaneMenu;
         private DevExpress.XtraBars.Navigation.NavButton navButton2;
         private DevExpress.XtraBars.Navigation.NavButton navButton1;
-        private DevExpress.XtraBars.Navigation.TileNavCategory mTinhTrang;
+        private DevExpress.XtraBars.Navigation.TileNavCategory mDanhSachMayKhach;
         private DevExpress.XtraBars.Navigation.TileNavCategory mTaiKhoan;
         private DevExpress.XtraBars.Navigation.TileNavCategory mNhatKyHeThong;
         private DevExpress.XtraBars.Navigation.TileNavCategory mNhatKyGiaoDich;

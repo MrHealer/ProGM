@@ -12,6 +12,28 @@ namespace ProGM.Business.ApiBusiness
     public class RestshapCommand
     {
         const string url = "http://40.74.77.139/api";
+
+        public static responseAccountDetail AccountDetail(string id)
+        {
+            var client = new RestClient(url+"?key=accountDetails&accountId=" + id);
+            client.Timeout = -1;
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Content-Type", "application/json");
+            request.AddHeader("Authorization", "Basic d2ViOjEyMw==");
+            try
+            {
+                IRestResponse response = client.Execute(request);
+                if (!string.IsNullOrEmpty(response.Content))
+                {
+                    return JsonConvert.DeserializeObject<responseAccountDetail>(response.Content);
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+            return null;
+        }
         public static LoginResponse Login(string username, string password, ref string messeage)
         {
             try
