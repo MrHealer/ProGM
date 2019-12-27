@@ -57,7 +57,7 @@ namespace ProGM.Management
 
         }
         #region socket.io Server
-       
+
         public void ConnectSocketToServer()
         {
             this.socket = IO.Socket("http://40.74.77.139:8888");
@@ -87,9 +87,9 @@ namespace ProGM.Management
                 // kiểm tra có máy tính đang kết nối bắng địa chỉ mác ở trên k
                 //1: lấy thông tin của tài khoản
                 var acountDetail = RestshapCommand.AccountDetail(idUser);
-                if (acountDetail != null && acountDetail.accountDetails.Length==1)
+                if (acountDetail != null && acountDetail.accountDetails.Length == 1)
                 {
-                    if (acountDetail.accountDetails[0].iActive ==1)
+                    if (acountDetail.accountDetails[0].iActive == 1)
                     {
                         OpenComputerByAccount(mac, userName, acountDetail.accountDetails[0].dBalance);
                     }
@@ -147,7 +147,7 @@ namespace ProGM.Management
             threadListen = new Thread(new ThreadStart(asyncSocketListener.StartListening));
             threadListen.Start();
         }
-        private void AsyncSocketListener_Disconnected(string  ipaddress)
+        private void AsyncSocketListener_Disconnected(string ipaddress)
         {
             var _cl = this.clients.Where(n => n.ipaddress == ipaddress).SingleOrDefault();
             if (_cl != null)
@@ -264,7 +264,7 @@ namespace ProGM.Management
                             ms.msg = "Đăng nhập thất bại";
                             this.asyncSocketListener.Send(ipaddress, JsonConvert.SerializeObject(ms), false);
                         }
-                      
+
                         break;
                     #endregion
 
@@ -289,7 +289,7 @@ namespace ProGM.Management
         {
             Timer tt = sender as Timer;
             var _clientItem = clients.Where(n => n.ipaddress == ipaddress).FirstOrDefault();
-            if (_clientItem != null && _clientItem.status==PCStatus.ONLINE)
+            if (_clientItem != null && _clientItem.status == PCStatus.ONLINE)
             {
                 _clientItem.timeUsed += 2;
 
@@ -317,7 +317,7 @@ namespace ProGM.Management
                     }
                     else
                     {
-                        
+
                         SocketReceivedData ms = new SocketReceivedData();
                         ms.username = _clientItem.userLogin;
                         ms.accountBlance = _clientItem.accountBlance;
@@ -506,7 +506,7 @@ namespace ProGM.Management
         /// <param name="userName"></param>
         /// <param name="dBalance"></param>
         /// <returns></returns>
-        public bool OpenComputerByAccount(string mac,string userName,decimal dBalance)
+        public bool OpenComputerByAccount(string mac, string userName, decimal dBalance)
         {
             SocketReceivedData ms = new SocketReceivedData();
             var _clientsk = clients.Where(c => c.macaddress == mac).SingleOrDefault();
