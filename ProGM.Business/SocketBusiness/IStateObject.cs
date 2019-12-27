@@ -11,7 +11,7 @@ namespace ProGM.Business.SocketBusiness
         DateTime TimeAccept { get; }
         int BufferSize { get; }
 
-        int Id { get; }
+        string IpAddress { get; }
 
         bool Close { get; set; }
 

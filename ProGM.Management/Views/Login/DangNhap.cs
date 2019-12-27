@@ -60,8 +60,6 @@ namespace ProGM.Management.Views.DangNhap
                             this.app_controller.ConnectSocketToServer();
                             this.app_controller.SocketEventRegistration();
                             this.app_controller.Show();
-                            
-
                         }
                         else
                         {

@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extention\FormatExtention.cs" />
+    <Compile Include="Extention\PCExtention.cs" />
     <Compile Include="Model\CategoryListResponse.cs" />
     <Compile Include="Model\ProductResponse.cs" />
     <Compile Include="Model\responseAccountDetail.cs" />

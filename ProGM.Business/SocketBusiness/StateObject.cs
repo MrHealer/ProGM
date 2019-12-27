@@ -12,15 +12,15 @@ namespace ProGM.Business.SocketBusiness
         private const int Buffer_Size = 1024;
         private readonly byte[] buffer = new byte[Buffer_Size];
         private readonly Socket listener;
-        private readonly int id;
+        private readonly string ipAddress;
         private readonly DateTime timeAccept;
         private StringBuilder sb;
 
-        public StateObject(Socket listener, int id = -1)
+        public StateObject(Socket listener,string ipAddress = "")
         {
             this.listener = listener;
             this.timeAccept = DateTime.Now;
-            this.id = id;
+            this.ipAddress = ipAddress;
             this.Close = false;
             this.Reset();
         }
@@ -32,11 +32,11 @@ namespace ProGM.Business.SocketBusiness
                 return this.timeAccept;
             }
         }
-        public int Id
+        public string IpAddress
         {
             get
             {
-                return this.id;
+                return this.ipAddress;
             }
         }
 

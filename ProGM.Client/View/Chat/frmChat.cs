@@ -12,6 +12,7 @@ using System.Net.Sockets;
 using ProGM.Business;
 using Newtonsoft.Json;
 using ProGM.Business.Model;
+using ProGM.Business.Extention;
 
 namespace ProGM.Client.View.Chat
 {

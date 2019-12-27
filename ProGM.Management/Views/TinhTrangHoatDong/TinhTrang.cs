@@ -150,21 +150,19 @@ namespace ProGM.Management.Views.TinhTrangHoatDong
         private void btnOpenPC_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
             string mac = tileView1.GetFocusedRowCellValue("MacID").ToString();
-            // mac = "60:03:08:99:0a:fe";
             var client = this.app_controller.clients.Where(n => n.macaddress.Equals(mac)).SingleOrDefault();
             if (client != null)
             {
                 client.timerStart = DateTime.Now;
                 client.Price = decimal.Parse(tileView1.GetFocusedRowCellValue("Price").ToString()); 
-                this.app_controller.CreateJobPay(client.id);
-
-
+                this.app_controller.CreateJobPay(client.ipaddress);
                 SocketReceivedData ms = new SocketReceivedData();
                 ms.type = SocketCommandType.OPENCLIENT;
                 ms.timeStart = client.timerStart;
                 ms.price = client.Price;
-                this.app_controller.asyncSocketListener.Send(client.id, JsonConvert.SerializeObject(ms), false);
+                this.app_controller.asyncSocketListener.Send(client.ipaddress, JsonConvert.SerializeObject(ms), false);
                 this.UpdateStatusPC(mac, 2, DateTime.Now.ToString("HH:mm:ss"));
+                client.status = PCStatus.ONLINE;
             }
 
         }
@@ -176,16 +174,16 @@ namespace ProGM.Management.Views.TinhTrangHoatDong
             if (client != null)
             {
                 //sop timer 
-                var timerPay = this.app_controller.lsTimerPay.Where(n => n.Key == client.id).SingleOrDefault();
+                var timerPay = this.app_controller.lsTimerPay.Where(n => n.Key == client.ipaddress).SingleOrDefault();
                 if (timerPay.Value!=null && timerPay.Value.Enabled)
                 {
                     timerPay.Value.Enabled = false;
                     timerPay.Value.Dispose();
-                    this.app_controller.lsTimerPay.Remove(client.id);
+                    this.app_controller.lsTimerPay.Remove(client.ipaddress);
                 }
                 SocketReceivedData ms = new SocketReceivedData();
                 ms.type = SocketCommandType.CLOSECLIENT;
-                this.app_controller.asyncSocketListener.Send(client.id, JsonConvert.SerializeObject(ms), false);
+                this.app_controller.asyncSocketListener.Send(client.ipaddress, JsonConvert.SerializeObject(ms), false);
                 this.UpdateStatusPC(mac, 1, "00:00:00");
             }
         }

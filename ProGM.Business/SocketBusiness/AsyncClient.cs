@@ -17,7 +17,7 @@ namespace ProGM.Business.SocketBusiness
     public sealed class AsyncClient : IAsyncClient
     {
         private const ushort Port = 8000;
-        private const string IP = "127.0.0.1";
+        private  string ManagerPcIP = "127.0.0.1";
 
         private Socket listener;
         private bool close;
@@ -30,14 +30,17 @@ namespace ProGM.Business.SocketBusiness
         public event ServerDisconnectedHandler Disconnected;
         public event ClientMessageReceivedHandler MessageReceived;
         public event ClientMessageSubmittedHandler MessageSubmitted;
-        IPHostEntry host = Dns.GetHostEntry(string.Empty);
-        IPEndPoint endpoint = new IPEndPoint(IPAddress.Parse(IP), Port);
+        
 
-        public void StartClient(bool tryConnectAgain = false)
+        public void StartClient(string ManagerPcIP,bool tryConnectAgain = false)
         {
-           
+            this.ManagerPcIP = ManagerPcIP;
+
+
             try
             {
+                IPHostEntry host = Dns.GetHostEntry(string.Empty);
+                IPEndPoint endpoint = new IPEndPoint(IPAddress.Parse(ManagerPcIP), Port);
                 if (this.listener==null)
                 {
                     this.listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -86,7 +89,7 @@ namespace ProGM.Business.SocketBusiness
                 //không có connect
                 if (ex.ErrorCode ==  10061)
                 {
-                    StartClient(true);
+                    StartClient(this.ManagerPcIP,true);
                 }
                 
             }
