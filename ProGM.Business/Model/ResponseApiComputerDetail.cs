@@ -26,6 +26,7 @@ namespace ProGM.Business.Model
         public string strModifiedByAccountId { get; set; } 
         public string strManagerPcIP { get; set; }
         public string strManagerPcMac { get; set; }
+        public decimal iPrice { get; set; }
     }
 
 }

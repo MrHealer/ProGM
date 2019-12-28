@@ -45,6 +45,7 @@ namespace ProGM.Client.View.Login
             this.txtMatKhau = new DevExpress.XtraEditors.TextEdit();
             this.labelControl1 = new DevExpress.XtraEditors.LabelControl();
             this.labelControl7 = new DevExpress.XtraEditors.LabelControl();
+            this.lbMesseage = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.groupControl1)).BeginInit();
             this.groupControl1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -64,6 +65,7 @@ namespace ProGM.Client.View.Login
             this.groupControl1.AutoSize = true;
             this.groupControl1.CaptionImageOptions.Image = ((System.Drawing.Image)(resources.GetObject("groupControl1.CaptionImageOptions.Image")));
             this.groupControl1.CaptionImageOptions.ImageUri.Uri = "AddItem";
+            this.groupControl1.Controls.Add(this.lbMesseage);
             this.groupControl1.Controls.Add(this.pictureBox1);
             this.groupControl1.Controls.Add(this.pictureEdit2);
             this.groupControl1.Controls.Add(this.pictureEdit1);
@@ -191,6 +193,15 @@ namespace ProGM.Client.View.Login
             this.labelControl7.TabIndex = 8;
             this.labelControl7.Text = "Tên tài khoản";
             // 
+            // lbMesseage
+            // 
+            this.lbMesseage.AutoSize = true;
+            this.lbMesseage.ForeColor = System.Drawing.Color.Green;
+            this.lbMesseage.Location = new System.Drawing.Point(136, 80);
+            this.lbMesseage.Name = "lbMesseage";
+            this.lbMesseage.Size = new System.Drawing.Size(0, 13);
+            this.lbMesseage.TabIndex = 12;
+            // 
             // frmDangNhap
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -234,5 +245,6 @@ namespace ProGM.Client.View.Login
         private DevExpress.XtraEditors.LabelControl labelControl7;
         private System.Windows.Forms.PictureBox pictureBox1;
         public DevExpress.XtraEditors.SimpleButton btnLogin;
+        public System.Windows.Forms.Label lbMesseage;
     }
 }

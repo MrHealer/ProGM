@@ -41,6 +41,7 @@ namespace ProGM.Client
         public App()
         {
             string mac = PCExtention.GetMacId();
+            Logger.WriteLog(Logger.LogType.Error, ManagerPcIP);
             var detail = RestshapCommand.ComputerDetail(mac);
             if (detail != null && detail != null && detail.computeDetail.Count() > 0)
             {
@@ -63,6 +64,7 @@ namespace ProGM.Client
 
         private void regiterClientConnect(string ManagerPcIP)
         {
+            Logger.WriteLog(Logger.LogType.Error, ManagerPcIP);
             asyncClient = new AsyncClient();
             asyncClient.Connected += AsyncClient_Connected;
             asyncClient.MessageReceived += AsyncClient_MessageReceived;
@@ -75,24 +77,71 @@ namespace ProGM.Client
             isConnectServer = true;
             resgisterMac();
             asyncClient.Receive();
+            if (frmDangNhap != null)
+            {
+
+                if (frmDangNhap.InvokeRequired)
+                {
+                    frmDangNhap.Invoke((Action)delegate
+                    {
+                        frmDangNhap.lbMesseage.Text = "";
+                        frmDangNhap.btnLogin.Enabled = true;
+                    });
+                }
+                else
+                {
+                    frmDangNhap.lbMesseage.Text = "";
+                    frmDangNhap.btnLogin.Enabled = true;
+                }
+            }
+
         }
         private void AsyncClient_Disconnected()
         {
 
             isConnectServer = false;
-            this.Invoke((Action)delegate
+            if (this.InvokeRequired)
+            {
+                this.Invoke((Action)delegate
+                {
+                    this.Hide();
+                });
+            }
+            else
             {
                 this.Hide();
-                if (this.frmDangNhap != null)
+            }
+
+            if (this.frmDangNhap != null)
+            {
+                asyncClient.Dispose();
+                threadListen.Abort();
+
+                if (frmDangNhap.InvokeRequired)
                 {
-                    asyncClient.Dispose();
-                    threadListen.Abort();
-                    regiterClientConnect(this.ManagerPcIP);
-                    this.frmLock.Show();
-                    this.frmDangNhap.Show();
-                    MessageBox.Show("Không thể sử dụng dịch vụ vào lúc này!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    frmDangNhap.Invoke((Action)delegate
+                    {
+                        frmDangNhap.lbMesseage.Text = "Không thể sử dụng dịch vụ vào lúc này";
+                        frmDangNhap.btnLogin.Enabled = false;
+                    });
                 }
-            });
+                else
+                {
+                    frmDangNhap.lbMesseage.Text = "Không thể sử dụng dịch vụ vào lúc này";
+                    frmDangNhap.btnLogin.Enabled = false;
+                }
+
+
+                regiterClientConnect(this.ManagerPcIP);
+                this.frmLock.Show();
+
+                if (!this.frmDangNhap.Modal)
+                {
+                    this.frmDangNhap.ShowDialog();
+                }
+
+            }
+
         }
         private void AsyncClient_MessageReceived(IAsyncClient a, string msg)
         {
@@ -152,11 +201,11 @@ namespace ProGM.Client
                             }
                             if (this.frmDangNhap != null)
                             {
-                               
+
                                 this.frmDangNhap.btnLogin.Enabled = true;
                                 this.frmDangNhap.Show();
                             }
-                           
+
                         });
 
 
@@ -197,7 +246,7 @@ namespace ProGM.Client
                     case SocketCommandType.UPDATE_INFO_USED:
                         this.Invoke((Action)delegate
                         {
-                          
+
                             lbTimeStart.Text = obj.timeStart.ToString("HH:mm:ss");
                             lbTimeUser.Text = FormatExtention.FormartMinute(obj.timeUsed);
                             lbPrice.Text = FormatExtention.Money(obj.price.ToString());
@@ -220,7 +269,7 @@ namespace ProGM.Client
                                     timerWarning.Enabled = true;
                                 }
                             }
-                           
+
 
                         });
 
@@ -375,7 +424,7 @@ namespace ProGM.Client
         {
             string macaddress = PCExtention.GetMacId();
             SocketReceivedData ms = new SocketReceivedData();
-            ms.msgFrom =this.ComputerName;
+            ms.msgFrom = this.ComputerName;
             ms.msgTo = "SERVER";
             ms.macAddressFrom = macaddress;
             ms.type = SocketCommandType.AUTHORIZE;

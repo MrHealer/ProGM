@@ -167,8 +167,6 @@ namespace ProGM.Client.View.Login
 
         }
         #endregion
-
-
         #region form event
 
         public frmDangNhap(FormState frmState, frmLock frmMain, App _app)
@@ -191,9 +189,14 @@ namespace ProGM.Client.View.Login
             // DisableTaskManager();
             // disable_Ctrl_Alt_Del();
             // HookStart();
-
+            var computer = JsonConvert.DeserializeObject<ResponseApiComputerDetail>(this.app_controller.ComputerDetail).computeDetail[0];
+            var ob = new
+            {
+                mac = computer.strMacAddress,
+                iPrice = computer.iPrice
+            };
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
-            QRCodeData qrCodeData = qrGenerator.CreateQrCode(JsonConvert.DeserializeObject<ResponseApiComputerDetail>(this.app_controller.ComputerDetail).computeDetail[0].strMacAddress, QRCodeGenerator.ECCLevel.Q);
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(JsonConvert.SerializeObject(ob), QRCodeGenerator.ECCLevel.Q);
             QRCode qrCode = new QRCode(qrCodeData);
             Bitmap qrCodeImage = qrCode.GetGraphic(20);
             pictureBox1.Image = qrCodeImage;

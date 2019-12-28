@@ -1,0 +1,6 @@
+15:49:49	30:9c:23:ab:0e:96	.ctor	Program.Main => App..ctor => Logger.WriteLog
+15:55:03		.ctor	Program.Main => App..ctor => Logger.WriteLog
+15:55:04		regiterClientConnect	App..ctor => App.regiterClientConnect => Logger.WriteLog
+16:04:48		.ctor	Program.Main => App..ctor => Logger.WriteLog
+16:04:52	192.168.1.28	regiterClientConnect	App..ctor => App.regiterClientConnect => Logger.WriteLog
+16:05:07	192.168.1.28	regiterClientConnect	App.AsyncClient_Disconnected => App.regiterClientConnect => Logger.WriteLog
