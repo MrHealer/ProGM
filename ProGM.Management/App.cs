@@ -26,6 +26,7 @@ using ProGM.Business.ApiBusiness;
 using Timer = System.Timers.Timer;
 using Quobject.SocketIoClientDotNet.Client;
 using Newtonsoft.Json.Linq;
+using ProGM.Business.Extention;
 
 namespace ProGM.Management
 {
@@ -64,19 +65,31 @@ namespace ProGM.Management
                 Console.WriteLine("Connect OK");
 
                 var user = new JObject();
-                user["idUser"] = "5f543a6d-2560-11ea-b536-005056b97a5d";
-                user["userName"] = "admin";
-                this.socket.Emit("registration-user", user);
+                user["idUser"] = ManagerLoginId;
+                user["userName"] = ManagerLoginName;
+
+                //var tt = new UserResgiter();
+                //tt.idUser = ManagerLoginId;
+                //tt.userName = ManagerLoginName;
+                //var jsonRequest = JsonConvert.SerializeObject(tt);
+
+                UserResgiter reqUser = new UserResgiter() {
+                    idUser      = ManagerLoginId,
+                    userName    = ManagerLoginName
+                };
+                var jsonRequest = JsonConvert.SerializeObject(reqUser);
+                Logger.WriteLog(Logger.LogType.Error, jsonRequest);
+                this.socket.Emit("registration-user", jsonRequest);
             });
 
             //sự kiện yêu cầu mở máy từ QR
             this.socket.On("login-pc", (data) =>
             {
                 Console.WriteLine("login-pc: " + data);
-                JObject jsonData = JObject.Parse(data.ToString());
-                string mac = jsonData.GetValue("mac").ToString();
-                string idUser = jsonData.GetValue("idUser").ToString();
-                string userName = jsonData.GetValue("userName").ToString();
+                JObject jsonData    = JObject.Parse(data.ToString());
+                string mac          = jsonData.GetValue("mac").ToString();
+                string idUser       = jsonData.GetValue("idUser").ToString();
+                string userName     = jsonData.GetValue("userName").ToString();
 
 
                 // xử lý mở máy ở đây
@@ -90,21 +103,29 @@ namespace ProGM.Management
                     if (acountDetail.accountDetails[0].iActive == 1)
                     {
                         OpenComputerByAccount(mac, userName, acountDetail.accountDetails[0].dBalance);
+                       
+                        var status = new JObject();
+                        status["idUser"] = acountDetail.accountDetails[0].strId;
+                        status["userName"] = userName;
+                        status["mac"] = mac;
+                        status["status"] = PCStatus.ONLINE;
+                        this.socket.Emit("login-pc-status", status);
+
                     }
                 }
 
 
-                var status = new JObject();
-                status["idUser"] = "984f2670-2561-11ea-b536-005056b97a5d";
-                status["userName"] = "gammer02";
-                status["mac"] = "30:85:a9:1d:a7:51";
-                status["status"] = "dm lắm lỗi vc";
-                this.socket.Emit("login-pc-status", status);
+               
             });
 
             this.socket.On("register-pc-status", (data) =>
             {
                 Console.WriteLine("register-pc-status: " + data);
+            });
+
+            this.socket.On("registration-user-status", (data) =>
+            {
+                Console.WriteLine("registration-user-status: " + data);
             });
         }
         private IO.Options CreateOptions()
@@ -549,5 +570,11 @@ namespace ProGM.Management
         public decimal Price { set; get; }
         public int timeUsed { set; get; }
         public int status { set; get; }
+    }
+
+    public class UserResgiter
+    {
+        public string idUser { set; get; }
+        public string userName { set; get; }
     }
 }

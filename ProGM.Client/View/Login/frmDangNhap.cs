@@ -193,7 +193,7 @@ namespace ProGM.Client.View.Login
             // HookStart();
 
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
-            QRCodeData qrCodeData = qrGenerator.CreateQrCode(JsonConvert.SerializeObject(this.app_controller.ComputerDetail), QRCodeGenerator.ECCLevel.Q);
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(JsonConvert.DeserializeObject<ResponseApiComputerDetail>(this.app_controller.ComputerDetail).computeDetail[0].strMacAddress, QRCodeGenerator.ECCLevel.Q);
             QRCode qrCode = new QRCode(qrCodeData);
             Bitmap qrCodeImage = qrCode.GetGraphic(20);
             pictureBox1.Image = qrCodeImage;
