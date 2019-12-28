@@ -21,8 +21,10 @@ namespace ProGM.Management.Views.Chat
         public delegate void UpdateTextBoxMethod(string text);
         App app_controller;
         string IdClient;
-        public frmChat(string IpClient, App app)
+        bool isChatMobile;
+        public frmChat(string IpClient, App app, bool isChatMobile =false)
         {
+            this.isChatMobile = isChatMobile;
             this.IdClient = IpClient;
             this.app_controller = app;
             InitializeComponent();
@@ -45,13 +47,21 @@ namespace ProGM.Management.Views.Chat
             string msg = txtMesseage.Text;
             if (!string.IsNullOrEmpty(msg))
             {
-                SocketReceivedData ms = new SocketReceivedData();
-                ms.msgFrom = "Nhân viên:";
-                ms.msg = msg;
-                ms.type = SocketCommandType.CHAT;
-                this.app_controller.asyncSocketListener.Send(this.IdClient,JsonConvert.SerializeObject(ms), false);
-                txtHistory.AppendText("Me: " + msg + Environment.NewLine);
-                txtMesseage.Text = "";
+                if (this.isChatMobile)
+                {
+                    this.app_controller.ChatMobile(this.IdClient, msg);
+                }
+                else
+                {
+                    SocketReceivedData ms = new SocketReceivedData();
+                    ms.msgFrom = "Nhân viên:";
+                    ms.msg = msg;
+                    ms.type = SocketCommandType.CHAT;
+                    this.app_controller.asyncSocketListener.Send(this.IdClient, JsonConvert.SerializeObject(ms), false);
+                    txtHistory.AppendText("Me: " + msg + Environment.NewLine);
+                    txtMesseage.Text = "";
+                }
+                
             }
 
         }

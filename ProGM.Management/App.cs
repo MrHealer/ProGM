@@ -37,7 +37,6 @@ namespace ProGM.Management
         TinhTrang userTinhTrang;
         Thread threadListen;
         Socket socket;
-
         #endregion
 
         #region public param 
@@ -49,6 +48,8 @@ namespace ProGM.Management
         public IAsyncSocketListener asyncSocketListener;
         public List<SocketClients> clients = new List<SocketClients>();
         public IDictionary<string, Timer> lsTimerPay = new Dictionary<string, Timer>();
+
+        public List<mobileChat> mobileChats = new List<mobileChat>();
         #endregion
         public App()
         {
@@ -57,39 +58,42 @@ namespace ProGM.Management
         }
         #region socket.io Server
         bool resterUserOk = false;
+
+
         public void ConnectSocketToServer()
         {
             this.socket = IO.Socket("http://40.74.77.139:8888");
             this.socket.On(Socket.EVENT_CONNECT, () =>
             {
                 Console.WriteLine("Connect OK");
-
                 var user = new JObject();
                 user["idUser"] = ManagerLoginId;
                 user["userName"] = ManagerLoginName;
-
-                //var tt = new UserResgiter();
-                //tt.idUser = ManagerLoginId;
-                //tt.userName = ManagerLoginName;
-                //var jsonRequest = JsonConvert.SerializeObject(tt);
-
-                UserResgiter reqUser = new UserResgiter() {
-                    idUser      = ManagerLoginId,
-                    userName    = ManagerLoginName
-                };
-                var jsonRequest = JsonConvert.SerializeObject(reqUser);
-                Logger.WriteLog(Logger.LogType.Error, jsonRequest);
+                var jsonRequest = JsonConvert.SerializeObject(user);
+                Thread.Sleep(500);
                 this.socket.Emit("registration-user", jsonRequest);
             });
-
+            this.socket.On("registration-user-status", (data) =>
+            {
+                resterUserOk = true;
+                string mac = PCExtention.GetMacId();
+                var pc = new JObject();
+                pc["mac"] = mac;
+                this.socket.Emit("registration-pc", JsonConvert.SerializeObject(pc));
+                Console.WriteLine("registration-user-status: " + data);
+            });
+            this.socket.On("register-pc-status", (data) =>
+            {
+                Console.WriteLine("register-pc-status: " + data);
+            });
             //sự kiện yêu cầu mở máy từ QR
             this.socket.On("login-pc", (data) =>
             {
                 Console.WriteLine("login-pc: " + data);
-                JObject jsonData    = JObject.Parse(data.ToString());
-                string mac          = jsonData.GetValue("mac").ToString();
-                string idUser       = jsonData.GetValue("idUser").ToString();
-                string userName     = jsonData.GetValue("userName").ToString();
+                JObject jsonData = JObject.Parse(data.ToString());
+                string mac = jsonData.GetValue("mac").ToString();
+                string idUser = jsonData.GetValue("idUser").ToString();
+                string userName = jsonData.GetValue("userName").ToString();
 
 
                 // xử lý mở máy ở đây
@@ -103,22 +107,23 @@ namespace ProGM.Management
                     if (acountDetail.accountDetails[0].iActive == 1)
                     {
                         var client = this.clients.Where(n => n.macaddress == mac).SingleOrDefault();
-                        if (client!=null )
+                        if (client != null)
                         {
                             if (client.status == PCStatus.READY)
                             {
-                                OpenComputerByAccount(mac, userName, acountDetail.accountDetails[0].dBalance);
-
-                                var status = new JObject();
-                                status["idUser"] = acountDetail.accountDetails[0].strId;
-                                status["userName"] = userName;
-                                status["mac"] = mac;
-                                status["status"] = "SUCCESS";
-                                status["messeage"] = "LOGIN THÀNH CÔNG";
-                                this.socket.Emit("login-pc-status", status);
-                                client.status = PCStatus.ONLINE;
+                                if (OpenComputerByAccount(mac, userName, acountDetail.accountDetails[0].dBalance))
+                                {
+                                    var status = new JObject();
+                                    status["idUser"] = acountDetail.accountDetails[0].strId;
+                                    status["userName"] = userName;
+                                    status["mac"] = mac;
+                                    status["status"] = "SUCCESS";
+                                    status["messeage"] = "LOGIN THÀNH CÔNG";
+                                    this.socket.Emit("login-pc-status", JsonConvert.SerializeObject(status));
+                                    client.status = PCStatus.ONLINE;
+                                    return;
+                                }
                             }
-                            else
                             {
                                 var status = new JObject();
                                 status["idUser"] = acountDetail.accountDetails[0].strId;
@@ -126,28 +131,75 @@ namespace ProGM.Management
                                 status["mac"] = mac;
                                 status["status"] = "ERROR";
                                 status["messeage"] = "Login thất bại";
-                                this.socket.Emit("login-pc-status", status);
+                                this.socket.Emit("login-pc-status", JsonConvert.SerializeObject(status));
                             }
-                            
                         }
-                       
-
                     }
                 }
-
-
-               
             });
-
-            this.socket.On("register-pc-status", (data) =>
+            this.socket.On("chat-receive", (data) =>
             {
-                Console.WriteLine("register-pc-status: " + data);
-            });
+                JObject meseage = JObject.Parse(data.ToString());
 
-            this.socket.On("registration-user-status", (data) =>
-            {
-                resterUserOk = true;
-                Console.WriteLine("registration-user-status: " + data);
+                string mac = meseage.GetValue("mac").ToString();
+                string idUserSend = meseage.GetValue("idUserSend").ToString();
+                string userSend = meseage.GetValue("userSend").ToString();
+                string idUserReceive = meseage.GetValue("idUserReceive").ToString();
+                string userReceive = meseage.GetValue("userReceive").ToString();
+                string content = meseage.GetValue("content").ToString();
+
+                mobileChat objCheck = mobileChats.Where(n => n.IdUser == idUserSend).FirstOrDefault();
+                if (objCheck == null)
+                {
+                    objCheck = new mobileChat();
+                    objCheck.FormChat = new frmChat(idUserSend, this, true);
+                    objCheck.FormChat.Text = userSend + " (mobile)";
+                    #region save messeage history
+                    Messeage ms = new Messeage();
+                    ms.idUserSend = idUserSend;
+                    ms.userSend = userSend;
+                    ms.idUserReceive = this.ManagerLoginId;
+                    ms.userReceive = this.ManagerLoginName;
+                    ms.content = content;
+                    ms.mac = mac;
+                    objCheck.mac = mac;
+                    objCheck.IdUser = idUserSend;
+                    objCheck.UserName = userSend;
+                    objCheck.Messeages.Add(ms);
+                    mobileChats.Add(objCheck);
+                    #endregion
+                }
+                else
+                {
+                    if (objCheck.FormChat == null || objCheck.FormChat.IsDisposed)
+                    {
+                        objCheck.FormChat = new frmChat(idUserSend, this, true);
+                        objCheck.FormChat.Text = userSend + " (mobile)";
+                        #region save messeage history
+                        Messeage ms = new Messeage();
+                        ms.idUserSend = idUserSend;
+                        ms.userSend = userSend;
+                        ms.idUserReceive = this.ManagerLoginId;
+                        ms.userReceive = this.ManagerLoginName;
+                        ms.content = content;
+                        ms.mac = mac;
+                        objCheck.mac = mac;
+                        objCheck.Messeages.Add(ms);
+                        #endregion
+
+
+                    }
+
+
+                }
+                this.Invoke((Action)delegate
+                {
+                    objCheck.FormChat.UpdateHistory("==> " + userSend + " : " + content);
+                    objCheck.FormChat.Show();
+                });
+
+
+                Console.WriteLine("chat-receive: " + data);
             });
         }
         private IO.Options CreateOptions()
@@ -163,13 +215,34 @@ namespace ProGM.Management
             op.Multiplex = true;
             return op;
         }
+
+        public void ChatMobile(string idClientMoBile, string messeage)
+        {
+            var clientMoblie = mobileChats.Where(n => n.IdUser == idClientMoBile).FirstOrDefault();
+            if (clientMoblie != null)
+            {
+                var obj_messeage = new Messeage();
+                Messeage ms = new Messeage();
+                ms.idUserSend = this.ManagerLoginId;
+                ms.userSend = this.ManagerLoginName;
+                ms.idUserReceive = clientMoblie.IdUser;
+                ms.userReceive = clientMoblie.UserName;
+                ms.content = messeage;
+                ms.mac = PCExtention.GetMacId();
+                this.Invoke((Action)delegate
+                {
+                    clientMoblie.FormChat.UpdateHistory("==> Bạn: " + messeage);
+                });
+                string _mess = JsonConvert.SerializeObject(ms);
+                this.socket.Emit("chat-send", _mess);
+            }
+        }
         private void ReadyClient(string mac)
         {
-            while (!resterUserOk) { } ;
-
+            while (!resterUserOk) { };
             var pc = new JObject();
             pc["mac"] = mac;
-            this.socket.Emit("registration-pc", pc);
+            this.socket.Emit("registration-pc", JsonConvert.SerializeObject(pc));
         }
 
         private void OfflineClient(string mac)
@@ -237,7 +310,7 @@ namespace ProGM.Management
                         var _client = clients.Where(c => c.macaddress == obj.macAddressFrom).SingleOrDefault();
                         if (_client != null)
                         {
-                            if (_client.frmChat == null || (_client.frmChat != null && _client.frmChat.Disposing))
+                            if (_client.frmChat == null || (_client.frmChat != null && _client.frmChat.IsDisposed))
                             {
                                 _client.frmChat = new frmChat(ipaddress, this);
 
@@ -262,6 +335,7 @@ namespace ProGM.Management
 
                             if (loginResponse.result[0].status == "SUCCESS")
                             {
+
 
 
                                 #region đăng nhập thánh  công
@@ -315,10 +389,50 @@ namespace ProGM.Management
                 if (!string.IsNullOrEmpty(_clientItem.userLogin))
                 {
                     //tiền còn lại
-                    _clientItem.accountBlance = _clientItem.accountBlance - (_clientItem.Price / 60 * 2);
-                    //thời gian còn lại
-                    var thoigianconlai = _clientItem.accountBlance / _clientItem.Price * 60;
-                    if (thoigianconlai <= 0)
+                    var amount = (_clientItem.Price / 60 * 2);
+
+                    _clientItem.accountBlance = _clientItem.accountBlance - amount;
+
+                    // số dư khả dụng cho lần trừ tiếp theo
+                    if (_clientItem.accountBlance >= amount)
+                    {
+                        var thoigianconlai = _clientItem.accountBlance / _clientItem.Price * 60;
+                        if (RestshapCommand.walletWithdrawal(_clientItem.IdUser, ManagerLoginId, amount, "Phí sử dụng dịch vụ"))
+                        {
+                            if (thoigianconlai <= 0)
+                            {
+                                _clientItem.timerStart = DateTime.MinValue;
+                                _clientItem.userLogin = "";
+                                _clientItem.accountBlance = 0;
+                                _clientItem.timeUsed = 0;
+                                _clientItem.frmChat = null;
+                                _clientItem.status = 1;
+                                tt.Enabled = false;
+                                tt.Dispose();
+                                lsTimerPay.Remove(ipaddress);
+                                //hiển thị tiền ở client
+                                SocketReceivedData ms = new SocketReceivedData();
+                                ms.type = SocketCommandType.OUT_OF_MONEY;
+                                this.asyncSocketListener.Send(ipaddress, JsonConvert.SerializeObject(ms), false);
+                                this.userTinhTrang.UpdateStatusPC(_clientItem.macaddress, 1, "00:00:00");
+                            }
+                            else
+                            {
+                                SocketReceivedData ms = new SocketReceivedData();
+                                ms.username = _clientItem.userLogin;
+                                ms.accountBlance = _clientItem.accountBlance;
+                                ms.timeStart = _clientItem.timerStart;
+                                ms.timeUpdate = DateTime.Now;
+                                ms.timeUsed = _clientItem.timeUsed;
+                                ms.timeRemaining = Decimal.ToInt32(thoigianconlai);
+                                ms.price = _clientItem.Price;
+                                ms.type = SocketCommandType.UPDATE_INFO_USED;
+                                this.asyncSocketListener.Send(ipaddress, JsonConvert.SerializeObject(ms), false);
+                            }
+                        }
+
+                    }
+                    else
                     {
                         _clientItem.timerStart = DateTime.MinValue;
                         _clientItem.userLogin = "";
@@ -335,19 +449,8 @@ namespace ProGM.Management
                         this.asyncSocketListener.Send(ipaddress, JsonConvert.SerializeObject(ms), false);
                         this.userTinhTrang.UpdateStatusPC(_clientItem.macaddress, 1, "00:00:00");
                     }
-                    else
-                    {
-                        SocketReceivedData ms = new SocketReceivedData();
-                        ms.username = _clientItem.userLogin;
-                        ms.accountBlance = _clientItem.accountBlance;
-                        ms.timeStart = _clientItem.timerStart;
-                        ms.timeUpdate = DateTime.Now;
-                        ms.timeUsed = _clientItem.timeUsed;
-                        ms.timeRemaining = Decimal.ToInt32(thoigianconlai);
-                        ms.price = _clientItem.Price;
-                        ms.type = SocketCommandType.UPDATE_INFO_USED;
-                        this.asyncSocketListener.Send(ipaddress, JsonConvert.SerializeObject(ms), false);
-                    }
+                    //thời gian còn lại
+
                 }
                 //trường hợp mở máy
                 else
@@ -533,26 +636,39 @@ namespace ProGM.Management
         {
             SocketReceivedData ms = new SocketReceivedData();
             var _clientsk = clients.Where(c => c.macaddress == mac).SingleOrDefault();
-            if (_clientsk != null && _clientsk.status == PCStatus.READY)
+            var computer = RestshapCommand.ComputerDetail(mac);
+            var amount = (computer.computeDetail[0].iPrice / 60 * 2);
+            if (_clientsk != null && _clientsk.status == PCStatus.READY )
             {
-                _clientsk.userLogin = userName;
-                _clientsk.timerStart = DateTime.Now;
-                _clientsk.accountBlance = dBalance;
-                _clientsk.macaddress = mac;
-                _clientsk.status = 2;
-                _clientsk.Price = decimal.Parse(this.userTinhTrang.datasource.Where(n => n.MacID == mac).SingleOrDefault().Price);
-                CreateJobPay(_clientsk.ipaddress, true);
-                var thoigianconlai = _clientsk.accountBlance / _clientsk.Price * 60;
-                ms.accountBlance = _clientsk.accountBlance;
-                ms.timeStart = _clientsk.timerStart;
-                ms.timeUpdate = DateTime.Now;
-                ms.timeUsed = _clientsk.timeUsed;
-                ms.timeRemaining = Decimal.ToInt32(thoigianconlai);
-                ms.price = _clientsk.Price;
-                ms.type = SocketCommandType.LOGIN_SUCCESS;
-                this.asyncSocketListener.Send(_clientsk.ipaddress, JsonConvert.SerializeObject(ms), false);
-                this.userTinhTrang.UpdateStatusPC(mac, 2, string.Format("{0:HH:mm:ss}", _clientsk.timerStart));
-                return true;
+                // tièn trong tài khoản  khả dụng
+                if ((computer.computeDetail[0].iPrice / 60 * 2) < dBalance)
+                {
+                    _clientsk.userLogin = userName;
+                    _clientsk.timerStart = DateTime.Now;
+                    _clientsk.accountBlance = dBalance;
+                    _clientsk.macaddress = mac;
+                    _clientsk.status = 2;
+                    _clientsk.Price = decimal.Parse(this.userTinhTrang.datasource.Where(n => n.MacID == mac).SingleOrDefault().Price);
+                    CreateJobPay(_clientsk.ipaddress, true);
+                    var thoigianconlai = _clientsk.accountBlance / _clientsk.Price * 60;
+                    ms.accountBlance = _clientsk.accountBlance;
+                    ms.timeStart = _clientsk.timerStart;
+                    ms.timeUpdate = DateTime.Now;
+                    ms.timeUsed = _clientsk.timeUsed;
+                    ms.timeRemaining = Decimal.ToInt32(thoigianconlai);
+                    ms.price = _clientsk.Price;
+                    ms.type = SocketCommandType.LOGIN_SUCCESS;
+                    this.asyncSocketListener.Send(_clientsk.ipaddress, JsonConvert.SerializeObject(ms), false);
+                    this.userTinhTrang.UpdateStatusPC(mac, 2, string.Format("{0:HH:mm:ss}", _clientsk.timerStart));
+                    return true;
+                }
+                else
+                {
+                    ms.type = SocketCommandType.LOGIN_FALSED;
+                    ms.msg = "Tài khoản không đủ vui lòng nạp thêm để xử dụng dịch vụ";
+                    this.asyncSocketListener.Send(_clientsk.ipaddress, JsonConvert.SerializeObject(ms), false);
+                }
+              
             }
             return false;
         }
@@ -569,6 +685,7 @@ namespace ProGM.Management
         public string macaddress { set; get; }
         public frmChat frmChat { set; get; }
         public DateTime timerStart { set; get; }
+        public string IdUser { set; get; }
         public string userLogin { set; get; }
         public decimal accountBlance { set; get; }
         public decimal Price { set; get; }
@@ -576,9 +693,17 @@ namespace ProGM.Management
         public int status { set; get; }
     }
 
-    public class UserResgiter
+    public class mobileChat
     {
-        public string idUser { set; get; }
-        public string userName { set; get; }
+        public mobileChat()
+        {
+            this.Messeages = new List<Messeage>();
+        }
+        public frmChat FormChat { set; get; }
+        public string IdUser { set; get; }
+        public string UserName { set; get; }
+        public string mac { set; get; }
+
+        public List<Messeage> Messeages { set; get; }
     }
 }

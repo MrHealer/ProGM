@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using ProGM.Business.Model;
 using RestSharp;
 using System;
@@ -152,6 +153,88 @@ namespace ProGM.Business.ApiBusiness
 
             }
             return null;
+        }
+
+        public static ResonseWalletDetail walletDetail(string idUser)
+        {
+            var client = new RestClient(url+"?key=walletDetail&accountId="+ idUser);
+            client.Timeout = -1;
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Authorization", "Basic d2ViOjEyMw==");
+            try
+            {
+                IRestResponse response = client.Execute(request);
+                if (!string.IsNullOrEmpty(response.Content))
+                {
+                    return JsonConvert.DeserializeObject<ResonseWalletDetail>(response.Content);
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+            return null;
+        }
+        /// <summary>
+        /// Hàm trừ tiền
+        /// </summary>
+        /// <param name="idUser"></param>
+        /// <param name="idManager"></param>
+        /// <param name="amount"></param>
+        /// <param name="comment"></param>
+        /// <returns></returns>
+        public static bool walletWithdrawal(string idUser,string idManager,decimal amount, string comment)
+        {
+
+            var client = new RestClient(url);
+            client.Timeout = -1;
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("Authorization", "Basic d2ViOjEyMw==");
+            request.AddHeader("Content-Type", "multipart/form-data; boundary=--------------------------716141854746053963220112");
+            request.AlwaysMultipartFormData = true;
+            request.AddParameter("key", "walletWithdrawal");
+            request.AddParameter("amount", amount);
+            request.AddParameter("comment", comment);
+            request.AddParameter("walletId", walletDetail(idUser).walletDetail[0].strId);
+            request.AddParameter("serviceId", "c4cc7bb4-2638-11ea-b536-005056b97a5d");
+            request.AddParameter("cashierId", idManager);
+            IRestResponse response = client.Execute(request);
+            var status = JObject.FromObject(response.Content);
+            if (status["result"].Equals("SUCCESS"))
+            {
+                return true;
+            }
+            return false;
+        }
+        /// <summary>
+        /// Hàm nạp tiền
+        /// </summary>
+        /// <param name="idUser"></param>
+        /// <param name="idManager"></param>
+        /// <param name="amount"></param>
+        /// <param name="comment"></param>
+        /// <returns></returns>
+        public static bool walletDeposit(string idUser, string idManager, decimal amount, string comment)
+        {
+            var client = new RestClient("http://40.74.77.139/api/");
+            client.Timeout = -1;
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("Authorization", "Basic d2ViOjEyMw==");
+            request.AddHeader("Content-Type", "multipart/form-data; boundary=--------------------------017743957999191953426396");
+            request.AlwaysMultipartFormData = true;
+            request.AddParameter("key", "walletDeposit");
+            request.AddParameter("amount", amount);
+            request.AddParameter("comment", comment);
+            request.AddParameter("walletId", walletDetail(idUser).walletDetail[0].strId);
+            request.AddParameter("serviceId", "d06bf8fe-2638-11ea-b536-005056b97a5d");
+            request.AddParameter("cashierId", idManager);
+            IRestResponse response = client.Execute(request);
+            var status = JObject.FromObject(response.Content);
+            if (status["result"].Equals("SUCCESS"))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

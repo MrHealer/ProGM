@@ -238,7 +238,15 @@ namespace ProGM.Client
                     #region LOGIN_FALSED
                     case SocketCommandType.LOGIN_FALSED:
                         MessageBox.Show(obj.msg, "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
+                        if (this.frmDangNhap.btnLogin.InvokeRequired)
+                        {
+                            this.frmDangNhap.btnLogin.Invoke((Action)delegate { this.frmDangNhap.btnLogin.Enabled = true; });
+                        }
+                        else
+                        {
+                            this.frmDangNhap.btnLogin.Enabled = true;
+                        }
+                       
                         break;
                     #endregion
 

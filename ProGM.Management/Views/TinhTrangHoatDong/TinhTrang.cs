@@ -192,6 +192,7 @@ namespace ProGM.Management.Views.TinhTrangHoatDong
                     timerPay.Value.Dispose();
                     this.app_controller.lsTimerPay.Remove(client.ipaddress);
                 }
+                client.status = PCStatus.READY;
                 SocketReceivedData ms = new SocketReceivedData();
                 ms.type = SocketCommandType.CLOSECLIENT;
                 this.app_controller.asyncSocketListener.Send(client.ipaddress, JsonConvert.SerializeObject(ms), false);
