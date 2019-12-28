@@ -143,7 +143,18 @@ namespace ProGM.Management.Views.TinhTrangHoatDong
 
         private void menuShowChat_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
-            var id = tileView1.GetFocusedRowCellValue("MacID");
+            var mac = tileView1.GetFocusedRowCellValue("MacID");
+            var client = this.app_controller.clients.Where(n => n.macaddress.Equals(mac)).SingleOrDefault();
+            if (client != null )
+            {
+                if (client.frmChat == null || client.frmChat.IsDisposed)
+                {
+                    client.frmChat = new Chat.frmChat(client.ipaddress,this.app_controller);
+                    client.frmChat.Name = client.macaddress;
+                }
+
+                client.frmChat.Show();
+            }
         }
 
 

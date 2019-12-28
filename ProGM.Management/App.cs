@@ -56,7 +56,7 @@ namespace ProGM.Management
 
         }
         #region socket.io Server
-
+        bool resterUserOk = false;
         public void ConnectSocketToServer()
         {
             this.socket = IO.Socket("http://40.74.77.139:8888");
@@ -102,14 +102,35 @@ namespace ProGM.Management
                 {
                     if (acountDetail.accountDetails[0].iActive == 1)
                     {
-                        OpenComputerByAccount(mac, userName, acountDetail.accountDetails[0].dBalance);
+                        var client = this.clients.Where(n => n.macaddress == mac).SingleOrDefault();
+                        if (client!=null )
+                        {
+                            if (client.status == PCStatus.READY)
+                            {
+                                OpenComputerByAccount(mac, userName, acountDetail.accountDetails[0].dBalance);
+
+                                var status = new JObject();
+                                status["idUser"] = acountDetail.accountDetails[0].strId;
+                                status["userName"] = userName;
+                                status["mac"] = mac;
+                                status["status"] = "SUCCESS";
+                                status["messeage"] = "LOGIN THÀNH CÔNG";
+                                this.socket.Emit("login-pc-status", status);
+                                client.status = PCStatus.ONLINE;
+                            }
+                            else
+                            {
+                                var status = new JObject();
+                                status["idUser"] = acountDetail.accountDetails[0].strId;
+                                status["userName"] = userName;
+                                status["mac"] = mac;
+                                status["status"] = "ERROR";
+                                status["messeage"] = "Login thất bại";
+                                this.socket.Emit("login-pc-status", status);
+                            }
+                            
+                        }
                        
-                        var status = new JObject();
-                        status["idUser"] = acountDetail.accountDetails[0].strId;
-                        status["userName"] = userName;
-                        status["mac"] = mac;
-                        status["status"] = PCStatus.ONLINE;
-                        this.socket.Emit("login-pc-status", status);
 
                     }
                 }
@@ -125,6 +146,7 @@ namespace ProGM.Management
 
             this.socket.On("registration-user-status", (data) =>
             {
+                resterUserOk = true;
                 Console.WriteLine("registration-user-status: " + data);
             });
         }
@@ -143,6 +165,8 @@ namespace ProGM.Management
         }
         private void ReadyClient(string mac)
         {
+            while (!resterUserOk) { } ;
+
             var pc = new JObject();
             pc["mac"] = mac;
             this.socket.Emit("registration-pc", pc);
@@ -242,31 +266,6 @@ namespace ProGM.Management
 
                                 #region đăng nhập thánh  công
                                 OpenComputerByAccount(obj.macAddressFrom, obj.username, loginResponse.result[0].dBalance);
-
-                                //var _clientsk = clients.Where(c => c.macaddress == obj.macAddressFrom).SingleOrDefault();
-                                //if (_clientsk != null)
-                                //{
-                                //    _clientsk.userLogin = obj.username;
-                                //    _clientsk.timerStart = DateTime.Now;
-                                //    _clientsk.accountBlance = loginResponse.result[0].dBalance;
-                                //    _clientsk.accountBlance = 10000;
-                                //    _clientsk.macaddress = obj.macAddressFrom;
-                                //    _clientsk.Price = decimal.Parse(this.userTinhTrang.datasource.Where(n => n.MacID == obj.macAddressFrom).SingleOrDefault().Price);
-                                //    CreateJobPay(id, true);
-                                //    var thoigianconlai = _clientsk.accountBlance / _clientsk.Price * 60;
-                                //    ms.accountBlance = _clientsk.accountBlance;
-                                //    ms.timeStart = _clientsk.timerStart;
-                                //    ms.timeUpdate = DateTime.Now;
-                                //    ms.timeUsed = _clientsk.timeUsed;
-                                //    ms.timeRemaining = Decimal.ToInt32(thoigianconlai);
-                                //    ms.price = _clientsk.Price;
-                                //    ms.type = SocketCommandType.LOGIN_SUCCESS;
-                                //    this.userTinhTrang.UpdateStatusPC(obj.macAddressFrom, 2, string.Format("{0:HH:mm:ss}", _clientsk.timerStart));
-
-                                //}
-
-
-
                                 #endregion
 
                             }
@@ -310,12 +309,14 @@ namespace ProGM.Management
             var _clientItem = clients.Where(n => n.ipaddress == ipaddress).FirstOrDefault();
             if (_clientItem != null && _clientItem.status == PCStatus.ONLINE)
             {
+                //tăng thời gian len 2 phút
                 _clientItem.timeUsed += 2;
-
                 // trường hợp đăng nhập bằng tài khoản
                 if (!string.IsNullOrEmpty(_clientItem.userLogin))
                 {
+                    //tiền còn lại
                     _clientItem.accountBlance = _clientItem.accountBlance - (_clientItem.Price / 60 * 2);
+                    //thời gian còn lại
                     var thoigianconlai = _clientItem.accountBlance / _clientItem.Price * 60;
                     if (thoigianconlai <= 0)
                     {
@@ -336,7 +337,6 @@ namespace ProGM.Management
                     }
                     else
                     {
-
                         SocketReceivedData ms = new SocketReceivedData();
                         ms.username = _clientItem.userLogin;
                         ms.accountBlance = _clientItem.accountBlance;
@@ -352,7 +352,7 @@ namespace ProGM.Management
                 //trường hợp mở máy
                 else
                 {
-
+                    // reset thông tin cũ 
                     SocketReceivedData ms = new SocketReceivedData();
                     ms.msgFrom = "SERVER";
                     ms.timeStart = _clientItem.timerStart;
@@ -362,6 +362,10 @@ namespace ProGM.Management
                     ms.type = SocketCommandType.UPDATE_INFO_USED;
                     this.asyncSocketListener.Send(ipaddress, JsonConvert.SerializeObject(ms), false);
                 }
+            }
+            else
+            {
+                tt.Enabled = false;
             }
         }
         #endregion
@@ -512,7 +516,7 @@ namespace ProGM.Management
         {
             Timer timerpay = new Timer();
             timerpay.Elapsed += (sender, eventArgs) => Timerpay_Tick(sender, eventArgs, ipaddress);
-            timerpay.Interval = 10000;
+            timerpay.Interval = 120000;
             timerpay.Enabled = true;
             lsTimerPay.Add(ipaddress, timerpay);
         }

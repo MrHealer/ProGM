@@ -94,20 +94,20 @@ namespace ProGM.Business.SocketBusiness
 
                 lock (this.clients)
                 {
-                   // var id = !this.clients.Any() ? 1 : this.clients.Keys.Max() + 1;
-                    var socketclient = (Socket)result.AsyncState;
-                    string IP = ((IPEndPoint)socketclient.LocalEndPoint).Address.ToString();
+                    var socket = ((Socket)result.AsyncState).EndAccept(result);
+
+                    string IP = ((IPEndPoint)socket.RemoteEndPoint).Address.ToString();
                     var checkExit = this.clients.Where(n => n.Key == IP).SingleOrDefault();
                     if (this.clients.ContainsKey(IP))
                     {
                         this.clients[IP].Listener.Close();
                         this.clients[IP].Listener.Dispose();
-                        state = new StateObject(((Socket)result.AsyncState).EndAccept(result), IP);
+                        state = new StateObject(socket, IP);
                         this.clients[IP] = state;
                     }
                     else
                     {
-                        state = new StateObject(((Socket)result.AsyncState).EndAccept(result), IP);
+                        state = new StateObject(socket, IP);
                         this.clients.Add(IP, state);
                     }
                     Console.WriteLine("==> Client connected. IP  " + IP);
