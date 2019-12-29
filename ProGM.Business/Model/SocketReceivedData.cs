@@ -14,6 +14,7 @@ namespace ProGM.Business.Model
         public string type { get; set; }
         public string macAddressFrom { get; set; }
         public string username { get; set; }
+        public string idUser { get; set; }
         public string password { get; set; }
 
         public decimal accountBlance { get; set; }

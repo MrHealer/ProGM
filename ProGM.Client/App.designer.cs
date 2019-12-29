@@ -56,7 +56,7 @@
             this.timerWarning = new System.Windows.Forms.Timer(this.components);
             this.behaviorManager1 = new DevExpress.Utils.Behaviors.BehaviorManager(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
-            this.labelControl8 = new DevExpress.XtraEditors.LabelControl();
+            this.lbComputerName = new DevExpress.XtraEditors.LabelControl();
             this.btnClose = new DevExpress.XtraEditors.SimpleButton();
             this.lbConnectStatus = new System.Windows.Forms.Label();
             this.btnLogout = new DevExpress.XtraEditors.SimpleButton();
@@ -312,7 +312,7 @@
             // 
             this.panel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.panel1.Controls.Add(this.labelControl8);
+            this.panel1.Controls.Add(this.lbComputerName);
             this.panel1.Controls.Add(this.btnClose);
             this.panel1.Controls.Add(this.lbConnectStatus);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -321,18 +321,18 @@
             this.panel1.Size = new System.Drawing.Size(323, 31);
             this.panel1.TabIndex = 17;
             // 
-            // labelControl8
+            // lbComputerName
             // 
-            this.labelControl8.Appearance.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelControl8.Appearance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            this.labelControl8.Appearance.Options.UseFont = true;
-            this.labelControl8.Appearance.Options.UseForeColor = true;
-            this.labelControl8.Location = new System.Drawing.Point(9, 7);
-            this.labelControl8.Margin = new System.Windows.Forms.Padding(4);
-            this.labelControl8.Name = "labelControl8";
-            this.labelControl8.Size = new System.Drawing.Size(37, 17);
-            this.labelControl8.TabIndex = 14;
-            this.labelControl8.Text = "VIP 1";
+            this.lbComputerName.Appearance.Font = new System.Drawing.Font("Times New Roman", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbComputerName.Appearance.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.lbComputerName.Appearance.Options.UseFont = true;
+            this.lbComputerName.Appearance.Options.UseForeColor = true;
+            this.lbComputerName.Location = new System.Drawing.Point(9, 7);
+            this.lbComputerName.Margin = new System.Windows.Forms.Padding(4);
+            this.lbComputerName.Name = "lbComputerName";
+            this.lbComputerName.Size = new System.Drawing.Size(37, 17);
+            this.lbComputerName.TabIndex = 14;
+            this.lbComputerName.Text = "VIP 1";
             // 
             // btnClose
             // 
@@ -534,7 +534,7 @@
         private System.Windows.Forms.Timer timerWarning;
         private DevExpress.Utils.Behaviors.BehaviorManager behaviorManager1;
         private System.Windows.Forms.Panel panel1;
-        private DevExpress.XtraEditors.LabelControl labelControl8;
+        private DevExpress.XtraEditors.LabelControl lbComputerName;
         private DevExpress.XtraEditors.SimpleButton btnClose;
         private System.Windows.Forms.Label lbConnectStatus;
         private DevExpress.XtraEditors.PictureEdit pictureEdit2;

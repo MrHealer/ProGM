@@ -679,11 +679,13 @@ namespace ProGM.Management
                     CreateJobPay(_clientsk.ipaddress, true);
                     var thoigianconlai = _clientsk.accountBlance / _clientsk.Price * 60;
                     ms.accountBlance = _clientsk.accountBlance;
+                   
                     ms.timeStart = _clientsk.timerStart;
                     ms.timeUpdate = DateTime.Now;
                     ms.timeUsed = _clientsk.timeUsed;
                     ms.timeRemaining = Decimal.ToInt32(thoigianconlai);
                     ms.price = _clientsk.Price;
+                    ms.idUser = _clientsk.IdUser;
                     ms.type = SocketCommandType.LOGIN_SUCCESS;
                     this.asyncSocketListener.Send(_clientsk.ipaddress, JsonConvert.SerializeObject(ms), false);
                     this.userTinhTrang.UpdateStatusPC(mac, 2, string.Format("{0:HH:mm:ss}", _clientsk.timerStart));

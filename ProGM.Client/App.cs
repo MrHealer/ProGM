@@ -38,6 +38,9 @@ namespace ProGM.Client
         Thread threadListen;
 
         public string ManagerPcIP = "";
+
+        string IdUserLogin = "";
+
         public App()
         {
             string mac = PCExtention.GetMacId();
@@ -48,7 +51,7 @@ namespace ProGM.Client
                 this.ComputerDetail = JsonConvert.SerializeObject(detail);
                 this.ManagerPcIP = detail.computeDetail[0].strManagerPcIP;
                 this.ComputerName = detail.computeDetail[0].strName;
-                this.Text = ComputerName;
+                lbComputerName.Text = ComputerName;
             }
 
             InitializeComponent();
@@ -244,8 +247,14 @@ namespace ProGM.Client
 
                     #region LOGIN_SUCCESS
                     case SocketCommandType.LOGIN_SUCCESS:
+
+
                         this.Invoke((Action)delegate
                         {
+                            var UserDetail = RestshapCommand.AccountDetail(obj.idUser).accountDetails[0];
+                            lbUserName.Text = UserDetail.strFullName + "(" + UserDetail.strName + ")";
+                            this.IdUserLogin = UserDetail.strId;
+
                             lbAccountBlance.Text = FormatExtention.Money(obj.accountBlance.ToString());
                             lbTimeStart.Text = obj.timeStart.ToString("HH:mm:ss");
                             lbTimeUser.Text = FormatExtention.FormartMinute(obj.timeUsed);
