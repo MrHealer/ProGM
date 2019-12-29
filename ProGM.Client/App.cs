@@ -320,7 +320,7 @@ namespace ProGM.Client
                                 if (obj.timeRemaining == 6 || obj.timeRemaining == 7)
                                 {
                                     timeWarning = obj.timeRemaining;
-                                    timerWarning.Interval = 5000;
+                                    timerWarning.Interval = 60000;
                                     timerWarning.Enabled = true;
                                 }
                             }

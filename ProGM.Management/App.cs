@@ -433,7 +433,7 @@ namespace ProGM.Management
                 if (!string.IsNullOrEmpty(_clientItem.userLogin))
                 {
                     //tiền còn lại
-                    var amount = (_clientItem.Price / 60 * 2);
+                    var amount = Math.Round(_clientItem.Price / 60 * 2);
 
                     _clientItem.accountBlance = _clientItem.accountBlance - amount;
 
@@ -443,6 +443,10 @@ namespace ProGM.Management
                         var thoigianconlai = _clientItem.accountBlance / _clientItem.Price * 60;
                         if (RestshapCommand.walletWithdrawal(_clientItem.IdUser, ManagerLoginId, amount, "Phí sử dụng dịch vụ"))
                         {
+                            var user = new JObject();
+                            user["idUser"] = _clientItem.IdUser;
+                            this.socket.Emit("charge-wallet-server", JsonConvert.SerializeObject(user));
+
                             if (thoigianconlai <= 0)
                             {
                                 _clientItem.timerStart = DateTime.MinValue;
