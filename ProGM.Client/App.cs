@@ -133,11 +133,32 @@ namespace ProGM.Client
 
 
                 regiterClientConnect(this.ManagerPcIP);
-                this.frmLock.Show();
+                if (this.frmLock.InvokeRequired)
+                {
+                    this.frmLock.Invoke((Action)delegate
+                    {
+                        this.frmLock.Show();
+                    });
+                }
+                else
+                {
+                    this.frmLock.Show();
+                }
+                
 
                 if (!this.frmDangNhap.Modal)
                 {
-                    this.frmDangNhap.ShowDialog();
+                    if (this.frmDangNhap.InvokeRequired)
+                    {
+                        this.frmDangNhap.Invoke((Action)delegate
+                        {
+                            this.frmDangNhap.ShowDialog();
+                        });
+                    }
+                    else
+                    {
+                        this.frmDangNhap.ShowDialog();
+                    }
                 }
 
             }
@@ -177,15 +198,24 @@ namespace ProGM.Client
                         this.Invoke((Action)delegate
                         {
                             this.Show();
-                            if (this.frmDangNhap != null)
-                            {
-                                this.frmDangNhap.Hide();
-                            }
-                            if (this.frmLock != null)
-                            {
-                                this.frmLock.Hide();
-                            }
                         });
+
+                        if (this.frmDangNhap.InvokeRequired)
+                        {
+                            frmDangNhap.Invoke((Action)delegate { this.frmDangNhap.Hide(); });
+                        }
+                        else
+                        {
+                            this.frmDangNhap.Hide();
+                        }
+                        if (this.frmLock.InvokeRequired)
+                        {
+                            frmLock.Invoke((Action)delegate { this.frmLock.Hide(); });
+                        }
+                        else
+                        {
+                            this.frmLock.Hide();
+                        }
                         break;
                     #endregion
 
@@ -203,7 +233,7 @@ namespace ProGM.Client
                             {
 
                                 this.frmDangNhap.btnLogin.Enabled = true;
-                                this.frmDangNhap.Show();
+                                this.frmDangNhap.ShowDialog();
                             }
 
                         });
@@ -301,7 +331,7 @@ namespace ProGM.Client
                             if (this.frmDangNhap != null)
                             {
                                 this.frmDangNhap.btnLogin.Enabled = true;
-                                this.frmDangNhap.Show();
+                                this.frmDangNhap.ShowDialog();
                             }
 
                         });

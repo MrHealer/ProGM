@@ -188,7 +188,7 @@ namespace ProGM.Client.View.Login
 
             // DisableTaskManager();
             // disable_Ctrl_Alt_Del();
-            // HookStart();
+            HookStart();
             var computer = JsonConvert.DeserializeObject<ResponseApiComputerDetail>(this.app_controller.ComputerDetail).computeDetail[0];
             var ob = new
             {
@@ -224,6 +224,8 @@ namespace ProGM.Client.View.Login
                 }
                 else
                 {
+
+                    HookStop();
                     SocketReceivedData ms = new SocketReceivedData();
                     ms.msgFrom = this.app_controller.ComputerName;
                     ms.msgTo = "SERVER";
@@ -240,7 +242,7 @@ namespace ProGM.Client.View.Login
             }
 
         }
-       
+
         #endregion
     }
 }
