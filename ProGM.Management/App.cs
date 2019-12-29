@@ -112,7 +112,7 @@ namespace ProGM.Management
                             if (client.status == PCStatus.READY)
                             {
                                 var userExit = this.clients.Where(n => n.IdUser == acountDetail.accountDetails[0].strId).SingleOrDefault();
-                                if (userExit==null)
+                                if (userExit == null)
                                 {
                                     if (OpenComputerByAccount(mac, userName, acountDetail.accountDetails[0].dBalance))
                                     {
@@ -229,6 +229,23 @@ namespace ProGM.Management
 
                 Console.WriteLine("chat-receive: " + data);
             });
+
+            this.socket.On("charge-wallet-notify", (data) =>
+            {
+                Console.WriteLine("charge-wallet-notify: " + data);
+                JObject jsonData = JObject.Parse(data.ToString());
+                string mac = jsonData.GetValue("idMac").ToString();
+                string idUser = jsonData.GetValue("idUser").ToString();
+                var clientOnline = this.clients.Where(n => n.IdUser == idUser).FirstOrDefault();
+                if (clientOnline != null && clientOnline.status == PCStatus.ONLINE)
+                {
+                    clientOnline.accountBlance = RestshapCommand.AccountDetail(idUser).accountDetails[0].dBalance;
+                    SocketReceivedData ms = new SocketReceivedData();
+                    ms.accountBlance = clientOnline.accountBlance;
+                    ms.type = SocketCommandType.UPDATE_TOTAL_MONEY;
+                    this.asyncSocketListener.Send(clientOnline.ipaddress, JsonConvert.SerializeObject(ms), false);
+                }
+            });
         }
         private IO.Options CreateOptions()
         {
@@ -277,7 +294,7 @@ namespace ProGM.Management
         {
             var pc = new JObject();
             pc["mac"] = mac;
-            this.socket.Emit("logout-pc",JsonConvert.SerializeObject(pc));
+            this.socket.Emit("logout-pc", JsonConvert.SerializeObject(pc));
         }
         #endregion
 
@@ -665,7 +682,7 @@ namespace ProGM.Management
             var _clientsk = clients.Where(c => c.macaddress == mac).SingleOrDefault();
             var computer = RestshapCommand.ComputerDetail(mac);
             var amount = (computer.computeDetail[0].iPrice / 60 * 2);
-            if (_clientsk != null && _clientsk.status == PCStatus.READY )
+            if (_clientsk != null && _clientsk.status == PCStatus.READY)
             {
                 // tièn trong tài khoản  khả dụng
                 if ((computer.computeDetail[0].iPrice / 60 * 2) < dBalance)
@@ -679,13 +696,14 @@ namespace ProGM.Management
                     CreateJobPay(_clientsk.ipaddress, true);
                     var thoigianconlai = _clientsk.accountBlance / _clientsk.Price * 60;
                     ms.accountBlance = _clientsk.accountBlance;
-                   
+
                     ms.timeStart = _clientsk.timerStart;
                     ms.timeUpdate = DateTime.Now;
                     ms.timeUsed = _clientsk.timeUsed;
                     ms.timeRemaining = Decimal.ToInt32(thoigianconlai);
                     ms.price = _clientsk.Price;
                     ms.idUser = _clientsk.IdUser;
+                    ms.username = _clientsk.userLogin;
                     ms.type = SocketCommandType.LOGIN_SUCCESS;
                     this.asyncSocketListener.Send(_clientsk.ipaddress, JsonConvert.SerializeObject(ms), false);
                     this.userTinhTrang.UpdateStatusPC(mac, 2, string.Format("{0:HH:mm:ss}", _clientsk.timerStart));
@@ -697,7 +715,7 @@ namespace ProGM.Management
                     ms.msg = "Tài khoản không đủ vui lòng nạp thêm để xử dụng dịch vụ";
                     this.asyncSocketListener.Send(_clientsk.ipaddress, JsonConvert.SerializeObject(ms), false);
                 }
-              
+
             }
             return false;
         }
