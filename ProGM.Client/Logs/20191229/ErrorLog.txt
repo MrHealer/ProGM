@@ -50,3 +50,13 @@
 03:38:59	192.168.1.28	regiterClientConnect	App..ctor => App.regiterClientConnect => Logger.WriteLog
 03:44:06		.ctor	Program.Main => App..ctor => Logger.WriteLog
 03:44:07	192.168.1.28	regiterClientConnect	App..ctor => App.regiterClientConnect => Logger.WriteLog
+11:01:19		.ctor	Program.Main => App..ctor => Logger.WriteLog
+11:02:12		.ctor	Program.Main => App..ctor => Logger.WriteLog
+11:03:36		.ctor	Program.Main => App..ctor => Logger.WriteLog
+11:08:46		.ctor	Program.Main => App..ctor => Logger.WriteLog
+11:09:37		.ctor	Program.Main => App..ctor => Logger.WriteLog
+11:17:14		.ctor	Program.Main => App..ctor => Logger.WriteLog
+11:17:43		.ctor	Program.Main => App..ctor => Logger.WriteLog
+11:18:25		.ctor	Program.Main => App..ctor => Logger.WriteLog
+11:25:31		.ctor	Program.Main => App..ctor => Logger.WriteLog
+11:39:19		.ctor	Program.Main => App..ctor => Logger.WriteLog

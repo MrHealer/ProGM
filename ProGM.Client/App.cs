@@ -40,6 +40,7 @@ namespace ProGM.Client
         public string ManagerPcIP = "";
 
         string IdUserLogin = "";
+        string AcountName = "";
 
         public App()
         {
@@ -51,7 +52,7 @@ namespace ProGM.Client
                 this.ComputerDetail = JsonConvert.SerializeObject(detail);
                 this.ManagerPcIP = detail.computeDetail[0].strManagerPcIP;
                 this.ComputerName = detail.computeDetail[0].strName;
-                lbComputerName.Text = ComputerName;
+             
             }
 
             InitializeComponent();
@@ -251,21 +252,29 @@ namespace ProGM.Client
 
                         this.Invoke((Action)delegate
                         {
-                            var UserDetail = RestshapCommand.AccountDetail(obj.idUser).accountDetails[0];
-                            lbUserName.Text = UserDetail.strFullName + "(" + UserDetail.strName + ")";
-                            this.IdUserLogin = UserDetail.strId;
+                            this.AcountName = obj.username;
+                            lbUserName.Text = this.AcountName;
+                            this.IdUserLogin = obj.idUser;
 
                             lbAccountBlance.Text = FormatExtention.Money(obj.accountBlance.ToString());
                             lbTimeStart.Text = obj.timeStart.ToString("HH:mm:ss");
                             lbTimeUser.Text = FormatExtention.FormartMinute(obj.timeUsed);
                             lbTimeRemaining.Text = FormatExtention.FormartMinute(obj.timeRemaining);
-                            lbPrice.Text = FormatExtention.Money(obj.price.ToString());lbUserName.Text = obj.username ?? this.ComputerName;
+                            lbPrice.Text = FormatExtention.Money(obj.price.ToString());
                             this.Show();
-                            if (this.frmDangNhap != null)
+                            if (this.frmDangNhap.InvokeRequired)
+                            {
+                                this.frmDangNhap.Invoke((Action)delegate { this.frmDangNhap.Hide(); });
+                            }
+                            else
                             {
                                 this.frmDangNhap.Hide();
                             }
-                            if (this.frmLock != null)
+                            if (this.frmLock.InvokeRequired)
+                            {
+                                this.frmLock.Invoke((Action)delegate { this.frmLock.Hide(); });
+                            }
+                            else
                             {
                                 this.frmLock.Hide();
                             }
@@ -366,7 +375,7 @@ namespace ProGM.Client
 
         private void App_Load(object sender, EventArgs e)
         {
-
+            this.lbComputerName.Text = ComputerName;
             this.frmLock = new frmLock(this);
             this.Hide();
             this.frmLock.Show();
