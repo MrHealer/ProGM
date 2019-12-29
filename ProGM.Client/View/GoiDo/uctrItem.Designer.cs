@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             this.panelItem = new System.Windows.Forms.Panel();
+            this.pictureEdit1 = new DevExpress.XtraEditors.PictureEdit();
             this.btnBuyNow = new System.Windows.Forms.Button();
+            this.btnAddToCart = new System.Windows.Forms.Button();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.lbPrice = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.lbName = new System.Windows.Forms.Label();
-            this.pictureEdit1 = new DevExpress.XtraEditors.PictureEdit();
-            this.btnAddToCart = new System.Windows.Forms.Button();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.ptImage = new System.Windows.Forms.PictureBox();
             this.panelItem.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureEdit1.Properties)).BeginInit();
@@ -61,6 +61,20 @@
             this.panelItem.Size = new System.Drawing.Size(200, 261);
             this.panelItem.TabIndex = 0;
             // 
+            // pictureEdit1
+            // 
+            this.pictureEdit1.EditValue = global::ProGM.Client.Properties.Resources.hot_burst;
+            this.pictureEdit1.Location = new System.Drawing.Point(-1, 0);
+            this.pictureEdit1.Name = "pictureEdit1";
+            this.pictureEdit1.Properties.Appearance.BackColor = System.Drawing.Color.Transparent;
+            this.pictureEdit1.Properties.Appearance.Options.UseBackColor = true;
+            this.pictureEdit1.Properties.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder;
+            this.pictureEdit1.Properties.ShowCameraMenuItem = DevExpress.XtraEditors.Controls.CameraMenuItemVisibility.Auto;
+            this.pictureEdit1.Properties.SizeMode = DevExpress.XtraEditors.Controls.PictureSizeMode.Stretch;
+            this.pictureEdit1.Size = new System.Drawing.Size(50, 44);
+            this.pictureEdit1.TabIndex = 9;
+            this.pictureEdit1.Visible = false;
+            // 
             // btnBuyNow
             // 
             this.btnBuyNow.BackColor = System.Drawing.Color.Red;
@@ -74,6 +88,33 @@
             this.btnBuyNow.Text = "Mua hàng";
             this.btnBuyNow.UseVisualStyleBackColor = false;
             this.btnBuyNow.Click += new System.EventHandler(this.btnBuyNow_Click);
+            // 
+            // btnAddToCart
+            // 
+            this.btnAddToCart.BackColor = System.Drawing.Color.Green;
+            this.btnAddToCart.FlatAppearance.BorderSize = 0;
+            this.btnAddToCart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAddToCart.ForeColor = System.Drawing.Color.White;
+            this.btnAddToCart.Image = global::ProGM.Client.Properties.Resources.cart_15_16;
+            this.btnAddToCart.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnAddToCart.Location = new System.Drawing.Point(7, 220);
+            this.btnAddToCart.Name = "btnAddToCart";
+            this.btnAddToCart.Size = new System.Drawing.Size(82, 30);
+            this.btnAddToCart.TabIndex = 7;
+            this.btnAddToCart.Text = "Giỏ hàng";
+            this.btnAddToCart.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btnAddToCart.UseVisualStyleBackColor = false;
+            this.btnAddToCart.Click += new System.EventHandler(this.btnAddToCart_Click);
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox2.Image = global::ProGM.Client.Properties.Resources.money;
+            this.pictureBox2.Location = new System.Drawing.Point(160, 192);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(31, 29);
+            this.pictureBox2.TabIndex = 6;
+            this.pictureBox2.TabStop = false;
             // 
             // lbPrice
             // 
@@ -114,51 +155,11 @@
             this.lbName.Text = "Ô long vị chanh";
             this.lbName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // pictureEdit1
-            // 
-            this.pictureEdit1.EditValue = global::ProGM.Client.Properties.Resources.hot_burst;
-            this.pictureEdit1.Location = new System.Drawing.Point(-1, 0);
-            this.pictureEdit1.Name = "pictureEdit1";
-            this.pictureEdit1.Properties.Appearance.BackColor = System.Drawing.Color.Transparent;
-            this.pictureEdit1.Properties.Appearance.Options.UseBackColor = true;
-            this.pictureEdit1.Properties.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder;
-            this.pictureEdit1.Properties.ShowCameraMenuItem = DevExpress.XtraEditors.Controls.CameraMenuItemVisibility.Auto;
-            this.pictureEdit1.Properties.SizeMode = DevExpress.XtraEditors.Controls.PictureSizeMode.Stretch;
-            this.pictureEdit1.Size = new System.Drawing.Size(50, 44);
-            this.pictureEdit1.TabIndex = 9;
-            // 
-            // btnAddToCart
-            // 
-            this.btnAddToCart.BackColor = System.Drawing.Color.Green;
-            this.btnAddToCart.FlatAppearance.BorderSize = 0;
-            this.btnAddToCart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnAddToCart.ForeColor = System.Drawing.Color.White;
-            this.btnAddToCart.Image = global::ProGM.Client.Properties.Resources.cart_15_16;
-            this.btnAddToCart.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnAddToCart.Location = new System.Drawing.Point(7, 220);
-            this.btnAddToCart.Name = "btnAddToCart";
-            this.btnAddToCart.Size = new System.Drawing.Size(82, 30);
-            this.btnAddToCart.TabIndex = 7;
-            this.btnAddToCart.Text = "Giỏ hàng";
-            this.btnAddToCart.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.btnAddToCart.UseVisualStyleBackColor = false;
-            this.btnAddToCart.Click += new System.EventHandler(this.btnAddToCart_Click);
-            // 
-            // pictureBox2
-            // 
-            this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox2.Image = global::ProGM.Client.Properties.Resources.money;
-            this.pictureBox2.Location = new System.Drawing.Point(160, 192);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(31, 29);
-            this.pictureBox2.TabIndex = 6;
-            this.pictureBox2.TabStop = false;
-            // 
             // ptImage
             // 
             this.ptImage.BackColor = System.Drawing.Color.Transparent;
             this.ptImage.Dock = System.Windows.Forms.DockStyle.Top;
-            this.ptImage.Image = global::ProGM.Client.Properties.Resources.QR_code;
+            this.ptImage.Image = global::ProGM.Client.Properties.Resources.spinner;
             this.ptImage.Location = new System.Drawing.Point(0, 0);
             this.ptImage.Name = "ptImage";
             this.ptImage.Size = new System.Drawing.Size(198, 164);

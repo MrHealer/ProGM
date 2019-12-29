@@ -12,8 +12,10 @@ namespace ProGM.Client.View.Custom
     public class ButtonCustom : System.Windows.Forms.Label
     {
         private CategoryItemCallback categoryItemCallback;
+        private object objectData;
 
         public CategoryItemCallback CategoryItemCallback { get => categoryItemCallback; set => categoryItemCallback = value; }
+        public object ObjectData { get => objectData; set => objectData = value; }
 
         public ButtonCustom()
         {
@@ -43,7 +45,8 @@ namespace ProGM.Client.View.Custom
         {
             base.OnClick(e);
             if(categoryItemCallback != null)
-                categoryItemCallback.onCategoryItem_Click(this.Text);
+                categoryItemCallback.onCategoryItem_Click(this.objectData);
         }
+
     }
 }

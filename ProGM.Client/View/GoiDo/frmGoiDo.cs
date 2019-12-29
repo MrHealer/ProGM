@@ -12,10 +12,10 @@ namespace ProGM.Client.View.GoiDo
 {
     public partial class frmGoiDo : DevExpress.XtraEditors.XtraForm
     {
-        public frmGoiDo()
+        public frmGoiDo(String companyId )
         {
             InitializeComponent();
-            uctrFood uctr = new uctrFood();
+            uctrFood uctr = new uctrFood(companyId);
             uctr.Dock = DockStyle.Fill;
             panel3.Controls.Add(uctr);
         }

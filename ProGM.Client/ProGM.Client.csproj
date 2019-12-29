@@ -222,6 +222,7 @@
     <Content Include="Resources\QR-code1.png" />
     <None Include="Resources\search-3-24.ico" />
     <None Include="Resources\star-8-24.ico" />
+    <None Include="Resources\spinner.gif" />
     <Content Include="Resources\us-01.png" />
     <None Include="Resources\user-image.png" />
     <None Include="Resources\user.ico" />

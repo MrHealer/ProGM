@@ -1,9 +1,5 @@
-﻿using ProGM.Client.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ProGM.Business.Model;
+using ProGM.Client.Model;
 
 namespace ProGM.Client.View.GoiDo
 {

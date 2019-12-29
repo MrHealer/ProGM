@@ -7,42 +7,87 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ProGM.Client.Model;
 using ProGM.Client.View.Custom;
+using ProGM.Business.Model;
+using ProGM.Business.ApiBusiness;
+using System.Net;
+using ProGM.Client.Model;
+using System.IO;
+using System.Threading;
 
 namespace ProGM.Client.View.GoiDo
 {
     public partial class uctrFood : UserControl, FoodItemCallback, CartItemCallback, CategoryItemCallback
     {
-        private List<Food> foods;
+        private List<Food> foods = new List<Food>();
         private List<Food> foodsInCart = new List<Food>();
-        private List<String> categorys;
+        private List<Productcategorylist> categorys;
         List<Food> fillterList = new List<Food>();
+        List<uctrItem> uctrFoodItems = new List<uctrItem>();
 
 
-        public uctrFood()
+
+        public uctrFood(String companyId)
         {
+            
             InitializeComponent();
             ////
-            fakeData();
+            loadData(companyId);
+            //fakeData();
             ////
-
             fillterList.AddRange(foods);
-            for(int i=0; i < foods.Count; i++)
-            {
-                uctrItem item = new uctrItem(foods[i]);
-                item.Visible = true;
-                item.Show();
-                item.SetCallback(this);
-                flpFoods.Controls.Add(item);
-                
-            }
-            flpFoods.Invalidate();
+            // load grid food item
+            loadFoodsView(foods);
             ////
-            foreach(String item in categorys)
+            loadCategory();
+        
+
+        }
+
+        private void loadData(String companyId)
+        {
+            //fix bug: Could not create SSL/TLS secure channel when load image
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            categorys = RestshapCommand.ListCategorys(companyId).productCategoryList.ToList();
+            List<Productlist> productlist = RestshapCommand.ListProducts().productList.ToList();
+
+           
+            foreach (Productlist item in productlist)
+            {
+                Food food = new Food(item);
+                //Stream stream = client.OpenRead(item.strThumbnail);
+                //Image image = Image.FromStream(stream);
+                food.ImageThumbnail = Image.FromFile("../../Resources/spinner.gif");
+                this.foods.Add(food);
+            }
+            new Thread(lazyLoadingFoodImage).Start();
+
+        }
+
+        private void lazyLoadingFoodImage()
+        {
+            WebClient client = new WebClient();
+
+            for (int i=0; i<this.foods.Count; i++)
+            {
+                Stream stream = client.OpenRead(foods[i].strThumbnail);
+                Image image = Image.FromStream(stream);
+                foods[i].ImageThumbnail = image;
+                flpFoods.Invoke((MethodInvoker)delegate
+                {
+                    // Running on the UI thread
+                    uctrFoodItems[i].updateImage(image);
+                });
+            }
+        }
+
+        private void loadCategory()
+        {
+            foreach (Productcategorylist item in categorys)
             {
                 ButtonCustom button = new ButtonCustom();
-                button.Text = item;
+                button.Text = item.strName;
                 button.CategoryItemCallback = this;
                 button.AutoSize = false;
                 button.Size = new Size(240, 35);
@@ -51,39 +96,15 @@ namespace ProGM.Client.View.GoiDo
                 flpCategorys.Controls.Add(button);
                 button.ForeColor = Color.White;
                 button.Font = new Font(button.Font.FontFamily, 12);
+                button.ObjectData = item;
             }
             flpCategorys.Invalidate();
-        
-
-        }
-
-        private void fakeData()
-        {
-            categorys = new List<string>();
-            categorys.Add("Đồ uống đóng chai");
-            categorys.Add("Thuốc lá");
-            categorys.Add("Đồ ăn");
-            categorys.Add("Đồ uống pha chế");
-            ////
-            foods = new List<Food>();
-            Random random = new Random();
-            for (int i=0; i<15; i++)
-            {
-                String ca = categorys[random.Next(4)];
-                int pri = random.Next(10000, 50000);
-                bool isHot = random.Next(2) == 0;
-                Food food = new Food(i.ToString(), ca+i, Image.FromFile("../../Resources/QR-code.png"), pri, ca, isHot);
-                foods.Add(food);
-            }
-            ///
-            
-           
         }
 
         public void buyNow(Food food)
         {
             //TODO
-            MessageBox.Show("Đã mua hàng", food.Name);
+            MessageBox.Show("Đã mua hàng", food.strName);
         }
 
         public void addToCart(Food food)
@@ -93,7 +114,7 @@ namespace ProGM.Client.View.GoiDo
             int totalAmount = 0;
             foreach (Food item in foodsInCart)
             {
-                totalAmount += item.Price;
+                totalAmount += item.iPrice;
             }
             lbTotalAmount.Text = addDotToAmount(totalAmount);
 
@@ -106,7 +127,7 @@ namespace ProGM.Client.View.GoiDo
             int totalAmount = 0;
             foreach (Food item in foodsInCart)
             {
-                totalAmount += item.Price;
+                totalAmount += item.iPrice;
             }
             lbTotalAmount.Text = addDotToAmount(totalAmount);
         }
@@ -141,15 +162,19 @@ namespace ProGM.Client.View.GoiDo
             lbTotalAmount.Text = "";
         }
 
-        public void onCategoryItem_Click(string category)
+        public void onCategoryItem_Click(object objData)
         {
-            fillterList.Clear();
-            foreach(Food item in foods)
+            if (objData is Productcategorylist)
             {
-                if (item.Category.Equals(category))
-                    fillterList.Add(item);
+                Productcategorylist category = (Productcategorylist)objData;
+                fillterList.Clear();
+                foreach (Food item in foods)
+                {
+                    if (item.strCategoryId.Equals(category.strId))
+                        fillterList.Add(item);
+                }
+                loadFoodsView(fillterList);
             }
-            loadFoodsView(fillterList);
         }
 
         private void buttonCustom2_Click(object sender, EventArgs e)
@@ -162,6 +187,7 @@ namespace ProGM.Client.View.GoiDo
         private void loadFoodsView(List<Food> listFood)
         {
             flpFoods.Controls.Clear();
+            uctrFoodItems.Clear();
             for (int i = 0; i < listFood.Count; i++)
             {
                 uctrItem item = new uctrItem(listFood[i]);
@@ -169,6 +195,7 @@ namespace ProGM.Client.View.GoiDo
                 item.Show();
                 item.SetCallback(this);
                 flpFoods.Controls.Add(item);
+                uctrFoodItems.Add(item);
             }
             flpFoods.Invalidate();
         }
@@ -176,7 +203,7 @@ namespace ProGM.Client.View.GoiDo
         private void button9_Click_1(object sender, EventArgs e)
         {
              
-            List<Food> softList = fillterList.OrderBy(o => o.Price).ToList();
+            List<Food> softList = fillterList.OrderBy(o => o.iPrice).ToList();
             loadFoodsView(softList);
 
 
@@ -187,7 +214,7 @@ namespace ProGM.Client.View.GoiDo
             List<Food> searchList = new List<Food>();
             foreach (Food item in fillterList)
             {
-                if (item.Name.Contains(btnSearch.Text))
+                if (item.strName.Contains(btnSearch.Text))
                     searchList.Add(item);
             }
             fillterList.Clear();
@@ -197,20 +224,23 @@ namespace ProGM.Client.View.GoiDo
 
         private void btnHotFood_Click(object sender, EventArgs e)
         {
-            List<Food> hotList = new List<Food>();
-            foreach (Food item in fillterList)
-            {
-                if (item.IsHot)
-                    hotList.Add(item);
-            }
-            fillterList.Clear();
-            fillterList.AddRange(hotList);
-            loadFoodsView(fillterList);
+            //List<Food> hotList = new List<Food>();
+            //foreach (Food item in fillterList)
+            //{
+            //    if (item.IsHot)
+            //        hotList.Add(item);
+            //}
+            //fillterList.Clear();
+            //fillterList.AddRange(hotList);
+            //loadFoodsView(fillterList);
         }
 
         private void btnBuyCart_Click(object sender, EventArgs e)
         {
             MessageBox.Show("Trong giỏ có "+foodsInCart.Count,"Đã mua hàng");
+            foodsInCart.Clear();
+            loadCartView();
+            lbTotalAmount.Text = "";
         }
     }
 }

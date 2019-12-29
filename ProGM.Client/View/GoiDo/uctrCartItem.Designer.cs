@@ -39,21 +39,21 @@
             this.lbName.ForeColor = System.Drawing.Color.White;
             this.lbName.Location = new System.Drawing.Point(0, 5);
             this.lbName.Name = "lbName";
-            this.lbName.Size = new System.Drawing.Size(178, 40);
+            this.lbName.Size = new System.Drawing.Size(156, 40);
             this.lbName.TabIndex = 0;
             this.lbName.Text = "Tên đồ ănTên đồ ăn";
             // 
             // lbPrice
             // 
-            this.lbPrice.AutoSize = true;
             this.lbPrice.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(216)))), ((int)(((byte)(216)))), ((int)(((byte)(216)))));
             this.lbPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbPrice.ForeColor = System.Drawing.Color.White;
-            this.lbPrice.Location = new System.Drawing.Point(180, 5);
+            this.lbPrice.Location = new System.Drawing.Point(159, 5);
             this.lbPrice.Name = "lbPrice";
-            this.lbPrice.Size = new System.Drawing.Size(30, 15);
+            this.lbPrice.Size = new System.Drawing.Size(51, 16);
             this.lbPrice.TabIndex = 1;
             this.lbPrice.Text = "12k";
+            this.lbPrice.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnDelete
             // 
@@ -78,7 +78,6 @@
             this.Name = "uctrCartItem";
             this.Size = new System.Drawing.Size(217, 50);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 

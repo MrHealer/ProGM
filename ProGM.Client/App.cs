@@ -408,7 +408,7 @@ namespace ProGM.Client
         {
             if (this.frmGoiDo == null || this.frmGoiDo.IsDisposed)
             {
-                this.frmGoiDo = new frmGoiDo();
+                this.frmGoiDo = new frmGoiDo("cf09c7b5-254e-11ea-b536-005056b97a5d");
 
             }
             this.frmGoiDo.Show();

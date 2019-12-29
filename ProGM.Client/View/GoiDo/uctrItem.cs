@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProGM.Client.Model;
+using ProGM.Business.Model;
+using System.Net;
 
 namespace ProGM.Client.View.GoiDo
 {
@@ -19,9 +21,9 @@ namespace ProGM.Client.View.GoiDo
         {
             InitializeComponent();
             this.food = food;
-            ptImage.Image = food.Image;
-            lbName.Text = food.Name;
-            String price = food.Price.ToString();
+            ptImage.Image = food.ImageThumbnail;
+            lbName.Text = food.strName;
+            String price = food.iPrice.ToString();
             if (price.Length > 3)
             {
                 price = price.Insert(price.Length - 3, ".");
@@ -29,10 +31,7 @@ namespace ProGM.Client.View.GoiDo
             lbPrice.Text = price;
             pictureEdit1.Parent = ptImage;
             pictureEdit1.BackColor = Color.Transparent;
-            if (!food.IsHot)
-            {
-                pictureEdit1.Visible = false;
-            }
+           
         }
         public void SetCallback(FoodItemCallback foodItemCallback)
         {
@@ -40,7 +39,7 @@ namespace ProGM.Client.View.GoiDo
         }
 
 
-        public Food Food { get => food; }
+        public Productlist Food { get => food; }
 
         private void btnBuyNow_Click(object sender, EventArgs e)
         {
@@ -50,6 +49,11 @@ namespace ProGM.Client.View.GoiDo
         private void btnAddToCart_Click(object sender, EventArgs e)
         {
             foodItemCallback.addToCart(food);
+        }
+        
+        public void updateImage(Image image)
+        {
+            ptImage.Image = image;
         }
     }
 }

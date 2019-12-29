@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProGM.Client.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace ProGM.Client.View.GoiDo
 {
     public interface CategoryItemCallback
     {
-        void onCategoryItem_Click(String category);
+        void onCategoryItem_Click(object obData);
     }
 }

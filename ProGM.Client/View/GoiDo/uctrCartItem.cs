@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ProGM.Client.Model;
+using ProGM.Business.Model;
 
 namespace ProGM.Client.View.GoiDo
 {
@@ -20,7 +21,19 @@ namespace ProGM.Client.View.GoiDo
         {
             InitializeComponent();
             this.food = food;
-            lbName.Text = food.Name;
+            lbName.Text = food.strName;
+            String price = (food.iPrice/(float)1000).ToString();
+            int lastDot = price.LastIndexOf('.');
+            if (lastDot > 0)
+            {
+                price = price.Substring(0, lastDot + 2) + "k";
+            }
+            else
+            {
+                price = price + "k";
+            }
+            
+            lbPrice.Text = price;
         }
 
         public int Index { get => index; set => index = value; }
