@@ -324,8 +324,6 @@ namespace ProGM.Client
                                     timerWarning.Enabled = true;
                                 }
                             }
-
-
                         });
 
                         break;
@@ -353,6 +351,12 @@ namespace ProGM.Client
                             }
 
                         });
+                        break;
+                    #endregion
+
+                    #region UPDATE_TOTAL_MONEY
+                    case SocketCommandType.UPDATE_TOTAL_MONEY:
+                        this.lbAccountBlance.Text = FormatExtention.Money(obj.accountBlance.ToString());
                         break;
                     #endregion
                     default:

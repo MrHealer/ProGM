@@ -17,6 +17,7 @@ namespace ProGM.Business.Model
         public const string LOGIN_FALSED = "LOGIN_FALSED";
         public const string UPDATE_INFO_USED = "UPDATE_INFO_USED";
         public const string OUT_OF_MONEY = "OUT_OF_MONEY";
+        public const string UPDATE_TOTAL_MONEY = "UPDATE_TOTAL_MONEY";
 
     }
 }
