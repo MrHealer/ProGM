@@ -60,3 +60,7 @@
 11:18:25		.ctor	Program.Main => App..ctor => Logger.WriteLog
 11:25:31		.ctor	Program.Main => App..ctor => Logger.WriteLog
 11:39:19		.ctor	Program.Main => App..ctor => Logger.WriteLog
+13:06:08		.ctor	Program.Main => App..ctor => Logger.WriteLog
+13:21:25		.ctor	Program.Main => App..ctor => Logger.WriteLog
+13:23:12		.ctor	Program.Main => App..ctor => Logger.WriteLog
+14:38:27		.ctor	Program.Main => App..ctor => Logger.WriteLog
