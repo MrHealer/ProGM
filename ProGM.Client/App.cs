@@ -260,7 +260,7 @@ namespace ProGM.Client
                             lbTimeStart.Text = obj.timeStart.ToString("HH:mm:ss");
                             lbTimeUser.Text = FormatExtention.FormartMinute(obj.timeUsed);
                             lbTimeRemaining.Text = FormatExtention.FormartMinute(obj.timeRemaining);
-                            lbPrice.Text = FormatExtention.Money(obj.price.ToString());
+                            lbPrice.Text = FormatExtention.Money(obj.price.ToString()) +"/h";
                             this.Show();
                             if (this.frmDangNhap.InvokeRequired)
                             {
@@ -356,7 +356,16 @@ namespace ProGM.Client
 
                     #region UPDATE_TOTAL_MONEY
                     case SocketCommandType.UPDATE_TOTAL_MONEY:
-                        this.lbAccountBlance.Text = FormatExtention.Money(obj.accountBlance.ToString());
+                        if (this.lbAccountBlance.InvokeRequired)
+                        {
+                            this.lbAccountBlance.Invoke((Action)delegate {
+                                this.lbAccountBlance.Text = FormatExtention.Money(obj.accountBlance.ToString());
+                            });
+                        }
+                        else
+                        {
+                            this.lbAccountBlance.Text = FormatExtention.Money(obj.accountBlance.ToString());
+                        }
                         break;
                     #endregion
                     default:
@@ -365,9 +374,9 @@ namespace ProGM.Client
                 }
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                Logger.WriteLog(Logger.LogType.Error, ex.Message);
 
             }
         }
