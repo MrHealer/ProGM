@@ -48,6 +48,7 @@ namespace ProGM.Client
                 this.ComputerDetail = JsonConvert.SerializeObject(detail);
                 this.ManagerPcIP = detail.computeDetail[0].strManagerPcIP;
                 this.ComputerName = detail.computeDetail[0].strName;
+                this.Text = ComputerName;
             }
 
             InitializeComponent();
@@ -64,7 +65,6 @@ namespace ProGM.Client
 
         private void regiterClientConnect(string ManagerPcIP)
         {
-            Logger.WriteLog(Logger.LogType.Error, ManagerPcIP);
             asyncClient = new AsyncClient();
             asyncClient.Connected += AsyncClient_Connected;
             asyncClient.MessageReceived += AsyncClient_MessageReceived;
@@ -220,8 +220,7 @@ namespace ProGM.Client
                             lbTimeStart.Text = obj.timeStart.ToString("HH:mm:ss");
                             lbTimeUser.Text = FormatExtention.FormartMinute(obj.timeUsed);
                             lbTimeRemaining.Text = FormatExtention.FormartMinute(obj.timeRemaining);
-                            lbPrice.Text = FormatExtention.Money(obj.price.ToString());
-
+                            lbPrice.Text = FormatExtention.Money(obj.price.ToString());lbUserName.Text = obj.username ?? this.ComputerName;
                             this.Show();
                             if (this.frmDangNhap != null)
                             {

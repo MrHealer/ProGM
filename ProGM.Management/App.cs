@@ -111,27 +111,55 @@ namespace ProGM.Management
                         {
                             if (client.status == PCStatus.READY)
                             {
-                                if (OpenComputerByAccount(mac, userName, acountDetail.accountDetails[0].dBalance))
+                                var userExit = this.clients.Where(n => n.IdUser == acountDetail.accountDetails[0].strId).SingleOrDefault();
+                                if (userExit==null)
+                                {
+                                    if (OpenComputerByAccount(mac, userName, acountDetail.accountDetails[0].dBalance))
+                                    {
+                                        var status = new JObject();
+                                        status["idUser"] = acountDetail.accountDetails[0].strId;
+                                        status["userName"] = userName;
+                                        status["mac"] = mac;
+                                        status["status"] = "SUCCESS";
+                                        status["message"] = "LOGIN THÀNH CÔNG";
+                                        this.socket.Emit("login-pc-status", JsonConvert.SerializeObject(status));
+                                        client.status = PCStatus.ONLINE;
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        var status = new JObject();
+                                        status["idUser"] = acountDetail.accountDetails[0].strId;
+                                        status["userName"] = userName;
+                                        status["mac"] = mac;
+                                        status["status"] = "ERROR";
+                                        status["message"] = "Login thất bại";
+                                        this.socket.Emit("login-pc-status", JsonConvert.SerializeObject(status));
+                                        return;
+                                    }
+                                }
+                                else
                                 {
                                     var status = new JObject();
                                     status["idUser"] = acountDetail.accountDetails[0].strId;
                                     status["userName"] = userName;
                                     status["mac"] = mac;
-                                    status["status"] = "SUCCESS";
-                                    status["messeage"] = "LOGIN THÀNH CÔNG";
+                                    status["status"] = "ERROR";
+                                    status["message"] = "Tài khoản đã đăng nhập trên máy khác!";
                                     this.socket.Emit("login-pc-status", JsonConvert.SerializeObject(status));
-                                    client.status = PCStatus.ONLINE;
                                     return;
                                 }
                             }
+                            else
                             {
                                 var status = new JObject();
                                 status["idUser"] = acountDetail.accountDetails[0].strId;
                                 status["userName"] = userName;
                                 status["mac"] = mac;
                                 status["status"] = "ERROR";
-                                status["messeage"] = "Login thất bại";
+                                status["message"] = "Máy tính bạn đăng nhập có thể đang tắt hoặc là có người chơi rồi!";
                                 this.socket.Emit("login-pc-status", JsonConvert.SerializeObject(status));
+                                return;
                             }
                         }
                     }
@@ -249,7 +277,7 @@ namespace ProGM.Management
         {
             var pc = new JObject();
             pc["mac"] = mac;
-            this.socket.Emit("logout-pc", pc);
+            this.socket.Emit("logout-pc",JsonConvert.SerializeObject(pc));
         }
         #endregion
 
@@ -335,9 +363,8 @@ namespace ProGM.Management
 
                             if (loginResponse.result[0].status == "SUCCESS")
                             {
-
-
-
+                                var _client2 = clients.Where(c => c.macaddress == obj.macAddressFrom).SingleOrDefault();
+                                _client2.IdUser = loginResponse.result[0].strId;
                                 #region đăng nhập thánh  công
                                 OpenComputerByAccount(obj.macAddressFrom, obj.username, loginResponse.result[0].dBalance);
                                 #endregion

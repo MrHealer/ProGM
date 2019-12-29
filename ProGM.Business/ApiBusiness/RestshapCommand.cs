@@ -190,7 +190,7 @@ namespace ProGM.Business.ApiBusiness
             client.Timeout = -1;
             var request = new RestRequest(Method.POST);
             request.AddHeader("Authorization", "Basic d2ViOjEyMw==");
-            request.AddHeader("Content-Type", "multipart/form-data; boundary=--------------------------716141854746053963220112");
+            request.AddHeader("Content-Type", "multipart/form-data");
             request.AlwaysMultipartFormData = true;
             request.AddParameter("key", "walletWithdrawal");
             request.AddParameter("amount", amount);
@@ -199,8 +199,9 @@ namespace ProGM.Business.ApiBusiness
             request.AddParameter("serviceId", "c4cc7bb4-2638-11ea-b536-005056b97a5d");
             request.AddParameter("cashierId", idManager);
             IRestResponse response = client.Execute(request);
-            var status = JObject.FromObject(response.Content);
-            if (status["result"].Equals("SUCCESS"))
+            var status = JObject.Parse(response.Content);
+            var r = status["result"];
+            if (status["result"].ToString().Equals("SUCCESS"))
             {
                 return true;
             }
